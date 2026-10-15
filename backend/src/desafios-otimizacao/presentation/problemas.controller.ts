@@ -1,70 +1,87 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestjs/common';
+import { Body, ConflictException, Controller, Delete, Get, Inject, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CriarProblemaDto } from './dtos/criar-problema.dto';
-import { SubmeterTentativaDto } from './dtos/submeter-tentativa.dto';
-import { FiltrarProblemasDto } from './dtos/filtrar-problemas.dto';
-
-import { SubmeterTentativaCommand } from '../application/commands/submeter-tentativa.command';
-import { ListarProblemasQuery } from '../application/queries/listar-problemas.query';
-import { ObterGraficoProblemaQuery } from '../application/queries/obter-grafico-problema.query';
+import { CriarProblemaCommand } from '../application/commands/criar-problema.command.js';
+import { SubmeterTentativaCommand } from '../application/commands/submeter-tentativa.command.js';
+import { ListarProblemasQuery } from '../application/queries/listar-problemas.query.js';
+import { ObterGraficoProblemaQuery } from '../application/queries/obter-grafico-problema.query.js';
+import { IPROBLEMA_REPOSITORY } from '../infrastructure/repositories/problema.repository.interface.js';
+import type { IProblemaRepository } from '../infrastructure/repositories/problema.repository.interface.js';
+import { CriarProblemaDto } from './dtos/criar-problema.dto.js';
+import { FiltrarProblemaDto } from './dtos/filtrar-problema.dto.js';
+import { SubmeterTentativaDto } from './dtos/submeter-tentativa.dto.js';
 
 @Controller('problemas')
 export class ProblemasController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    @Inject(IPROBLEMA_REPOSITORY) private readonly problemaRepo: IProblemaRepository,
   ) {}
 
   @Get()
-  async listar(@Query() filtros: FiltrarProblemasDto) {
+  listar(@Query() filtros: FiltrarProblemaDto) {
     return this.queryBus.execute(new ListarProblemasQuery(filtros));
   }
 
   @Get(':id')
   async obterPorId(@Param('id') id: string) {
-    // Retorna detalhes do desafio
+    const problema = await this.problemaRepo.findById(id);
+    if (!problema) throw new NotFoundException('Desafio não encontrado.');
+    return problema;
   }
 
   @Post()
-  async criar(@Body() dto: CriarProblemaDto) {
-    // Dispara comando de criação
+  criar(@Body() dto: CriarProblemaDto) {
+    return this.commandBus.execute(new CriarProblemaCommand(
+      dto.titulo,
+      dto.descricao,
+      dto.nivel,
+      dto.tipo,
+      new Date(dto.prazoLimite),
+      dto.limiteTentativas,
+      dto.funcaoObjetivo,
+      dto.valorOtimoZ,
+    ));
   }
 
   @Patch(':id')
-  async atualizar(@Param('id') id: string, @Body() dto: any) {
-    // Valida Regra 13 (não editar se houver tentativas)
+  async atualizar(@Param('id') id: string, @Body() dto: Partial<CriarProblemaDto>) {
+    const problema = await this.problemaRepo.findById(id);
+    if (!problema) throw new NotFoundException('Desafio não encontrado.');
+    if (problema.temTentativas()) throw new ConflictException('Problemas com tentativas não podem ser editados.');
+    return this.problemaRepo.atualizar(id, {
+      ...dto,
+      prazoLimite: dto.prazoLimite ? new Date(dto.prazoLimite) : undefined,
+    });
   }
 
   @Delete(':id')
   async remover(@Param('id') id: string) {
-    // Valida Regra 13
+    const problema = await this.problemaRepo.findById(id);
+    if (!problema) throw new NotFoundException('Desafio não encontrado.');
+    if (problema.temTentativas()) throw new ConflictException('Problemas com tentativas não podem ser removidos.');
+    await this.problemaRepo.deletar(id);
   }
 
   @Post(':id/publicar')
   async publicar(@Param('id') id: string) {
-    // Altera status para publicado
+    const problema = await this.problemaRepo.findById(id);
+    if (!problema) throw new NotFoundException('Desafio não encontrado.');
+    return this.problemaRepo.atualizar(id, { publicado: true });
   }
 
   @Post(':id/restricoes')
   async adicionarRestricao(@Param('id') id: string, @Body() dto: any) {
-    // Adiciona restrição
+    return this.problemaRepo.adicionarRestricao(id, dto);
   }
 
-  // BÔNUS CQRS: Invocação do Command de Gravação + Correção
   @Post(':id/tentativas')
-  async submeterTentativa(
-    @Param('id') problemaId: string,
-    @Body() dto: SubmeterTentativaDto,
-  ) {
-    // Exemplo pegando alunoId do Token JWT/Sessão (simulado 'aluno-123')
-    const alunoId = 'aluno-123';
-    return this.commandBus.execute(
-      new SubmeterTentativaCommand(problemaId, alunoId, dto.valores),
-    );
+  submeterTentativa(@Param('id') problemaId: string, @Body() dto: SubmeterTentativaDto) {
+    return this.commandBus.execute(new SubmeterTentativaCommand(problemaId, 'aluno-123', dto.valores));
   }
 
   @Get(':id/grafico')
-  async obterGrafico(@Param('id') id: string) {
+  obterGrafico(@Param('id') id: string) {
     return this.queryBus.execute(new ObterGraficoProblemaQuery(id));
   }
 }

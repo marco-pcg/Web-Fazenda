@@ -1,11 +1,12 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { NotFoundException } from '@nestjs/common';
-import { ObterGraficoProblemaQuery } from '../obter-grafico-problema.query';
-import { ProblemaRepository } from '../../../infrastructure/repositories/problema.repository';
+import { Inject, NotFoundException } from '@nestjs/common';
+import { ObterGraficoProblemaQuery } from '../obter-grafico-problema.query.js';
+import { IPROBLEMA_REPOSITORY } from '../../../infrastructure/repositories/problema.repository.interface.js';
+import type { IProblemaRepository } from '../../../infrastructure/repositories/problema.repository.interface.js';
 
 @QueryHandler(ObterGraficoProblemaQuery)
 export class ObterGraficoProblemaHandler implements IQueryHandler<ObterGraficoProblemaQuery> {
-  constructor(private readonly problemaRepo: ProblemaRepository) {}
+  constructor(@Inject(IPROBLEMA_REPOSITORY) private readonly problemaRepo: IProblemaRepository) {}
 
   async execute(query: ObterGraficoProblemaQuery) {
     const problema = await this.problemaRepo.findById(query.problemaId);

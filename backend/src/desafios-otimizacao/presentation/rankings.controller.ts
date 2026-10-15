@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ObterRankingProblemaQuery } from '../application/queries/obter-ranking-problema.query';
-import { ObterRankingTurmaQuery } from '../application/queries/obter-ranking-turma.query';
+import { ObterRankingProblemaQuery } from '../application/queries/obter-ranking-problema.query.js';
+import { ObterRankingTurmaQuery } from '../application/queries/obter-ranking-turma.query.js';
 
 @Controller()
 export class RankingsController {

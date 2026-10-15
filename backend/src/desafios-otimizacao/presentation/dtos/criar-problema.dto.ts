@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsEnum, IsNumber, IsDateString, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TipoObjetivo } from '../../domain/entities/problema.entity';
+import { TipoObjetivo } from '../../domain/entities/problema.entity.js';
 
 export class CoeficienteDto {
   @IsString()
@@ -27,7 +27,7 @@ export class CriarProblemaDto {
   tipo: TipoObjetivo;
 
   @IsDateString()
-  prazoLimite: Date;
+  prazoLimite: string;
 
   @IsNumber()
   limiteTentativas: number;
