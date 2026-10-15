@@ -1,5 +1,5 @@
-import { TentativaEntity } from '../entities/tentativa.entity';
-import { FiltrarTentativasDto } from '../../presentation/dtos/filtrar-tentativas.dto';
+import type { TentativaEntity } from '../../domain/entities/tentativa.entity.js';
+import type { FiltrarTentativasDto } from '../../presentation/dtos/filtrar-tentativas.dto.js';
 
 export const ITENTATIVA_REPOSITORY = 'ITentativaRepository';
 
