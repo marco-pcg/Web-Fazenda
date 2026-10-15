@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ProblemaEntity, TipoObjetivo } from '../entities/problema.entity';
-import { RestricaoEntity, OperadorRestricao } from '../entities/restricao.entity';
+import { TipoObjetivo } from '../entities/problema.entity.js';
+import type { ProblemaEntity } from '../entities/problema.entity.js';
+import { OperadorRestricao } from '../entities/restricao.entity.js';
+import type { RestricaoEntity } from '../entities/restricao.entity.js';
 
 @Injectable()
 export class AvaliadorOtimizacaoService {

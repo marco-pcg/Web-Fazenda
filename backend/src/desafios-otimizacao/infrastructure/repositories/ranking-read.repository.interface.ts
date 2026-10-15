@@ -1,4 +1,4 @@
-import { RankingReadModel } from '../read-models/ranking.read-model';
+import type { RankingReadModel } from '../../domain/read-models/ranking.read-model.js';
 
 export const IRANKING_READ_REPOSITORY = 'IRankingReadRepository';
 
