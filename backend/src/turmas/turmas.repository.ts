@@ -10,15 +10,11 @@ export class TurmasRepository {
   private readonly pivotTable = 'turma_alunos';
 
   async findByCode(codigo: string) {
-    return knex(this.table)
-      .where({ codigo })
-      .first();
+    return knex(this.table).where({ codigo }).first();
   }
 
   async create(createTurmaDto: any) {
-    return knex(this.table)
-      .insert(createTurmaDto)
-      .returning('*');
+    return knex(this.table).insert(createTurmaDto).returning('*');
   }
 
   async findAll(filters: FilterTurmaDto, user: any) {
@@ -41,7 +37,9 @@ export class TurmasRepository {
     } else if (user?.perfil === 'aluno') {
       query.where((b) => {
         b.whereIn('turmas.id', function () {
-          this.select('turma_id').from('turma_alunos').where('aluno_id', user.id);
+          this.select('turma_id')
+            .from('turma_alunos')
+            .where('aluno_id', user.id);
         });
         if (user.turma_id) {
           b.orWhere('turmas.id', user.turma_id);
@@ -59,12 +57,19 @@ export class TurmasRepository {
 
     if (filters.search) {
       query.where((b) => {
-        b.where('turmas.nome', 'ilike', `%${filters.search}%`)
-          .orWhere('turmas.codigo', 'ilike', `%${filters.search}%`);
+        b.where('turmas.nome', 'ilike', `%${filters.search}%`).orWhere(
+          'turmas.codigo',
+          'ilike',
+          `%${filters.search}%`,
+        );
       });
     }
 
-    const countResult = await query.clone().clearSelect().count('turmas.id as total').first();
+    const countResult = await query
+      .clone()
+      .clearSelect()
+      .count('turmas.id as total')
+      .first();
     const total = Number(countResult?.total || 0);
 
     const page = Number(filters.page) || 1;
@@ -131,9 +136,7 @@ export class TurmasRepository {
   }
 
   async remove(id: string) {
-    return knex(this.table)
-      .where({ id })
-      .del();
+    return knex(this.table).where({ id }).del();
   }
 
   async verificarMatricula(turmaId: string, alunoId: string) {
@@ -152,22 +155,21 @@ export class TurmasRepository {
   }
 
   async adicionarAluno(turmaId: string, alunoId: string) {
-    // Adiciona na tabela pivot e atualiza turma_id no cadastro do usuário
-    const [matricula] = await knex(this.pivotTable)
-      .insert({
-        turma_id: turmaId,
-        aluno_id: alunoId,
-        created_at: knex.fn.now(),
-      })
-      .returning('*');
+    return knex.transaction(async (trx) => {
+      const [matricula] = await trx(this.pivotTable)
+        .insert({
+          turma_id: turmaId,
+          aluno_id: alunoId,
+          created_at: trx.fn.now(),
+        })
+        .returning('*');
 
-    await knex('usuarios')
-      .where({ id: alunoId })
-      .update({
+      await trx('usuarios').where({ id: alunoId }).update({
         turma_id: turmaId,
-        updated_at: knex.fn.now(),
+        updated_at: trx.fn.now(),
       });
 
-    return matricula;
+      return matricula;
+    });
   }
 }

@@ -2,8 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { validateRuntimeConfiguration } from './db/database-config';
 
 async function bootstrap() {
+  validateRuntimeConfiguration();
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
@@ -21,7 +23,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Fazendinha API')
-    .setDescription('API de Gestão da Fazendinha - Módulo de Acesso, Usuários e Turmas (Integrante 1)')
+    .setDescription(
+      'API de Gestão da Fazendinha - Módulo de Acesso, Usuários e Turmas (Integrante 1)',
+    )
     .setVersion('1.0')
     .addBearerAuth(
       {
