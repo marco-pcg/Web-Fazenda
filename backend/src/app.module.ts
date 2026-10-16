@@ -1,5 +1,6 @@
 // src/app.module.ts
 import { Module } from '@nestjs/common';
+<<<<<<< HEAD
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -22,6 +23,15 @@ import { AuthModule } from './auth/auth.module';
     UsuariosModule,
     AuthModule,
   ],
+=======
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { DatabaseModule } from './database/database.module.js';
+import { EstacoesAnimaisModule } from './modules/estacoes-animais/estacoes-animais.module.js';
+
+@Module({
+  imports: [DatabaseModule, EstacoesAnimaisModule],
+>>>>>>> 58ebeaf (feat(estacoes-animais): cria EstacoesAnimaisModule e registra no AppModule)
   controllers: [AppController],
   providers: [
     AppService,
