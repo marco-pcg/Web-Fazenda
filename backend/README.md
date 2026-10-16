@@ -31,6 +31,29 @@
 $ npm install
 ```
 
+## Local database
+
+Copy the example environment file before starting the local services:
+
+```bash
+cp .env.example .env
+docker compose up -d
+```
+
+PostgreSQL is available at `localhost:5432`. Adminer is available at
+<http://localhost:8080>; use `database` as the server from inside the Compose
+network, or `localhost` when connecting from the host.
+
+Run the migrations and seed data from this directory:
+
+```bash
+npx knex --knexfile knexfile.js migrate:latest
+npx knex --knexfile knexfile.js seed:run
+```
+
+Stop the services with `docker compose down`. The PostgreSQL data remains in
+the `postgres_data` volume between restarts.
+
 ## Compile and run the project
 
 ```bash
