@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { FilterUsuarioDto } from './dto/filter-usuario.dto';
@@ -8,10 +12,12 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuariosService {
-  constructor(private readonly repository: UsuariosRepository) { }
+  constructor(private readonly repository: UsuariosRepository) {}
 
   async create(createUsuarioDto: CreateUsuarioDto) {
-    const userExists = await this.repository.findByEmail(createUsuarioDto.email);
+    const userExists = await this.repository.findByEmail(
+      createUsuarioDto.email,
+    );
     if (userExists) {
       throw new ConflictException('Usuário já cadastrado');
     }
@@ -25,6 +31,7 @@ export class UsuariosService {
       email: createUsuarioDto.email,
       senha: senhaHash,
       perfil_id: createUsuarioDto.perfil_id,
+      turma_id: createUsuarioDto.turma_id || null,
     };
 
     const [newUser] = await this.repository.create(newUserData);
@@ -37,7 +44,11 @@ export class UsuariosService {
     const limit = Number(filtros.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const { dados, total } = await this.repository.findAllPaginated(filtros, limit, offset);
+    const { dados, total } = await this.repository.findAllPaginated(
+      filtros,
+      limit,
+      offset,
+    );
 
     return {
       dados,
