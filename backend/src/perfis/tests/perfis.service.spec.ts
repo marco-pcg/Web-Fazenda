@@ -18,6 +18,7 @@ describe('PerfisService', () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PerfisService,
@@ -33,5 +34,41 @@ describe('PerfisService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('includes permissions when finding a profile', async () => {
+    mockPerfisRepository.findById.mockResolvedValue({
+      id: 'profile-id',
+      nome: 'professor',
+    });
+    mockPerfisRepository.findPermissoesByPerfilId.mockResolvedValue([
+      { id: 'permission-id', nome: 'turmas:listar' },
+    ]);
+
+    await expect(service.findById('profile-id')).resolves.toEqual({
+      id: 'profile-id',
+      nome: 'professor',
+      permissoes: [{ id: 'permission-id', nome: 'turmas:listar' }],
+    });
+  });
+
+  it('links permissions only for an existing profile', async () => {
+    mockPerfisRepository.findById.mockResolvedValue({ id: 'profile-id' });
+
+    await expect(
+      service.vincularPermissoes('profile-id', ['permission-id']),
+    ).resolves.toEqual({ message: 'Permissões atualizadas com sucesso' });
+    expect(mockPerfisRepository.vincularPermissoes).toHaveBeenCalledWith(
+      'profile-id',
+      ['permission-id'],
+    );
+  });
+
+  it('throws when linking permissions to a missing profile', async () => {
+    mockPerfisRepository.findById.mockResolvedValue(undefined);
+
+    await expect(service.vincularPermissoes('missing', [])).rejects.toThrow(
+      'Perfil não encontrado',
+    );
   });
 });
