@@ -3,17 +3,17 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { PaginacaoDto } from '../../common/dtos/paginacao.dto';
 
 export class FiltroTalhaoDto extends PaginacaoDto {
-  @ApiPropertyOptional({ example: '48ad956a-2b13-4ca9-a2e5-147b9ac129a0' })
+  @ApiPropertyOptional({ description: 'Id da fazenda' })
   @IsOptional()
   @IsUUID()
   fazenda_id?: string;
 
-  @ApiPropertyOptional({ example: 'livre' })
+  @ApiPropertyOptional({ description: 'livre ou plantado' })
   @IsOptional()
   @IsString()
   status?: string;
 
-  @ApiPropertyOptional({ example: 'A' })
+  @ApiPropertyOptional({ description: 'Começo do código, como A' })
   @IsOptional()
   @IsString()
   codigo?: string;
