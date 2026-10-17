@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('culturas', (table) => {
-    table.increments('id');
+    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.string('nome', 60).notNullable().unique();
     table.specificType('estacoes', 'text[]').notNullable();
     table.integer('area_por_unidade').notNullable();

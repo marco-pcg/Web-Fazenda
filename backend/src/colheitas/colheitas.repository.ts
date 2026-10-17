@@ -47,7 +47,7 @@ export class ColheitasRepository {
     return { dados, total: Number(total) };
   }
 
-  async findOne(id: number): Promise<Colheita | undefined> {
+  async findOne(id: string): Promise<Colheita | undefined> {
     return this.consultaComNomes()
       .where('colheitas.id', id)
       .first<Colheita | undefined>();

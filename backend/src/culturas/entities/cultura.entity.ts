@@ -1,5 +1,5 @@
 export class Cultura {
-  id: number;
+  id: string;
   nome: string;
   estacoes: string[];
   area_por_unidade: number;

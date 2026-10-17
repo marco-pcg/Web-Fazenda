@@ -41,7 +41,7 @@ export class CulturasRepository {
     return { dados, total: Number(total) };
   }
 
-  async findOne(id: number): Promise<Cultura | undefined> {
+  async findOne(id: string): Promise<Cultura | undefined> {
     return database<Cultura>('culturas').where({ id }).first();
   }
 
@@ -50,7 +50,7 @@ export class CulturasRepository {
   }
 
   async update(
-    id: number,
+    id: string,
     updateCulturaDto: UpdateCulturaDto,
   ): Promise<Cultura> {
     const [atualizada] = await database<Cultura>('culturas')
@@ -60,11 +60,11 @@ export class CulturasRepository {
     return atualizada;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return database<Cultura>('culturas').where({ id }).del();
   }
 
-  async foiPlantada(id: number) {
+  async foiPlantada(id: string) {
     return database<Plantio>('plantios').where({ cultura_id: id }).first();
   }
 }

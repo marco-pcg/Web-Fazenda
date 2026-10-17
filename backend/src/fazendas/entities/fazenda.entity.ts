@@ -1,5 +1,5 @@
 export class Fazenda {
-  id: number;
+  id: string;
   nome: string;
   turma_id: string;
   usuario_id: string;
