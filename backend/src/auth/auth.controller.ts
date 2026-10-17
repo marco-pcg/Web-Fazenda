@@ -1,6 +1,11 @@
 import { Controller, Post, Get, Body, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUsuarioDto } from '../usuarios/dto/create-usuario.dto';
@@ -31,7 +36,9 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('jwt')
-  @ApiOperation({ summary: 'Retorna informações do usuário autenticado no token' })
+  @ApiOperation({
+    summary: 'Retorna informações do usuário autenticado no token',
+  })
   @ApiResponse({ status: 200, description: 'Dados do usuário autenticado' })
   @ApiResponse({ status: 401, description: 'Não autorizado' })
   @Get('me')
