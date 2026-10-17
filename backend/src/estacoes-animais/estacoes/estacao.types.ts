@@ -1,4 +1,4 @@
-import { NomeEstacao } from '../common/enums';
+import { NomeEstacao } from '../../common/enums/enums';
 
 export interface Estacao {
   id: string;

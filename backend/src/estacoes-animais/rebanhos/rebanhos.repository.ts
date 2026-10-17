@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
-import { database as knex } from '../../../db/knex-connection';
+import { database as knex } from '../../db/knex-connection';
 import { Rebanho } from './rebanho.types';
 
 @Injectable()

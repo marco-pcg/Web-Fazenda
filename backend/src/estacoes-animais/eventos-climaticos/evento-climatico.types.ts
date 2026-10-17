@@ -1,4 +1,4 @@
-import { AlvoEvento, StatusEvento, TipoEvento } from '../common/enums';
+import { AlvoEvento, StatusEvento, TipoEvento } from '../../common/enums/enums';
 
 export interface EventoClimatico {
   id: string;
