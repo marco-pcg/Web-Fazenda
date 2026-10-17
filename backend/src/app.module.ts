@@ -1,4 +1,3 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 <<<<<<< HEAD
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
@@ -10,20 +9,40 @@ import { PerfisModule } from './perfis/perfis.module';
 import { TurmasModule } from './turmas/turmas.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
+<<<<<<< HEAD
 import { EstacoesAnimaisModule } from './estacoes-animais/estacoes-animais.module';
+=======
+import { ScheduleModule } from '@nestjs/schedule';
+import { CulturasModule } from './culturas/culturas.module';
+import { FazendasModule } from './fazendas/fazendas.module';
+import { TalhoesModule } from './talhoes/talhoes.module';
+import { PlantiosModule } from './plantios/plantios.module';
+import { ColheitasModule } from './colheitas/colheitas.module';
+>>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 100,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     PermissoesModule,
     PerfisModule,
     TurmasModule,
     UsuariosModule,
     AuthModule,
+<<<<<<< HEAD
     EstacoesAnimaisModule,
+=======
+    ScheduleModule.forRoot(),
+    CulturasModule,
+    FazendasModule,
+    TalhoesModule,
+    PlantiosModule,
+    ColheitasModule,
+>>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
   ],
 <<<<<<< HEAD
 =======
@@ -46,4 +65,4 @@ import { EstacoesAnimaisModule } from './modules/estacoes-animais/estacoes-anima
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

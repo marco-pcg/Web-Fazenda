@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Query,
   UseGuards,
@@ -38,14 +38,14 @@ export class PlantiosController {
 
   @Get(':id')
   @RequirePermissions('plantios:visualizar')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.plantiosService.findOne(id);
   }
 
   @Post(':id/colher')
   @RequirePermissions('plantios:colher')
   colher(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() colherPlantioDto: ColherPlantioDto,
   ) {
     return this.plantiosService.colher(id, colherPlantioDto);

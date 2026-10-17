@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -40,14 +40,14 @@ export class FazendasController {
 
   @Get(':id')
   @RequirePermissions('fazendas:visualizar')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.fazendasService.findOne(id);
   }
 
   @Patch(':id')
   @RequirePermissions('fazendas:editar')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateFazendaDto: UpdateFazendaDto,
   ) {
     return this.fazendasService.update(id, updateFazendaDto);
@@ -55,7 +55,7 @@ export class FazendasController {
 
   @Delete(':id')
   @RequirePermissions('fazendas:deletar')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.fazendasService.remove(id);
   }
 }

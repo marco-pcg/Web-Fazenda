@@ -1,4 +1,4 @@
 export class FilterPermissaoDto {
-    modulo?: string;
-    acao?: string;
+  modulo?: string;
+  acao?: string;
 }

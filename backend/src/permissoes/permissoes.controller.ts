@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { PermissoesService } from './permissoes.service';
 import { CreatePermissaoDto } from './dto/create-permissao.dto';
 import { UpdatePermissaoDto } from './dto/update-permissao.dto';
@@ -6,7 +17,7 @@ import { FilterPermissaoDto } from './dto/filter-permissao.dto';
 
 @Controller('permissoes')
 export class PermissoesController {
-  constructor(private readonly permissoesService: PermissoesService) { }
+  constructor(private readonly permissoesService: PermissoesService) {}
 
   @Post()
   create(@Body() createPermissaoDto: CreatePermissaoDto) {
@@ -24,7 +35,10 @@ export class PermissoesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePermissaoDto: UpdatePermissaoDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePermissaoDto: UpdatePermissaoDto,
+  ) {
     return this.permissoesService.update(id, updatePermissaoDto);
   }
 

@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -40,14 +40,14 @@ export class CulturasController {
 
   @Get(':id')
   @RequirePermissions('culturas:visualizar')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.culturasService.findOne(id);
   }
 
   @Patch(':id')
   @RequirePermissions('culturas:editar')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateCulturaDto: UpdateCulturaDto,
   ) {
     return this.culturasService.update(id, updateCulturaDto);
@@ -55,7 +55,7 @@ export class CulturasController {
 
   @Delete(':id')
   @RequirePermissions('culturas:deletar')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.culturasService.remove(id);
   }
 }

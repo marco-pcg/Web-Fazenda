@@ -10,9 +10,7 @@ export class PerfisRepository {
   private readonly pivotTable = 'perfil_permissao';
 
   async findByNome(nome: string) {
-    return knex(this.table)
-      .where({ nome })
-      .first();
+    return knex(this.table).where({ nome }).first();
   }
 
   async findByName(name: string) {
@@ -20,9 +18,7 @@ export class PerfisRepository {
   }
 
   async create(perfil: any) {
-    return knex(this.table)
-      .insert(perfil)
-      .returning(['*']);
+    return knex(this.table).insert(perfil).returning(['*']);
   }
 
   async findAll(filtros: FilterPerfilDto) {
@@ -65,16 +61,12 @@ export class PerfisRepository {
   }
 
   async findById(id: string) {
-    return knex(this.table)
-      .where({ id })
-      .first();
+    return knex(this.table).where({ id }).first();
   }
 
   async vincularPermissoes(perfil_id: string, permissoes_ids: string[]) {
     await knex.transaction(async (trx) => {
-      await trx(this.pivotTable)
-        .where({ perfil_id })
-        .del();
+      await trx(this.pivotTable).where({ perfil_id }).del();
 
       if (permissoes_ids && permissoes_ids.length > 0) {
         const newVinculos = permissoes_ids.map((id) => ({
@@ -98,14 +90,17 @@ export class PerfisRepository {
   }
 
   async remove(id: string) {
-    return knex(this.table)
-      .where({ id })
-      .del();
+    return knex(this.table).where({ id }).del();
   }
 
   async findPermissoesByPerfilId(id: string) {
     return knex('permissoes')
-      .join(this.pivotTable, 'permissoes.id', '=', `${this.pivotTable}.permissao_id`)
+      .join(
+        this.pivotTable,
+        'permissoes.id',
+        '=',
+        `${this.pivotTable}.permissao_id`,
+      )
       .select([
         'permissoes.id',
         'permissoes.nome',

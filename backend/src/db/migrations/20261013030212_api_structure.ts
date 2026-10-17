@@ -18,8 +18,16 @@ export async function up(knex: Knex): Promise<void> {
   });
 
   await knex.schema.createTable('perfil_permissao', (table) => {
-    table.uuid('perfil_id').references('id').inTable('perfis').onDelete('CASCADE');
-    table.uuid('permissao_id').references('id').inTable('permissoes').onDelete('CASCADE');
+    table
+      .uuid('perfil_id')
+      .references('id')
+      .inTable('perfis')
+      .onDelete('CASCADE');
+    table
+      .uuid('permissao_id')
+      .references('id')
+      .inTable('permissoes')
+      .onDelete('CASCADE');
     table.primary(['perfil_id', 'permissao_id']);
   });
 
@@ -38,17 +46,38 @@ export async function up(knex: Knex): Promise<void> {
     table.string('nome').notNullable();
     table.string('email').unique().notNullable();
     table.string('senha').notNullable();
-    table.uuid('perfil_id').references('id').inTable('perfis').onDelete('RESTRICT');
-    table.uuid('turma_id').references('id').inTable('turmas').onDelete('SET NULL').nullable();
+    table
+      .uuid('perfil_id')
+      .references('id')
+      .inTable('perfis')
+      .onDelete('RESTRICT');
+    table
+      .uuid('turma_id')
+      .references('id')
+      .inTable('turmas')
+      .onDelete('SET NULL')
+      .nullable();
     table.timestamps(true, true);
   });
   await knex.schema.alterTable('turmas', (table) => {
-    table.foreign('professor_id').references('id').inTable('usuarios').onDelete('SET NULL');
+    table
+      .foreign('professor_id')
+      .references('id')
+      .inTable('usuarios')
+      .onDelete('SET NULL');
   });
 
   await knex.schema.createTable('turma_alunos', (table) => {
-    table.uuid('turma_id').references('id').inTable('turmas').onDelete('CASCADE');
-    table.uuid('aluno_id').references('id').inTable('usuarios').onDelete('CASCADE');
+    table
+      .uuid('turma_id')
+      .references('id')
+      .inTable('turmas')
+      .onDelete('CASCADE');
+    table
+      .uuid('aluno_id')
+      .references('id')
+      .inTable('usuarios')
+      .onDelete('CASCADE');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.primary(['turma_id', 'aluno_id']);
   });

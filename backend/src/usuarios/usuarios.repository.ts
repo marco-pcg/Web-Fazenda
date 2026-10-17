@@ -7,9 +7,7 @@ export class UsuariosRepository {
   private readonly table = 'usuarios';
 
   async findByEmail(email: string): Promise<any> {
-    return knex(this.table)
-      .where({ email })
-      .first();
+    return knex(this.table).where({ email }).first();
   }
 
   async findById(id: string): Promise<any> {
@@ -32,7 +30,11 @@ export class UsuariosRepository {
       .first();
   }
 
-  async findAllPaginated(filtros: FilterUsuarioDto, limit: number, offset: number) {
+  async findAllPaginated(
+    filtros: FilterUsuarioDto,
+    limit: number,
+    offset: number,
+  ) {
     const query = knex(this.table)
       .join('perfis', 'usuarios.perfil_id', '=', 'perfis.id')
       .leftJoin('turmas', 'usuarios.turma_id', '=', 'turmas.id');
@@ -47,12 +49,16 @@ export class UsuariosRepository {
 
     if (filtros.search) {
       query.where((builder) => {
-        builder.where('usuarios.nome', 'ilike', `%${filtros.search}%`)
+        builder
+          .where('usuarios.nome', 'ilike', `%${filtros.search}%`)
           .orWhere('usuarios.email', 'ilike', `%${filtros.search}%`);
       });
     }
 
-    const countResult = await query.clone().count('usuarios.id as total').first();
+    const countResult = await query
+      .clone()
+      .count('usuarios.id as total')
+      .first();
     const total = Number(countResult?.total || 0);
 
     const dados = await query
@@ -84,7 +90,15 @@ export class UsuariosRepository {
         perfil_id: user.perfil_id,
         turma_id: user.turma_id || null,
       })
-      .returning(['id', 'nome', 'email', 'perfil_id', 'turma_id', 'created_at', 'updated_at']);
+      .returning([
+        'id',
+        'nome',
+        'email',
+        'perfil_id',
+        'turma_id',
+        'created_at',
+        'updated_at',
+      ]);
   }
 
   async update(id: string, user: any): Promise<any> {
@@ -101,22 +115,25 @@ export class UsuariosRepository {
     return knex(this.table)
       .where({ id })
       .update(payload)
-      .returning(['id', 'nome', 'email', 'perfil_id', 'turma_id', 'created_at', 'updated_at']);
+      .returning([
+        'id',
+        'nome',
+        'email',
+        'perfil_id',
+        'turma_id',
+        'created_at',
+        'updated_at',
+      ]);
   }
 
   async remove(id: string) {
-    return knex(this.table)
-      .where({ id })
-      .del();
+    return knex(this.table).where({ id }).del();
   }
 
   async findForAuth(email: string) {
     return knex(this.table)
       .join('perfis', 'usuarios.perfil_id', '=', 'perfis.id')
-      .select([
-        'usuarios.*',
-        'perfis.nome as perfil_nome',
-      ])
+      .select(['usuarios.*', 'perfis.nome as perfil_nome'])
       .where('usuarios.email', email)
       .first();
   }

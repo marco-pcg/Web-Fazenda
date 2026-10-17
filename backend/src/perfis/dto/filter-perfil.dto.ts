@@ -4,12 +4,18 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginacaoDto } from '../../common/dtos/paginacao.dto';
 
 export class FilterPerfilDto extends PaginacaoDto {
-  @ApiPropertyOptional({ description: 'Filtrar por nome do perfil', example: 'professor' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por nome do perfil',
+    example: 'professor',
+  })
   @IsOptional()
   @IsString()
   nome?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar por status ativo (true/false)', example: true })
+  @ApiPropertyOptional({
+    description: 'Filtrar por status ativo (true/false)',
+    example: true,
+  })
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => {

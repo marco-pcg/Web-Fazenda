@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePermissaoDto } from './dto/create-permissao.dto';
 import { UpdatePermissaoDto } from './dto/update-permissao.dto';
 import { FilterPermissaoDto } from './dto/filter-permissao.dto';
@@ -10,7 +14,9 @@ export class PermissoesService {
   constructor(private readonly repository: PermissoesRepository) {}
 
   async create(createPermissaoDto: CreatePermissaoDto) {
-    const permissaoExists = await this.repository.findByName(createPermissaoDto.nome);
+    const permissaoExists = await this.repository.findByName(
+      createPermissaoDto.nome,
+    );
     if (permissaoExists) {
       throw new ConflictException('Permissão já cadastrada');
     }

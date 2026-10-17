@@ -124,7 +124,7 @@ export class PlantiosService {
     return this.plantiosRepository.findAll(filtro, limit, offset);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const plantio = await this.plantiosRepository.findOne(id);
     if (!plantio) {
       throw new NotFoundException('Plantio não encontrado.');
@@ -132,7 +132,7 @@ export class PlantiosService {
     return plantio;
   }
 
-  async colher(id: number, colherPlantioDto: ColherPlantioDto) {
+  async colher(id: string, colherPlantioDto: ColherPlantioDto) {
     const plantio = await this.findOne(id);
 
     if (plantio.status === 'colhido') {

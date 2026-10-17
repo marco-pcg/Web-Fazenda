@@ -6,6 +6,6 @@ import { PerfisRepository } from './perfis.repository';
 @Module({
   controllers: [PerfisController],
   providers: [PerfisService, PerfisRepository],
-  exports: [PerfisService, PerfisRepository]
+  exports: [PerfisService, PerfisRepository],
 })
-export class PerfisModule { }
+export class PerfisModule {}

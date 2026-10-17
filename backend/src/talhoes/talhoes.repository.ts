@@ -41,19 +41,19 @@ export class TalhoesRepository {
     return { dados, total: Number(total) };
   }
 
-  async findOne(id: number): Promise<Talhao | undefined> {
+  async findOne(id: string): Promise<Talhao | undefined> {
     return database<Talhao>('talhoes').where({ id }).first();
   }
 
   async findByCodigo(
-    fazenda_id: number,
+    fazenda_id: string,
     codigo: string,
   ): Promise<Talhao | undefined> {
     return database<Talhao>('talhoes').where({ fazenda_id, codigo }).first();
   }
 
   async update(
-    id: number,
+    id: string,
     dados: Partial<Talhao>,
     trx: Knex = database,
   ): Promise<Talhao> {
@@ -64,11 +64,11 @@ export class TalhoesRepository {
     return atualizado;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return database<Talhao>('talhoes').where({ id }).del();
   }
 
-  async temPlantio(id: number) {
+  async temPlantio(id: string) {
     return database<Plantio>('plantios').where({ talhao_id: id }).first();
   }
 }

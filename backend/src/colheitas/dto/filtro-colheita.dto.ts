@@ -1,17 +1,17 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsInt, IsOptional } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsUUID } from 'class-validator';
 import { PaginacaoDto } from '../../common/dtos/paginacao.dto';
 
 export class FiltroColheitaDto extends PaginacaoDto {
-  @ApiPropertyOptional({ example: 1 })
+  @ApiPropertyOptional({ example: '48ad956a-2b13-4ca9-a2e5-147b9ac129a0' })
   @IsOptional()
-  @IsInt()
-  fazenda_id?: number;
+  @IsUUID()
+  fazenda_id?: string;
 
-  @ApiPropertyOptional({ example: 1 })
+  @ApiPropertyOptional({ example: 'eea2c902-498b-43c5-9c81-d140e6f66e4d' })
   @IsOptional()
-  @IsInt()
-  cultura_id?: number;
+  @IsUUID()
+  cultura_id?: string;
 
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()

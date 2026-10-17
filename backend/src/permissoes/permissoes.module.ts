@@ -6,6 +6,6 @@ import { PermissoesRepository } from './permissoes.repository';
 @Module({
   controllers: [PermissoesController],
   providers: [PermissoesService, PermissoesRepository],
-  exports: [PermissoesService, PermissoesRepository]
+  exports: [PermissoesService, PermissoesRepository],
 })
-export class PermissoesModule { }
+export class PermissoesModule {}

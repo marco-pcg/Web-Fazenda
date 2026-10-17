@@ -30,7 +30,7 @@ export class CulturasService {
     return this.culturasRepository.findAll(filtro, limit, offset);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const cultura = await this.culturasRepository.findOne(id);
     if (!cultura) {
       throw new NotFoundException('Cultura não encontrada.');
@@ -38,7 +38,7 @@ export class CulturasService {
     return cultura;
   }
 
-  async update(id: number, updateCulturaDto: UpdateCulturaDto) {
+  async update(id: string, updateCulturaDto: UpdateCulturaDto) {
     await this.findOne(id);
 
     if (updateCulturaDto.nome) {
@@ -53,7 +53,7 @@ export class CulturasService {
     return this.culturasRepository.update(id, updateCulturaDto);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     await this.findOne(id);
 
     const foiPlantada = await this.culturasRepository.foiPlantada(id);

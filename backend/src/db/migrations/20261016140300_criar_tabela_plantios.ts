@@ -2,9 +2,9 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('plantios', (table) => {
-    table.increments('id');
-    table.integer('talhao_id').notNullable().references('talhoes.id');
-    table.integer('cultura_id').notNullable().references('culturas.id');
+    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+    table.uuid('talhao_id').notNullable().references('talhoes.id');
+    table.uuid('cultura_id').notNullable().references('culturas.id');
     table.integer('quantidade').notNullable();
     table.integer('area_usada').notNullable();
     table.integer('agua_usada').notNullable();

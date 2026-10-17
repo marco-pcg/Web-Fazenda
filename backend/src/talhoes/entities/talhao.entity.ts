@@ -1,6 +1,6 @@
 export class Talhao {
-  id: number;
-  fazenda_id: number;
+  id: string;
+  fazenda_id: string;
   codigo: string;
   area: number;
   status: string;

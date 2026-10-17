@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -28,7 +28,7 @@ export class ColheitasController {
 
   @Get(':id')
   @RequirePermissions('colheitas:visualizar')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.colheitasService.findOne(id);
   }
 }

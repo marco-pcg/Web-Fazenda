@@ -41,12 +41,12 @@ export class FazendasRepository {
     return { dados, total: Number(total) };
   }
 
-  async findOne(id: number): Promise<Fazenda | undefined> {
+  async findOne(id: string): Promise<Fazenda | undefined> {
     return database<Fazenda>('fazendas').where({ id }).first();
   }
 
   async update(
-    id: number,
+    id: string,
     dados: Partial<Fazenda>,
     trx: Knex = database,
   ): Promise<Fazenda> {
@@ -57,11 +57,11 @@ export class FazendasRepository {
     return atualizada;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return database<Fazenda>('fazendas').where({ id }).del();
   }
 
-  async findTalhoes(id: number): Promise<Talhao[]> {
+  async findTalhoes(id: string): Promise<Talhao[]> {
     return database<Talhao>('talhoes')
       .where({ fazenda_id: id })
       .orderBy('codigo');
@@ -75,7 +75,7 @@ export class FazendasRepository {
     return database<{ id: string }>('usuarios').where({ id }).first();
   }
 
-  async temPlantio(id: number) {
+  async temPlantio(id: string) {
     return database<Plantio>('plantios')
       .join('talhoes', 'talhoes.id', 'plantios.talhao_id')
       .where('talhoes.fazenda_id', id)

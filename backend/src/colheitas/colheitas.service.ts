@@ -13,7 +13,7 @@ export class ColheitasService {
     return this.colheitasRepository.findAll(filtro, limit, offset);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const colheita = await this.colheitasRepository.findOne(id);
     if (!colheita) {
       throw new NotFoundException('Colheita não encontrada.');

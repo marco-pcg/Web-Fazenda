@@ -1,7 +1,7 @@
 export class Plantio {
-  id: number;
-  talhao_id: number;
-  cultura_id: number;
+  id: string;
+  talhao_id: string;
+  cultura_id: string;
   quantidade: number;
   area_usada: number;
   agua_usada: number;
