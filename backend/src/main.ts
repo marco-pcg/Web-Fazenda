@@ -21,7 +21,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Fazendinha API')
-    .setDescription('API de Gestão da Fazendinha - Módulo de Acesso, Usuários e Turmas (Integrante 1)')
+    .setDescription(
+      'API de Gestão da Fazendinha - Módulo de Acesso, Usuários e Turmas (Integrante 1)',
+    )
     .setVersion('1.0')
     .addBearerAuth(
       {

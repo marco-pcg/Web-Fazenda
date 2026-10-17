@@ -12,10 +12,12 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 100,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     PermissoesModule,
     PerfisModule,
     TurmasModule,
@@ -31,4 +33,4 @@ import { AuthModule } from './auth/auth.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

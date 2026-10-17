@@ -8,4 +8,4 @@ import { TurmasRepository } from './turmas.repository';
   providers: [TurmasService, TurmasRepository],
   exports: [TurmasService, TurmasRepository],
 })
-export class TurmasModule { }
+export class TurmasModule {}
