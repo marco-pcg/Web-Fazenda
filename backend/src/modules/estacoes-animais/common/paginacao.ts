@@ -19,18 +19,18 @@ export async function paginar<T>(
   if (limit < 1) limit = 1;
   if (limit > 100) limit = 100;
 
-  const contagem = await query
+  const contagem = (await query
     .clone()
     .clearSelect()
     .clearOrder()
     .count('* as total')
-    .first();
-  const total = Number(contagem.total);
+    .first()) as { total: string } | undefined;
+  const total = Number(contagem?.total || 0);
 
-  const data = await query
+  const data = (await query
     .clone()
     .limit(limit)
-    .offset((page - 1) * limit);
+    .offset((page - 1) * limit)) as T[];
 
   return {
     data,
