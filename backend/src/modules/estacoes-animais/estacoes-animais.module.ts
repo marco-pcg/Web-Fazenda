@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { EspeciesRepository } from './especies/especies.repository.js';
-import { EstacoesRepository } from './estacoes/estacoes.repository.js';
-import { EventosClimaticosRepository } from './eventos-climaticos/eventos-climaticos.repository.js';
-import { ESTOQUE_PORT } from './ports/estoque.port.js';
-import { FAZENDAS_PORT } from './ports/fazendas.port.js';
-import { TURMAS_PORT } from './ports/turmas.port.js';
-import { EstoquePortProvisorio } from './ports/provisorios/estoque.port.provisorio.js';
-import { FazendasPortProvisorio } from './ports/provisorios/fazendas.port.provisorio.js';
-import { TurmasPortProvisorio } from './ports/provisorios/turmas.port.provisorio.js';
-import { ProducoesRepository } from './producoes/producoes.repository.js';
-import { AlimentacoesRepository } from './rebanhos/alimentacoes.repository.js';
-import { RebanhosRepository } from './rebanhos/rebanhos.repository.js';
-import { TemporadasRepository } from './temporadas/temporadas.repository.js';
+import { EspeciesRepository } from './especies/especies.repository';
+import { EstacoesRepository } from './estacoes/estacoes.repository';
+import { EventosClimaticosRepository } from './eventos-climaticos/eventos-climaticos.repository';
+import { ESTOQUE_PORT } from './ports/estoque.port';
+import { FAZENDAS_PORT } from './ports/fazendas.port';
+import { TURMAS_PORT } from './ports/turmas.port';
+import { EstoquePortProvisorio } from './ports/provisorios/estoque.port.provisorio';
+import { FazendasPortProvisorio } from './ports/provisorios/fazendas.port.provisorio';
+import { TurmasPortProvisorio } from './ports/provisorios/turmas.port.provisorio';
+import { ProducoesRepository } from './producoes/producoes.repository';
+import { AlimentacoesRepository } from './rebanhos/alimentacoes.repository';
+import { RebanhosRepository } from './rebanhos/rebanhos.repository';
+import { TemporadasRepository } from './temporadas/temporadas.repository';
 
 @Module({
   providers: [

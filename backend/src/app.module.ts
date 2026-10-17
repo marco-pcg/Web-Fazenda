@@ -8,9 +8,8 @@ import { PermissoesModule } from './permissoes/permissoes.module';
 import { PerfisModule } from './perfis/perfis.module';
 import { TurmasModule } from './turmas/turmas.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
-import { DatabaseModule } from './database/database.module.js';
-import { EstacoesAnimaisModule } from './modules/estacoes-animais/estacoes-animais.module.js';
 import { AuthModule } from './auth/auth.module';
+import { EstacoesAnimaisModule } from './modules/estacoes-animais/estacoes-animais.module';
 
 @Module({
   imports: [
@@ -23,10 +22,8 @@ import { AuthModule } from './auth/auth.module';
     TurmasModule,
     UsuariosModule,
     AuthModule,
+    EstacoesAnimaisModule,
   ],
-
-@Module({
-  imports: [DatabaseModule, EstacoesAnimaisModule],
   controllers: [AppController],
   providers: [
     AppService,
