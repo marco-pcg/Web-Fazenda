@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type { TurmasPort } from '../turmas.port.js';
+import type { TurmasPort } from '../turmas.port';
 
 @Injectable()
 export class TurmasPortProvisorio implements TurmasPort {

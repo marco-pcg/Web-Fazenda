@@ -1,5 +1,5 @@
 import type { Knex } from 'knex';
-import { AlvoEvento } from '../common/enums.js';
+import { AlvoEvento } from '../common/enums';
 
 export const FAZENDAS_PORT = 'FAZENDAS_PORT';
 

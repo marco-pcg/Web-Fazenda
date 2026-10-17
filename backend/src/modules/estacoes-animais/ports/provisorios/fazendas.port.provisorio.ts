@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Fazenda, FazendasPort, Modificador } from '../fazendas.port.js';
+import { Fazenda, FazendasPort, Modificador } from '../fazendas.port';
 
 @Injectable()
 export class FazendasPortProvisorio implements FazendasPort {
