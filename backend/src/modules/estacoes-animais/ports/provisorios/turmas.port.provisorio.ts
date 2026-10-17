@@ -5,20 +5,17 @@ import type { TurmasPort } from '../turmas.port';
 export class TurmasPortProvisorio implements TurmasPort {
   private readonly logger = new Logger(TurmasPortProvisorio.name);
 
-  async existe(turmaId: string): Promise<boolean> {
+  existe(turmaId: string): Promise<boolean> {
     this.logger.log({
       error: `existe(${turmaId}) provisório: retornando true`,
     });
-    return true;
+    return Promise.resolve(true);
   }
 
-  async professorEhDaTurma(
-    turmaId: string,
-    usuarioId: string,
-  ): Promise<boolean> {
+  professorEhDaTurma(turmaId: string, usuarioId: string): Promise<boolean> {
     this.logger.log({
       error: `professorEhDaTurma(${turmaId}, ${usuarioId}) provisório: retornando true`,
     });
-    return true;
+    return Promise.resolve(true);
   }
 }

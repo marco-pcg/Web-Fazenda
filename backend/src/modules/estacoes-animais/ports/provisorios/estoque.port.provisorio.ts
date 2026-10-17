@@ -5,11 +5,11 @@ export class EstoquePortProvisorio implements EstoquePort {
   private racao: Record<string, number> = {};
   private produtos: Record<string, number> = {};
 
-  async obterRacao(fazendaId: string): Promise<number> {
+  obterRacao(fazendaId: string): Promise<number> {
     if (this.racao[fazendaId] === undefined) {
       this.racao[fazendaId] = 1000;
     }
-    return this.racao[fazendaId];
+    return Promise.resolve(this.racao[fazendaId]);
   }
 
   async consumirRacao(fazendaId: string, quantidade: number): Promise<void> {
@@ -20,12 +20,13 @@ export class EstoquePortProvisorio implements EstoquePort {
     this.racao[fazendaId] = disponivel - quantidade;
   }
 
-  async creditarProduto(
+  creditarProduto(
     fazendaId: string,
     produto: string,
     quantidade: number,
   ): Promise<void> {
     const chave = `${fazendaId}-${produto}`;
     this.produtos[chave] = (this.produtos[chave] || 0) + quantidade;
+    return Promise.resolve();
   }
 }

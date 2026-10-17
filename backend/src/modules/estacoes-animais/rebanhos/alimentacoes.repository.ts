@@ -7,9 +7,13 @@ import { Alimentacao } from './alimentacao.types';
 export class AlimentacoesRepository {
   private readonly table = 'alimentacoes';
 
-  async findById(id: string, trx?: Knex.Transaction): Promise<Alimentacao> {
+  async findById(
+    id: string,
+    trx?: Knex.Transaction,
+  ): Promise<Alimentacao | undefined> {
     const db = trx || knex;
-    return db(this.table).where({ id }).first();
+    const alimentacao = await db<Alimentacao>(this.table).where({ id }).first();
+    return alimentacao;
   }
 
   async insert(
@@ -17,7 +21,9 @@ export class AlimentacoesRepository {
     trx?: Knex.Transaction,
   ): Promise<Alimentacao> {
     const db = trx || knex;
-    const [alimentacao] = await db(this.table).insert(dados).returning('*');
+    const [alimentacao] = await db<Alimentacao>(this.table)
+      .insert(dados)
+      .returning('*');
     return alimentacao;
   }
 
@@ -25,9 +31,9 @@ export class AlimentacoesRepository {
     id: string,
     dados: Partial<Alimentacao>,
     trx?: Knex.Transaction,
-  ): Promise<Alimentacao> {
+  ): Promise<Alimentacao | undefined> {
     const db = trx || knex;
-    const [alimentacao] = await db(this.table)
+    const [alimentacao] = await db<Alimentacao>(this.table)
       .where({ id })
       .update(dados)
       .returning('*');

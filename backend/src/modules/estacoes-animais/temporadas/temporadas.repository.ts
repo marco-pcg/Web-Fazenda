@@ -7,9 +7,13 @@ import { Temporada } from './temporada.types';
 export class TemporadasRepository {
   private readonly table = 'temporadas';
 
-  async findById(id: string, trx?: Knex.Transaction): Promise<Temporada> {
+  async findById(
+    id: string,
+    trx?: Knex.Transaction,
+  ): Promise<Temporada | undefined> {
     const db = trx || knex;
-    return db(this.table).where({ id }).first();
+    const temporada = await db<Temporada>(this.table).where({ id }).first();
+    return temporada;
   }
 
   async insert(
@@ -17,7 +21,9 @@ export class TemporadasRepository {
     trx?: Knex.Transaction,
   ): Promise<Temporada> {
     const db = trx || knex;
-    const [temporada] = await db(this.table).insert(dados).returning('*');
+    const [temporada] = await db<Temporada>(this.table)
+      .insert(dados)
+      .returning('*');
     return temporada;
   }
 
@@ -25,9 +31,9 @@ export class TemporadasRepository {
     id: string,
     dados: Partial<Temporada>,
     trx?: Knex.Transaction,
-  ): Promise<Temporada> {
+  ): Promise<Temporada | undefined> {
     const db = trx || knex;
-    const [temporada] = await db(this.table)
+    const [temporada] = await db<Temporada>(this.table)
       .where({ id })
       .update(dados)
       .returning('*');
