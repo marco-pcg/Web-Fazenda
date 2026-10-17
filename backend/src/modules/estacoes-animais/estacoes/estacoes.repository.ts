@@ -1,23 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { Knex } from 'knex';
-import { KNEX } from '../../../database/database.constants.js';
-import { Estacao } from './estacao.types.js';
+import { Injectable } from '@nestjs/common';
+import { Knex } from 'knex';
+import { database as knex } from '../../../db/knex-connection';
+import { Estacao } from './estacao.types';
 
 @Injectable()
 export class EstacoesRepository {
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  private readonly table = 'estacoes';
 
   async findById(id: string, trx?: Knex.Transaction): Promise<Estacao> {
-    const db = trx || this.knex;
-    return db('estacoes').where({ id }).first();
+    const db = trx || knex;
+    return db(this.table).where({ id }).first();
   }
 
   async insert(
     dados: Partial<Estacao>,
     trx?: Knex.Transaction,
   ): Promise<Estacao> {
-    const db = trx || this.knex;
-    const [estacao] = await db('estacoes').insert(dados).returning('*');
+    const db = trx || knex;
+    const [estacao] = await db(this.table).insert(dados).returning('*');
     return estacao;
   }
 
@@ -26,8 +26,8 @@ export class EstacoesRepository {
     dados: Partial<Estacao>,
     trx?: Knex.Transaction,
   ): Promise<Estacao> {
-    const db = trx || this.knex;
-    const [estacao] = await db('estacoes')
+    const db = trx || knex;
+    const [estacao] = await db(this.table)
       .where({ id })
       .update(dados)
       .returning('*');

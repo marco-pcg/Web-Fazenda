@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { EstoquePort } from '../estoque.port.js';
+import { EstoquePort } from '../estoque.port';
 
 export class EstoquePortProvisorio implements EstoquePort {
   private racao: Record<string, number> = {};
