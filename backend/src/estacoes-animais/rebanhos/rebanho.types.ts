@@ -1,4 +1,4 @@
-import { SaudeRebanho } from '../common/enums';
+import { SaudeRebanho } from '../../common/enums/enums';
 
 export interface Rebanho {
   id: string;
