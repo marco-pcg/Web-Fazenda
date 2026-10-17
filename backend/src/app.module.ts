@@ -9,7 +9,7 @@ import { PerfisModule } from './perfis/perfis.module';
 import { TurmasModule } from './turmas/turmas.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
-import { EstacoesAnimaisModule } from './modules/estacoes-animais/estacoes-animais.module';
+import { EstacoesAnimaisModule } from './estacoes-animais/estacoes-animais.module';
 
 @Module({
   imports: [

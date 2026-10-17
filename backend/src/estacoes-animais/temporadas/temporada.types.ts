@@ -1,4 +1,4 @@
-import { StatusTemporada } from '../common/enums';
+import { StatusTemporada } from '../../common/enums/enums';
 
 export interface Temporada {
   id: string;
