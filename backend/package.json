@@ -62,9 +62,13 @@
 >>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
     "knex": "^3.3.0",
     "pg": "^8.23.1",
+<<<<<<< HEAD
 =======
     "@nestjs/swagger": "^12.0.2",
 >>>>>>> 0320435 (feat: add Swagger documentation to the API)
+=======
+    "redis": "^5.12.1",
+>>>>>>> 528f652 (Implementa produtos, estoque e cotações dinâmicas)
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
