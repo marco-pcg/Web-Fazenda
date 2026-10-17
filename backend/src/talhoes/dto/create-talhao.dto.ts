@@ -1,10 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsString, Matches, Min } from 'class-validator';
+import { IsInt, IsString, IsUUID, Matches, Min } from 'class-validator';
 
 export class CreateTalhaoDto {
-  @ApiProperty({ description: 'Fazenda do talhão', example: 1 })
-  @IsInt()
-  fazenda_id: number;
+  @ApiProperty({
+    description: 'Fazenda do talhão',
+    example: '48ad956a-2b13-4ca9-a2e5-147b9ac129a0',
+  })
+  @IsUUID()
+  fazenda_id: string;
 
   @ApiProperty({ description: 'Código do talhão', example: 'A6' })
   @IsString()

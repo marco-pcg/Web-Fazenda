@@ -29,7 +29,7 @@ export class FazendasService {
     return this.fazendasRepository.findAll(filtro, limit, offset);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const fazenda = await this.fazendasRepository.findOne(id);
     if (!fazenda) {
       throw new NotFoundException('Fazenda não encontrada.');
@@ -58,7 +58,7 @@ export class FazendasService {
     };
   }
 
-  async update(id: number, updateFazendaDto: UpdateFazendaDto) {
+  async update(id: string, updateFazendaDto: UpdateFazendaDto) {
     const fazenda = await this.findOne(id);
     await this.verificarTurmaEUsuario(updateFazendaDto);
 
@@ -82,7 +82,7 @@ export class FazendasService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     await this.findOne(id);
 
     const temPlantio = await this.fazendasRepository.temPlantio(id);

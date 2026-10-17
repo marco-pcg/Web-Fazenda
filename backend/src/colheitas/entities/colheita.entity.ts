@@ -1,6 +1,6 @@
 export class Colheita {
-  id: number;
-  plantio_id: number;
+  id: string;
+  plantio_id: string;
   data_colheita: string;
   antecipada: boolean;
   perda_percentual: number;

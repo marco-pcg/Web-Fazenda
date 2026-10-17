@@ -2,12 +2,8 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('colheitas', (table) => {
-    table.increments('id');
-    table
-      .integer('plantio_id')
-      .notNullable()
-      .unique()
-      .references('plantios.id');
+    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+    table.uuid('plantio_id').notNullable().unique().references('plantios.id');
     table.date('data_colheita').notNullable();
     table.boolean('antecipada').notNullable().defaultTo(false);
     table.float('perda_percentual').notNullable().defaultTo(0);

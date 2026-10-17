@@ -47,15 +47,15 @@ export class PlantiosRepository {
     return { dados, total: Number(total) };
   }
 
-  async findOne(id: number): Promise<Plantio | undefined> {
+  async findOne(id: string): Promise<Plantio | undefined> {
     return this.consultaComNomes()
       .where('plantios.id', id)
       .first<Plantio | undefined>();
   }
 
   async findPlantioAnterior(
-    talhao_id: number,
-    cultura_id: number,
+    talhao_id: string,
+    cultura_id: string,
     temporada: number,
   ) {
     return database<Plantio>('plantios')
@@ -64,7 +64,7 @@ export class PlantiosRepository {
   }
 
   async update(
-    id: number,
+    id: string,
     dados: Partial<Plantio>,
     trx: Knex = database,
   ): Promise<Plantio> {

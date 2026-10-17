@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -40,14 +40,14 @@ export class TalhoesController {
 
   @Get(':id')
   @RequirePermissions('talhoes:visualizar')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.talhoesService.findOne(id);
   }
 
   @Patch(':id')
   @RequirePermissions('talhoes:editar')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTalhaoDto: UpdateTalhaoDto,
   ) {
     return this.talhoesService.update(id, updateTalhaoDto);
@@ -55,7 +55,7 @@ export class TalhoesController {
 
   @Delete(':id')
   @RequirePermissions('talhoes:deletar')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.talhoesService.remove(id);
   }
 }

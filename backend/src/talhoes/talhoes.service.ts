@@ -44,7 +44,7 @@ export class TalhoesService {
     return this.talhoesRepository.findAll(filtro, limit, offset);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const talhao = await this.talhoesRepository.findOne(id);
     if (!talhao) {
       throw new NotFoundException('Talhão não encontrado.');
@@ -52,7 +52,7 @@ export class TalhoesService {
     return talhao;
   }
 
-  async update(id: number, updateTalhaoDto: UpdateTalhaoDto) {
+  async update(id: string, updateTalhaoDto: UpdateTalhaoDto) {
     const talhao = await this.findOne(id);
 
     if (
@@ -80,7 +80,7 @@ export class TalhoesService {
     return this.talhoesRepository.update(id, updateTalhaoDto);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     await this.findOne(id);
 
     const temPlantio = await this.talhoesRepository.temPlantio(id);
