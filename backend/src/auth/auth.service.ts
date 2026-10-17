@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsuariosRepository } from '../usuarios/usuarios.repository';
 import { PerfisRepository } from '../perfis/perfis.repository';
@@ -26,7 +30,9 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais incorretas.');
     }
 
-    const permissoes = await this.perfisRepository.findPermissoesByPerfilId(usuario.perfil_id);
+    const permissoes = await this.perfisRepository.findPermissoesByPerfilId(
+      usuario.perfil_id,
+    );
     const listaPermissoes = permissoes.map((p: any) => p.nome);
 
     const payload = {
@@ -43,7 +49,9 @@ export class AuthService {
   }
 
   async registro(createUsuarioDto: CreateUsuarioDto) {
-    const existente = await this.usuariosRepository.findByEmail(createUsuarioDto.email);
+    const existente = await this.usuariosRepository.findByEmail(
+      createUsuarioDto.email,
+    );
     if (existente) {
       throw new ConflictException('Este e-mail já está em uso.');
     }

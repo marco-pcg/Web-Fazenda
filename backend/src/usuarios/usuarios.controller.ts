@@ -1,5 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -26,7 +43,9 @@ export class UsuariosController {
 
   @Get()
   @RequirePermissions('usuarios:listar')
-  @ApiOperation({ summary: 'Lista usuários com paginação e filtros de nome e perfil' })
+  @ApiOperation({
+    summary: 'Lista usuários com paginação e filtros de nome e perfil',
+  })
   @ApiResponse({ status: 200, description: 'Lista paginada de usuários' })
   findAll(@Query() filtros: FilterUsuarioDto) {
     return this.usuariosService.findAll(filtros);

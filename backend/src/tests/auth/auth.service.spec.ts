@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { UsuariosRepository } from '../../usuarios/usuarios.repository';
 import { PerfisRepository } from '../../perfis/perfis.repository';
 import * as bcrypt from 'bcrypt';
