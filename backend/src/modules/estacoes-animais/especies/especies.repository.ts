@@ -7,9 +7,13 @@ import { Especie } from './especie.types';
 export class EspeciesRepository {
   private readonly table = 'especies';
 
-  async findById(id: string, trx?: Knex.Transaction): Promise<Especie> {
+  async findById(
+    id: string,
+    trx?: Knex.Transaction,
+  ): Promise<Especie | undefined> {
     const db = trx || knex;
-    return db(this.table).where({ id }).first();
+    const especie = await db<Especie>(this.table).where({ id }).first();
+    return especie;
   }
 
   async insert(
@@ -17,7 +21,9 @@ export class EspeciesRepository {
     trx?: Knex.Transaction,
   ): Promise<Especie> {
     const db = trx || knex;
-    const [especie] = await db(this.table).insert(dados).returning('*');
+    const [especie] = await db<Especie>(this.table)
+      .insert(dados)
+      .returning('*');
     return especie;
   }
 
@@ -25,9 +31,9 @@ export class EspeciesRepository {
     id: string,
     dados: Partial<Especie>,
     trx?: Knex.Transaction,
-  ): Promise<Especie> {
+  ): Promise<Especie | undefined> {
     const db = trx || knex;
-    const [especie] = await db(this.table)
+    const [especie] = await db<Especie>(this.table)
       .where({ id })
       .update(dados)
       .returning('*');

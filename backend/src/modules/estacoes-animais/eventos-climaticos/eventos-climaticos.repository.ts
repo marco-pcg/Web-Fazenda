@@ -7,9 +7,13 @@ import { EventoClimatico } from './evento-climatico.types';
 export class EventosClimaticosRepository {
   private readonly table = 'eventos_climaticos';
 
-  async findById(id: string, trx?: Knex.Transaction): Promise<EventoClimatico> {
+  async findById(
+    id: string,
+    trx?: Knex.Transaction,
+  ): Promise<EventoClimatico | undefined> {
     const db = trx || knex;
-    return db(this.table).where({ id }).first();
+    const evento = await db<EventoClimatico>(this.table).where({ id }).first();
+    return evento;
   }
 
   async insert(
@@ -17,7 +21,9 @@ export class EventosClimaticosRepository {
     trx?: Knex.Transaction,
   ): Promise<EventoClimatico> {
     const db = trx || knex;
-    const [evento] = await db(this.table).insert(dados).returning('*');
+    const [evento] = await db<EventoClimatico>(this.table)
+      .insert(dados)
+      .returning('*');
     return evento;
   }
 
@@ -25,9 +31,9 @@ export class EventosClimaticosRepository {
     id: string,
     dados: Partial<EventoClimatico>,
     trx?: Knex.Transaction,
-  ): Promise<EventoClimatico> {
+  ): Promise<EventoClimatico | undefined> {
     const db = trx || knex;
-    const [evento] = await db(this.table)
+    const [evento] = await db<EventoClimatico>(this.table)
       .where({ id })
       .update(dados)
       .returning('*');

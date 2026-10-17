@@ -7,9 +7,13 @@ import { Producao } from './producao.types';
 export class ProducoesRepository {
   private readonly table = 'producoes';
 
-  async findById(id: string, trx?: Knex.Transaction): Promise<Producao> {
+  async findById(
+    id: string,
+    trx?: Knex.Transaction,
+  ): Promise<Producao | undefined> {
     const db = trx || knex;
-    return db(this.table).where({ id }).first();
+    const producao = await db<Producao>(this.table).where({ id }).first();
+    return producao;
   }
 
   async insert(
@@ -17,7 +21,9 @@ export class ProducoesRepository {
     trx?: Knex.Transaction,
   ): Promise<Producao> {
     const db = trx || knex;
-    const [producao] = await db(this.table).insert(dados).returning('*');
+    const [producao] = await db<Producao>(this.table)
+      .insert(dados)
+      .returning('*');
     return producao;
   }
 
@@ -25,9 +31,9 @@ export class ProducoesRepository {
     id: string,
     dados: Partial<Producao>,
     trx?: Knex.Transaction,
-  ): Promise<Producao> {
+  ): Promise<Producao | undefined> {
     const db = trx || knex;
-    const [producao] = await db(this.table)
+    const [producao] = await db<Producao>(this.table)
       .where({ id })
       .update(dados)
       .returning('*');
