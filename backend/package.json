@@ -32,6 +32,7 @@
     "@nestjs/common": "^12.0.1",
     "@nestjs/core": "^12.0.1",
     "@nestjs/platform-express": "^12.0.1",
+<<<<<<< HEAD
 =======
     "migrate": "node -r ts-node/register node_modules/knex/bin/cli.js --knexfile knexfile.js migrate:latest",
     "migrate:rollback": "node -r ts-node/register node_modules/knex/bin/cli.js --knexfile knexfile.js migrate:rollback --all",
@@ -60,6 +61,9 @@
 >>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
     "knex": "^3.3.0",
     "pg": "^8.23.1",
+=======
+    "@nestjs/swagger": "^12.0.2",
+>>>>>>> 0320435 (feat: add Swagger documentation to the API)
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

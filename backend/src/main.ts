@@ -1,11 +1,17 @@
 import { NestFactory } from '@nestjs/core';
+<<<<<<< HEAD
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+=======
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module.js';
+>>>>>>> 0320435 (feat: add Swagger documentation to the API)
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+<<<<<<< HEAD
   app.enableCors();
 
   app.useGlobalPipes(
@@ -49,5 +55,16 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`Aplicação rodando em: http://localhost:${port}`);
   console.log(`Swagger disponível em: http://localhost:${port}/api/docs`);
+=======
+  const config = new DocumentBuilder()
+    .setTitle('Web Fazenda API')
+    .setDescription('API de gerenciamento da Web Fazenda')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
+  await app.listen(process.env.PORT ?? 3000);
+>>>>>>> 0320435 (feat: add Swagger documentation to the API)
 }
 bootstrap();

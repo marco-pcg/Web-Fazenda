@@ -3,17 +3,17 @@ import { IsInt, IsOptional, IsString } from 'class-validator';
 import { PaginacaoDto } from '../../common/dtos/paginacao.dto';
 
 export class FiltroCulturaDto extends PaginacaoDto {
-  @ApiPropertyOptional({ example: 'mil' })
+  @ApiPropertyOptional({ description: 'Parte do nome' })
   @IsOptional()
   @IsString()
   nome?: string;
 
-  @ApiPropertyOptional({ example: 'verao' })
+  @ApiPropertyOptional({ description: 'primavera, verao, outono ou inverno' })
   @IsOptional()
   @IsString()
   estacao?: string;
 
-  @ApiPropertyOptional({ example: 90 })
+  @ApiPropertyOptional({ description: 'Dias de crescimento no máximo' })
   @IsOptional()
   @IsInt()
   dias_maximo?: number;
