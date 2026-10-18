@@ -37,6 +37,24 @@ const permissoes = [
     modulo: 'especies',
     acao: 'editar',
   },
+  {
+    nome: 'temporadas:listar',
+    descricao: 'Listar temporadas das turmas',
+    modulo: 'temporadas',
+    acao: 'listar',
+  },
+  {
+    nome: 'temporadas:criar',
+    descricao: 'Criar temporadas para uma turma',
+    modulo: 'temporadas',
+    acao: 'criar',
+  },
+  {
+    nome: 'temporadas:avancar',
+    descricao: 'Avançar a temporada de uma turma',
+    modulo: 'temporadas',
+    acao: 'avancar',
+  },
 ];
 
 const permissoesPorPerfil: Record<string, string[]> = {
@@ -46,8 +64,11 @@ const permissoesPorPerfil: Record<string, string[]> = {
     'especies:listar',
     'especies:criar',
     'especies:editar',
+    'temporadas:listar',
+    'temporadas:criar',
+    'temporadas:avancar',
   ],
-  aluno: ['estacoes:listar', 'especies:listar'],
+  aluno: ['estacoes:listar', 'especies:listar', 'temporadas:listar'],
 };
 
 export async function seed(knex: Knex): Promise<void> {
