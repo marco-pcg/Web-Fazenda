@@ -14,10 +14,15 @@ import { TURMAS_PORT } from './ports/turmas.port';
 import { TurmasAdapter } from './ports/turmas.adapter';
 import { EstoquePortProvisorio } from './ports/provisorios/estoque.port.provisorio';
 import { FazendasPortProvisorio } from './ports/provisorios/fazendas.port.provisorio';
+import { ProducoesController } from './producoes/producoes.controller';
 import { ProducoesRepository } from './producoes/producoes.repository';
+import { ProducoesService } from './producoes/producoes.service';
 import { TemporadaAvancoProducer } from './queue/temporada-avanco.producer';
 import { AlimentacoesRepository } from './rebanhos/alimentacoes.repository';
+import { AlimentacoesService } from './rebanhos/alimentacoes.service';
+import { RebanhosController } from './rebanhos/rebanhos.controller';
 import { RebanhosRepository } from './rebanhos/rebanhos.repository';
+import { RebanhosService } from './rebanhos/rebanhos.service';
 import { TemporadasController } from './temporadas/temporadas.controller';
 import { TemporadasRepository } from './temporadas/temporadas.repository';
 import { TemporadasService } from './temporadas/temporadas.service';
@@ -28,12 +33,17 @@ import { TemporadasService } from './temporadas/temporadas.service';
     EspeciesController,
     TemporadasController,
     EventosClimaticosController,
+    RebanhosController,
+    ProducoesController,
   ],
   providers: [
     EstacoesService,
     EspeciesService,
     TemporadasService,
     EventosClimaticosService,
+    RebanhosService,
+    AlimentacoesService,
+    ProducoesService,
     TemporadaAvancoProducer,
 
     EstacoesRepository,
