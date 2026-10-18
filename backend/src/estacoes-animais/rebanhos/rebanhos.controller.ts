@@ -13,10 +13,16 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import {
+  AlimentacaoResponse,
+  RebanhoResponse,
+  RebanhosPaginadosResponse,
+} from '../swagger.schemas';
 import { RebanhosService } from './rebanhos.service';
 import { CreateRebanhoDto } from './dto/create-rebanho.dto';
 import { QueryRebanhoDto } from './dto/query-rebanho.dto';
@@ -38,7 +44,11 @@ export class RebanhosController {
     summary:
       'Lista rebanhos com filtros por espécie, saúde e fazenda (aluno só vê as fazendas dele)',
   })
-  @ApiResponse({ status: 200, description: 'Lista paginada de rebanhos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de rebanhos',
+    type: RebanhosPaginadosResponse,
+  })
   @ApiResponse({ status: 400, description: 'Filtros inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para listar' })
@@ -55,7 +65,11 @@ export class RebanhosController {
     summary:
       'Adiciona animais a uma fazenda (soma no rebanho da espécie se ele já existir)',
   })
-  @ApiResponse({ status: 201, description: 'Rebanho criado ou atualizado' })
+  @ApiResponse({
+    status: 201,
+    description: 'Rebanho criado ou atualizado',
+    type: RebanhoResponse,
+  })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({
@@ -72,13 +86,22 @@ export class RebanhosController {
   }
 
   @Post(':id/alimentar')
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    description: 'ID do rebanho',
+  })
   @RequirePermissions('rebanhos:alimentar')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary:
       'Alimenta o rebanho consumindo ração do estoque (se faltar, o rebanho fica subnutrido)',
   })
-  @ApiResponse({ status: 200, description: 'Rebanho alimentado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Rebanho alimentado',
+    type: AlimentacaoResponse,
+  })
   @ApiResponse({ status: 400, description: 'ID inválido' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({

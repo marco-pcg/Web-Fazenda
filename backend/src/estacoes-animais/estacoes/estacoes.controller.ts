@@ -5,6 +5,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { EstacaoResponse, EstacoesPaginadasResponse } from '../swagger.schemas';
 import { EstacoesService } from './estacoes.service';
 import { CreateEstacaoDto } from './dto/create-estacao.dto';
 import { QueryEstacaoDto } from './dto/query-estacao.dto';
@@ -22,7 +23,11 @@ export class EstacoesController {
   @Get()
   @RequirePermissions('estacoes:listar')
   @ApiOperation({ summary: 'Lista as estações com filtros por nome e ordem' })
-  @ApiResponse({ status: 200, description: 'Lista paginada de estações' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de estações',
+    type: EstacoesPaginadasResponse,
+  })
   @ApiResponse({ status: 400, description: 'Filtros inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para listar' })
@@ -33,7 +38,11 @@ export class EstacoesController {
   @Post()
   @RequirePermissions('estacoes:criar')
   @ApiOperation({ summary: 'Cadastra uma nova estação (somente admin)' })
-  @ApiResponse({ status: 201, description: 'Estação cadastrada com sucesso' })
+  @ApiResponse({
+    status: 201,
+    description: 'Estação cadastrada com sucesso',
+    type: EstacaoResponse,
+  })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para cadastrar' })

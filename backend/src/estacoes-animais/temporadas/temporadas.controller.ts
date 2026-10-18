@@ -13,10 +13,16 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import {
+  TemporadaAvancoResponse,
+  TemporadaResponse,
+  TemporadasPaginadasResponse,
+} from '../swagger.schemas';
 import { TemporadasService } from './temporadas.service';
 import { CreateTemporadaDto } from './dto/create-temporada.dto';
 import { QueryTemporadaDto } from './dto/query-temporada.dto';
@@ -43,7 +49,11 @@ export class TemporadasController {
     summary:
       'Lista temporadas com filtros por turma e status (aluno só vê a própria turma)',
   })
-  @ApiResponse({ status: 200, description: 'Lista paginada de temporadas' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de temporadas',
+    type: TemporadasPaginadasResponse,
+  })
   @ApiResponse({ status: 400, description: 'Filtros inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para listar' })
@@ -57,7 +67,11 @@ export class TemporadasController {
   @Post()
   @RequirePermissions('temporadas:criar')
   @ApiOperation({ summary: 'Cria uma temporada planejada para uma turma' })
-  @ApiResponse({ status: 201, description: 'Temporada criada com sucesso' })
+  @ApiResponse({
+    status: 201,
+    description: 'Temporada criada com sucesso',
+    type: TemporadaResponse,
+  })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({
@@ -73,13 +87,22 @@ export class TemporadasController {
   }
 
   @Post(':id/avancar')
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    description: 'ID da temporada',
+  })
   @RequirePermissions('temporadas:avancar')
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({
     summary:
       'Avança a temporada: ativa uma planejada ou encerra a ativa e ativa a próxima',
   })
-  @ApiResponse({ status: 202, description: 'Avanço da temporada iniciado' })
+  @ApiResponse({
+    status: 202,
+    description: 'Avanço da temporada iniciado',
+    type: TemporadaAvancoResponse,
+  })
   @ApiResponse({ status: 400, description: 'ID inválido' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({
