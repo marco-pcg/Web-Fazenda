@@ -10,6 +10,11 @@ export class FazendasPortProvisorio implements FazendasPort {
     return Promise.resolve([]);
   }
 
+  listarPorUsuario(usuarioId: string): Promise<Fazenda[]> {
+    console.log(`listarPorUsuario(${usuarioId}) provisório`);
+    return Promise.resolve([]);
+  }
+
   buscarPorId(id: string): Promise<Fazenda | null> {
     return Promise.resolve({
       id,

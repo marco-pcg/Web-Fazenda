@@ -18,6 +18,7 @@ export interface Modificador {
 
 export interface FazendasPort {
   listarPorTurma(turmaId: string): Promise<Fazenda[]>;
+  listarPorUsuario(usuarioId: string): Promise<Fazenda[]>;
   buscarPorId(id: string): Promise<Fazenda | null>;
   pertenceAoUsuario(fazendaId: string, usuarioId: string): Promise<boolean>;
   aplicarModificadorTurma(
