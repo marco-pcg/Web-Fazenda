@@ -12,8 +12,8 @@ import { ESTOQUE_PORT } from './ports/estoque.port';
 import { FAZENDAS_PORT } from './ports/fazendas.port';
 import { TURMAS_PORT } from './ports/turmas.port';
 import { TurmasAdapter } from './ports/turmas.adapter';
-import { EstoquePortProvisorio } from './ports/provisorios/estoque.port.provisorio';
-import { FazendasPortProvisorio } from './ports/provisorios/fazendas.port.provisorio';
+import { EstoqueAdapter } from './ports/estoque.adapter';
+import { FazendasAdapter } from './ports/fazendas.adapter';
 import { ProducoesController } from './producoes/producoes.controller';
 import { ProducoesRepository } from './producoes/producoes.repository';
 import { ProducoesService } from './producoes/producoes.service';
@@ -55,8 +55,8 @@ import { TemporadasService } from './temporadas/temporadas.service';
     ProducoesRepository,
 
     { provide: TURMAS_PORT, useClass: TurmasAdapter },
-    { provide: FAZENDAS_PORT, useClass: FazendasPortProvisorio },
-    { provide: ESTOQUE_PORT, useClass: EstoquePortProvisorio },
+    { provide: FAZENDAS_PORT, useClass: FazendasAdapter },
+    { provide: ESTOQUE_PORT, useClass: EstoqueAdapter },
   ],
 })
 export class EstacoesAnimaisModule {}
