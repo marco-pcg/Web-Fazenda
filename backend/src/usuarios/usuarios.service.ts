@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { FilterUsuarioDto } from './dto/filter-usuario.dto';
@@ -8,10 +12,12 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuariosService {
-  constructor(private readonly repository: UsuariosRepository) { }
+  constructor(private readonly repository: UsuariosRepository) {}
 
   async create(createUsuarioDto: CreateUsuarioDto) {
-    const userExists = await this.repository.findByEmail(createUsuarioDto.email);
+    const userExists = await this.repository.findByEmail(
+      createUsuarioDto.email,
+    );
     if (userExists) {
       throw new ConflictException('Usuário já cadastrado');
     }
@@ -37,7 +43,11 @@ export class UsuariosService {
     const limit = Number(filtros.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const { dados, total } = await this.repository.findAllPaginated(filtros, limit, offset);
+    const { dados, total } = await this.repository.findAllPaginated(
+      filtros,
+      limit,
+      offset,
+    );
 
     return {
       dados,
@@ -71,7 +81,7 @@ export class UsuariosService {
   async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
     await this.findById(id);
 
-    let dadosAtualizacao: any = { ...updateUsuarioDto };
+    const dadosAtualizacao: any = { ...updateUsuarioDto };
     if (updateUsuarioDto.senha) {
       const salt = await bcrypt.genSalt();
       dadosAtualizacao.senha = await bcrypt.hash(updateUsuarioDto.senha, salt);

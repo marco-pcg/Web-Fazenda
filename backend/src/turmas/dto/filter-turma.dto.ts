@@ -4,7 +4,10 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginacaoDto } from '../../common/dtos/paginacao.dto';
 
 export class FilterTurmaDto extends PaginacaoDto {
-  @ApiPropertyOptional({ description: 'Filtrar por nome da turma', example: 'Agropecuária' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por nome da turma',
+    example: 'Agropecuária',
+  })
   @IsOptional()
   @IsString()
   nome?: string;
