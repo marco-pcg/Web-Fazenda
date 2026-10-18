@@ -76,9 +76,18 @@ $ npm run test
 # e2e tests
 $ npm run test:e2e
 
+# PostgreSQL integration tests (requires the Compose database)
+$ npm run test:integration
+
 # test coverage
 $ npm run test:cov
 ```
+
+The PostgreSQL integration suite is opt-in so the regular Jest commands remain
+database-independent. Start the database with `docker compose up -d`, copy
+`.env.example` to `.env`, then run `npm run migrate` before
+`npm run test:integration`. The suite uses the configured `DB_*` values and
+cleans up its own records.
 
 ## Deployment
 
