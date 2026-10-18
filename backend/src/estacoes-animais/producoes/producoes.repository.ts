@@ -51,6 +51,18 @@ export class ProducoesRepository {
     return paginar<Producao>(query, page, limit);
   }
 
+  async findDoRebanhoNaTemporada(
+    rebanho_id: string,
+    temporada_id: string,
+    trx?: Knex.Transaction,
+  ): Promise<Producao | undefined> {
+    const db = trx || knex;
+    const producao = await db<Producao>(this.table)
+      .where({ rebanho_id, temporada_id })
+      .first();
+    return producao;
+  }
+
   async findById(
     id: string,
     trx?: Knex.Transaction,
