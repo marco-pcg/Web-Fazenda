@@ -12,10 +12,15 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import {
+  EventoClimaticoResponse,
+  EventosClimaticosPaginadosResponse,
+} from '../swagger.schemas';
 import { EventosClimaticosService } from './eventos-climaticos.service';
 import { CreateEventoClimaticoDto } from './dto/create-evento-climatico.dto';
 import { QueryEventoClimaticoDto } from './dto/query-evento-climatico.dto';
@@ -39,7 +44,11 @@ export class EventosClimaticosController {
     summary:
       'Lista eventos climáticos com filtros (aluno só vê os da própria turma)',
   })
-  @ApiResponse({ status: 200, description: 'Lista paginada de eventos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de eventos',
+    type: EventosClimaticosPaginadosResponse,
+  })
   @ApiResponse({ status: 400, description: 'Filtros inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para listar' })
@@ -56,7 +65,11 @@ export class EventosClimaticosController {
     summary:
       'Dispara um evento climático que afeta todas as fazendas da turma da temporada',
   })
-  @ApiResponse({ status: 201, description: 'Evento criado e aplicado' })
+  @ApiResponse({
+    status: 201,
+    description: 'Evento criado e aplicado',
+    type: EventoClimaticoResponse,
+  })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({
@@ -77,11 +90,20 @@ export class EventosClimaticosController {
   }
 
   @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    description: 'ID do evento climático',
+  })
   @RequirePermissions('eventos:encerrar')
   @ApiOperation({
     summary: 'Encerra um evento climático e reverte seus efeitos',
   })
-  @ApiResponse({ status: 200, description: 'Evento encerrado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Evento encerrado',
+    type: EventoClimaticoResponse,
+  })
   @ApiResponse({ status: 400, description: 'ID inválido' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({
