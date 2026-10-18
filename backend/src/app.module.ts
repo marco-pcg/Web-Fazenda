@@ -18,7 +18,11 @@ import { FazendasModule } from './fazendas/fazendas.module';
 import { TalhoesModule } from './talhoes/talhoes.module';
 import { PlantiosModule } from './plantios/plantios.module';
 import { ColheitasModule } from './colheitas/colheitas.module';
+<<<<<<< HEAD
 >>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
+=======
+import { MercadoModule } from './mercado/mercado.module';
+>>>>>>> fab846a (Integra rotas do mercado e crédito das colheitas)
 
 @Module({
   imports: [
@@ -42,7 +46,11 @@ import { ColheitasModule } from './colheitas/colheitas.module';
     TalhoesModule,
     PlantiosModule,
     ColheitasModule,
+<<<<<<< HEAD
 >>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
+=======
+    MercadoModule,
+>>>>>>> fab846a (Integra rotas do mercado e crédito das colheitas)
   ],
 <<<<<<< HEAD
 =======
