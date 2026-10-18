@@ -55,6 +55,24 @@ const permissoes = [
     modulo: 'temporadas',
     acao: 'avancar',
   },
+  {
+    nome: 'eventos:listar',
+    descricao: 'Listar eventos climáticos',
+    modulo: 'eventos',
+    acao: 'listar',
+  },
+  {
+    nome: 'eventos:criar',
+    descricao: 'Disparar eventos climáticos na turma',
+    modulo: 'eventos',
+    acao: 'criar',
+  },
+  {
+    nome: 'eventos:encerrar',
+    descricao: 'Encerrar eventos climáticos',
+    modulo: 'eventos',
+    acao: 'encerrar',
+  },
 ];
 
 const permissoesPorPerfil: Record<string, string[]> = {
@@ -67,8 +85,16 @@ const permissoesPorPerfil: Record<string, string[]> = {
     'temporadas:listar',
     'temporadas:criar',
     'temporadas:avancar',
+    'eventos:listar',
+    'eventos:criar',
+    'eventos:encerrar',
   ],
-  aluno: ['estacoes:listar', 'especies:listar', 'temporadas:listar'],
+  aluno: [
+    'estacoes:listar',
+    'especies:listar',
+    'temporadas:listar',
+    'eventos:listar',
+  ],
 };
 
 export async function seed(knex: Knex): Promise<void> {
