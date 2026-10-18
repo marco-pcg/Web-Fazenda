@@ -5,7 +5,9 @@ import { EspeciesService } from './especies/especies.service';
 import { EstacoesController } from './estacoes/estacoes.controller';
 import { EstacoesRepository } from './estacoes/estacoes.repository';
 import { EstacoesService } from './estacoes/estacoes.service';
+import { EventosClimaticosController } from './eventos-climaticos/eventos-climaticos.controller';
 import { EventosClimaticosRepository } from './eventos-climaticos/eventos-climaticos.repository';
+import { EventosClimaticosService } from './eventos-climaticos/eventos-climaticos.service';
 import { ESTOQUE_PORT } from './ports/estoque.port';
 import { FAZENDAS_PORT } from './ports/fazendas.port';
 import { TURMAS_PORT } from './ports/turmas.port';
@@ -21,11 +23,17 @@ import { TemporadasRepository } from './temporadas/temporadas.repository';
 import { TemporadasService } from './temporadas/temporadas.service';
 
 @Module({
-  controllers: [EstacoesController, EspeciesController, TemporadasController],
+  controllers: [
+    EstacoesController,
+    EspeciesController,
+    TemporadasController,
+    EventosClimaticosController,
+  ],
   providers: [
     EstacoesService,
     EspeciesService,
     TemporadasService,
+    EventosClimaticosService,
     TemporadaAvancoProducer,
 
     EstacoesRepository,
