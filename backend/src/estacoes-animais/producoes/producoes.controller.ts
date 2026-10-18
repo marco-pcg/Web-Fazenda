@@ -5,6 +5,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ProducoesPaginadasResponse } from '../swagger.schemas';
 import { ProducoesService } from './producoes.service';
 import { QueryProducaoDto } from './dto/query-producao.dto';
 import { UsuarioLogado } from '../common/usuario-logado';
@@ -25,7 +26,11 @@ export class ProducoesController {
     summary:
       'Lista produções com filtros por produto, período, rebanho, temporada e fazenda',
   })
-  @ApiResponse({ status: 200, description: 'Lista paginada de produções' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de produções',
+    type: ProducoesPaginadasResponse,
+  })
   @ApiResponse({
     status: 400,
     description: 'Filtros inválidos ou data inicial maior que a final',
