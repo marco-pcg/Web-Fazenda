@@ -1,130 +1,50 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API Web Fazenda
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API NestJS com PostgreSQL, autenticação JWT e módulos de fazenda, temporadas, animais e mercado. O Swagger fica em `http://localhost:3000/api/docs`.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Subir com Docker
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+Na pasta `backend`, copie `.env.example` para `.env`. Preencha `JWT_SECRET`, `ADMIN_PERFIL_ID`, `PROF_PERFIL_ID`, `ALUNO_PERFIL_ID`, `ADMIN_E_ADR` e `ADMIN_PWD`. Os IDs de perfil devem ser UUIDs distintos. Em seguida:
 
 ```bash
-$ npm install
+docker compose up --build -d
+docker compose exec api npm run seed
 ```
 
-## Local database
+O Compose sobe API, PostgreSQL, Redis e Adminer. A API executa as migrations ao iniciar. O seed cadastra os perfis, usuários e dados de exemplo, incluindo produtos e um comprador (`comprador@webfarm.com`, senha `123456`). Execute o seed em um banco de desenvolvimento: os seeds existentes recriam parte dos dados.
 
-Copy the example environment file before starting the local services:
+Para acompanhar ou parar os serviços:
 
 ```bash
-cp .env.example .env
-docker compose up -d
+docker compose logs -f api
+docker compose down
 ```
 
-PostgreSQL is available at `localhost:5432`. Adminer is available at
-<http://localhost:8080>; use `database` as the server from inside the Compose
-network, or `localhost` when connecting from the host.
+## Rodar a API fora do Docker
 
-Run the migrations and seed data from this directory:
+Suba apenas PostgreSQL e Redis com `docker compose up -d database redis`. Mantenha `DB_HOST=localhost` e `REDIS_HOST=localhost` no `.env`.
 
 ```bash
-npx knex --knexfile knexfile.js migrate:latest
-npx knex --knexfile knexfile.js seed:run
+npm ci
+npm run migrate
+npm run seed
+npm run start:dev
 ```
 
-Stop the services with `docker compose down`. The PostgreSQL data remains in
-the `postgres_data` volume between restarts.
+## Mercado
 
-## Compile and run the project
+O aluno oferece produtos da própria fazenda em `POST /ordens/venda` ou inicia uma venda conjunta em `POST /cooperativa/vendas-conjuntas`. Cada oferta reserva a quantidade informada no estoque. A venda conjunta aceita contribuições de outras fazendas da mesma turma e temporada e pode ser comprada quando duas fazendas distintas participam. O comprador usa `POST /ordens/compra` com `origem` igual a `ORDEM` ou `VENDA_CONJUNTA` e `origem_id` igual ao ID escolhido. A compra sempre abrange a oferta inteira.
+
+Depois da compra conjunta, o criador ou admin chama `POST /cooperativa/vendas-conjuntas/:id/distribuir`. A cooperativa retém 5% e distribui o restante proporcionalmente às contribuições. Os repasses e a taxa aparecem no extrato.
+
+O preço usa a temporada numérica de `fazendas.temporada_atual` e a fórmula `máx(0,01; preço_base / (1 + sensibilidade × quantidade_vendida))`. Redis armazena consultas de cotação; PostgreSQL guarda os valores definitivos. As rotas, filtros, DTOs e autorizações estão documentados no Swagger.
+
+## Testes
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run build
+npm test -- --runInBand
+npm run test:integration
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# PostgreSQL integration tests (requires the Compose database)
-$ npm run test:integration
-
-# test coverage
-$ npm run test:cov
-```
-
-The PostgreSQL integration suite is opt-in so the regular Jest commands remain
-database-independent. Start the database with `docker compose up -d`, copy
-`.env.example` to `.env`, then run `npm run migrate` before
-`npm run test:integration`. The suite uses the configured `DB_*` values and
-cleans up its own records.
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Os testes de integração com PostgreSQL usam `DB_*` do `.env` e exigem migrations aplicadas.
