@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -23,6 +24,7 @@ import { TalhoesService } from './talhoes.service';
 import { CreateTalhaoDto } from './dto/create-talhao.dto';
 import { UpdateTalhaoDto } from './dto/update-talhao.dto';
 import { FiltroTalhaoDto } from './dto/filtro-talhao.dto';
+import { Talhao } from './entities/talhao.entity';
 
 @ApiTags('Talhões')
 @ApiBearerAuth('jwt')
@@ -34,7 +36,7 @@ export class TalhoesController {
   @Post()
   @RequirePermissions('talhoes:criar')
   @ApiOperation({ summary: 'Cadastra um talhão' })
-  @ApiResponse({ status: 201, description: 'Talhão cadastrado' })
+  @ApiResponse({ status: 201, description: 'Talhão cadastrado', type: Talhao })
   @ApiResponse({ status: 404, description: 'Fazenda não encontrada' })
   @ApiResponse({ status: 409, description: 'Já existe esse código na fazenda' })
   create(@Body() createTalhaoDto: CreateTalhaoDto) {
@@ -50,18 +52,20 @@ export class TalhoesController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do talhão' })
   @RequirePermissions('talhoes:visualizar')
   @ApiOperation({ summary: 'Mostra um talhão' })
-  @ApiResponse({ status: 200, description: 'Talhão encontrado' })
+  @ApiResponse({ status: 200, description: 'Talhão encontrado', type: Talhao })
   @ApiResponse({ status: 404, description: 'Talhão não encontrado' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.talhoesService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do talhão' })
   @RequirePermissions('talhoes:editar')
   @ApiOperation({ summary: 'Atualiza um talhão' })
-  @ApiResponse({ status: 200, description: 'Talhão atualizado' })
+  @ApiResponse({ status: 200, description: 'Talhão atualizado', type: Talhao })
   @ApiResponse({ status: 404, description: 'Talhão não encontrado' })
   @ApiResponse({
     status: 409,
@@ -75,6 +79,7 @@ export class TalhoesController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do talhão' })
   @RequirePermissions('talhoes:deletar')
   @ApiOperation({ summary: 'Exclui um talhão' })
   @ApiResponse({ status: 200, description: 'Talhão removido' })

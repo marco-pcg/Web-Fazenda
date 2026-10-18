@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -23,6 +24,7 @@ import { CulturasService } from './culturas.service';
 import { CreateCulturaDto } from './dto/create-cultura.dto';
 import { UpdateCulturaDto } from './dto/update-cultura.dto';
 import { FiltroCulturaDto } from './dto/filtro-cultura.dto';
+import { Cultura } from './entities/cultura.entity';
 
 @ApiTags('Culturas')
 @ApiBearerAuth('jwt')
@@ -34,7 +36,7 @@ export class CulturasController {
   @Post()
   @RequirePermissions('culturas:criar')
   @ApiOperation({ summary: 'Cadastra uma cultura' })
-  @ApiResponse({ status: 201, description: 'Cultura cadastrada' })
+  @ApiResponse({ status: 201, description: 'Cultura cadastrada', type: Cultura })
   @ApiResponse({
     status: 409,
     description: 'Já existe uma cultura com esse nome',
@@ -52,18 +54,20 @@ export class CulturasController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da cultura' })
   @RequirePermissions('culturas:visualizar')
   @ApiOperation({ summary: 'Mostra uma cultura' })
-  @ApiResponse({ status: 200, description: 'Cultura encontrada' })
+  @ApiResponse({ status: 200, description: 'Cultura encontrada', type: Cultura })
   @ApiResponse({ status: 404, description: 'Cultura não encontrada' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.culturasService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da cultura' })
   @RequirePermissions('culturas:editar')
   @ApiOperation({ summary: 'Atualiza uma cultura' })
-  @ApiResponse({ status: 200, description: 'Cultura atualizada' })
+  @ApiResponse({ status: 200, description: 'Cultura atualizada', type: Cultura })
   @ApiResponse({ status: 404, description: 'Cultura não encontrada' })
   @ApiResponse({
     status: 409,
@@ -77,6 +81,7 @@ export class CulturasController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da cultura' })
   @RequirePermissions('culturas:deletar')
   @ApiOperation({ summary: 'Exclui uma cultura' })
   @ApiResponse({ status: 200, description: 'Cultura removida' })

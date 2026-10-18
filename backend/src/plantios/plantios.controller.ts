@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -21,6 +22,7 @@ import { PlantiosService } from './plantios.service';
 import { CreatePlantioDto } from './dto/create-plantio.dto';
 import { ColherPlantioDto } from './dto/colher-plantio.dto';
 import { FiltroPlantioDto } from './dto/filtro-plantio.dto';
+import { Plantio } from './entities/plantio.entity';
 
 @ApiTags('Plantios')
 @ApiBearerAuth('jwt')
@@ -32,7 +34,7 @@ export class PlantiosController {
   @Post()
   @RequirePermissions('plantios:criar')
   @ApiOperation({ summary: 'Planta uma cultura em um talhão' })
-  @ApiResponse({ status: 201, description: 'Plantio criado' })
+  @ApiResponse({ status: 201, description: 'Plantio criado', type: Plantio })
   @ApiResponse({ status: 404, description: 'Talhão ou cultura não encontrado' })
   @ApiResponse({ status: 409, description: 'O talhão já está plantado' })
   @ApiResponse({
@@ -52,15 +54,17 @@ export class PlantiosController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do plantio' })
   @RequirePermissions('plantios:visualizar')
   @ApiOperation({ summary: 'Mostra um plantio' })
-  @ApiResponse({ status: 200, description: 'Plantio encontrado' })
+  @ApiResponse({ status: 200, description: 'Plantio encontrado', type: Plantio })
   @ApiResponse({ status: 404, description: 'Plantio não encontrado' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.plantiosService.findOne(id);
   }
 
   @Post(':id/colher')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do plantio' })
   @RequirePermissions('plantios:colher')
   @ApiOperation({ summary: 'Colhe um plantio' })
   @ApiResponse({ status: 201, description: 'Colheita registrada' })

@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -52,6 +53,7 @@ export class UsuariosController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do usuário' })
   @RequirePermissions('usuarios:visualizar')
   @ApiOperation({ summary: 'Busca usuário por ID' })
   @ApiResponse({ status: 200, description: 'Usuário encontrado' })
@@ -61,6 +63,7 @@ export class UsuariosController {
   }
 
   @Get('email/:email')
+  @ApiParam({ name: 'email', description: 'E-mail do usuário', example: 'ana@webfarm.com' })
   @RequirePermissions('usuarios:visualizar')
   @ApiOperation({ summary: 'Busca usuário por e-mail' })
   @ApiResponse({ status: 200, description: 'Usuário encontrado' })
@@ -70,6 +73,7 @@ export class UsuariosController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do usuário' })
   @RequirePermissions('usuarios:editar')
   @ApiOperation({ summary: 'Atualiza dados de um usuário' })
   @ApiResponse({ status: 200, description: 'Usuário atualizado com sucesso' })
@@ -79,6 +83,7 @@ export class UsuariosController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do usuário' })
   @RequirePermissions('usuarios:deletar')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remove um usuário por ID' })
