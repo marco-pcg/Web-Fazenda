@@ -22,7 +22,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Fazendinha API')
     .setDescription(
-      'API de gestão de usuários, turmas, permissões, culturas, fazendas, talhões, plantios e colheitas.',
+      'API de gestão de usuários, turmas, permissões, estações, temporadas, eventos climáticos, espécies, rebanhos, produções, culturas, fazendas, talhões, plantios e colheitas.',
     )
     .setVersion('1.0')
     .setContact(
