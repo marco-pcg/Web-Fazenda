@@ -8,6 +8,7 @@ import { PerfisModule } from './perfis/perfis.module';
 import { TurmasModule } from './turmas/turmas.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
+import { EstacoesAnimaisModule } from './estacoes-animais/estacoes-animais.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CulturasModule } from './culturas/culturas.module';
 import { FazendasModule } from './fazendas/fazendas.module';
@@ -28,6 +29,7 @@ import { ColheitasModule } from './colheitas/colheitas.module';
     TurmasModule,
     UsuariosModule,
     AuthModule,
+    EstacoesAnimaisModule,
     ScheduleModule.forRoot(),
     CulturasModule,
     FazendasModule,
