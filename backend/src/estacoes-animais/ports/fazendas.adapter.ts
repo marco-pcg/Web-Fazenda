@@ -13,26 +13,42 @@ interface FazendaRow {
 
 @Injectable()
 export class FazendasAdapter implements FazendasPort {
-  async listarPorTurma(turmaId: string): Promise<Fazenda[]> {
-    return this.map(await knex<FazendaRow>('fazendas').where({ turma_id: turmaId }));
-  }
-
-  async listarPorUsuario(usuarioId: string): Promise<Fazenda[]> {
+  async listarPorTurma(
+    turmaId: string,
+    trx?: Knex.Transaction,
+  ): Promise<Fazenda[]> {
+    const db = trx || knex;
     return this.map(
-      await knex<FazendaRow>('fazendas').where({ usuario_id: usuarioId }),
+      await db<FazendaRow>('fazendas').where({ turma_id: turmaId }),
     );
   }
 
-  async buscarPorId(id: string): Promise<Fazenda | null> {
-    const fazenda = await knex<FazendaRow>('fazendas').where({ id }).first();
+  async listarPorUsuario(
+    usuarioId: string,
+    trx?: Knex.Transaction,
+  ): Promise<Fazenda[]> {
+    const db = trx || knex;
+    return this.map(
+      await db<FazendaRow>('fazendas').where({ usuario_id: usuarioId }),
+    );
+  }
+
+  async buscarPorId(
+    id: string,
+    trx?: Knex.Transaction,
+  ): Promise<Fazenda | null> {
+    const db = trx || knex;
+    const fazenda = await db<FazendaRow>('fazendas').where({ id }).first();
     return fazenda ? this.map([fazenda])[0] : null;
   }
 
   async pertenceAoUsuario(
     fazendaId: string,
     usuarioId: string,
+    trx?: Knex.Transaction,
   ): Promise<boolean> {
-    return !!(await knex<FazendaRow>('fazendas')
+    const db = trx || knex;
+    return !!(await db<FazendaRow>('fazendas')
       .where({ id: fazendaId, usuario_id: usuarioId })
       .first());
   }

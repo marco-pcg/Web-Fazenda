@@ -160,7 +160,7 @@ export class AlimentacoesService {
       return temporadaRecebida;
     }
 
-    const fazenda = await this.fazendasPort.buscarPorId(fazenda_id);
+    const fazenda = await this.fazendasPort.buscarPorId(fazenda_id, trx);
     if (!fazenda || !fazenda.turmaId) {
       return null;
     }

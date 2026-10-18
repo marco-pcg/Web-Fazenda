@@ -1,4 +1,5 @@
 import { AlvoEvento } from '../../common/enums/enums';
+import type { Knex } from 'knex';
 import { database } from '../../db/knex-connection';
 import { FazendasAdapter } from './fazendas.adapter';
 
@@ -16,7 +17,12 @@ describe('FazendasAdapter', () => {
 
   it('lista fazendas persistidas pela turma', async () => {
     const where = jest.fn().mockResolvedValue([
-      { id: 'fazenda-1', nome: 'Esperança', turma_id: 'turma-1', usuario_id: null },
+      {
+        id: 'fazenda-1',
+        nome: 'Esperança',
+        turma_id: 'turma-1',
+        usuario_id: null,
+      },
     ]);
     mockedDatabase.mockReturnValue({ where });
 
@@ -31,14 +37,40 @@ describe('FazendasAdapter', () => {
     expect(where).toHaveBeenCalledWith({ turma_id: 'turma-1' });
   });
 
+  it('usa o cliente transacional nas leituras', async () => {
+    const where = jest.fn().mockReturnValue({
+      first: jest.fn().mockResolvedValue({
+        id: 'fazenda-1',
+        nome: 'Esperança',
+        turma_id: 'turma-1',
+        usuario_id: null,
+      }),
+    });
+    const trx = jest
+      .fn()
+      .mockReturnValue({ where }) as unknown as Knex.Transaction;
+
+    await expect(adapter.buscarPorId('fazenda-1', trx)).resolves.toEqual({
+      id: 'fazenda-1',
+      nome: 'Esperança',
+      turmaId: 'turma-1',
+      usuarioId: null,
+    });
+
+    expect(trx).toHaveBeenCalledWith('fazendas');
+    expect(mockedDatabase).not.toHaveBeenCalled();
+  });
+
   it('não fabrica fazenda nem concede posse', async () => {
     const first = jest.fn().mockResolvedValue(undefined);
-    mockedDatabase.mockReturnValue({ where: jest.fn().mockReturnValue({ first }) });
+    mockedDatabase.mockReturnValue({
+      where: jest.fn().mockReturnValue({ first }),
+    });
 
     await expect(adapter.buscarPorId('inexistente')).resolves.toBeNull();
-    await expect(adapter.pertenceAoUsuario('fazenda-1', 'usuario-1')).resolves.toBe(
-      false,
-    );
+    await expect(
+      adapter.pertenceAoUsuario('fazenda-1', 'usuario-1'),
+    ).resolves.toBe(false);
   });
 
   it('persiste o modificador e atualiza o fator da fazenda', async () => {
@@ -46,7 +78,9 @@ describe('FazendasAdapter', () => {
       where: jest.fn().mockResolvedValue([{ id: 'fazenda-1' }]),
     });
     const insert = jest.fn().mockReturnValue({
-      onConflict: jest.fn().mockReturnValue({ ignore: jest.fn().mockResolvedValue([]) }),
+      onConflict: jest
+        .fn()
+        .mockReturnValue({ ignore: jest.fn().mockResolvedValue([]) }),
     });
     const update = jest.fn().mockResolvedValue(1);
     const db = jest.fn((table: string) => {
@@ -57,11 +91,15 @@ describe('FazendasAdapter', () => {
     });
     db.raw = jest.fn();
 
-    await adapter.aplicarModificadorTurma('turma-1', {
-      alvo: AlvoEvento.AGUA,
-      multiplicador: 0.7,
-      eventoId: 'evento-1',
-    }, db as never);
+    await adapter.aplicarModificadorTurma(
+      'turma-1',
+      {
+        alvo: AlvoEvento.AGUA,
+        multiplicador: 0.7,
+        eventoId: 'evento-1',
+      },
+      db as never,
+    );
 
     expect(insert).toHaveBeenCalledWith({
       fazenda_id: 'fazenda-1',

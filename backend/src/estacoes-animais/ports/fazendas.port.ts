@@ -17,10 +17,17 @@ export interface Modificador {
 }
 
 export interface FazendasPort {
-  listarPorTurma(turmaId: string): Promise<Fazenda[]>;
-  listarPorUsuario(usuarioId: string): Promise<Fazenda[]>;
-  buscarPorId(id: string): Promise<Fazenda | null>;
-  pertenceAoUsuario(fazendaId: string, usuarioId: string): Promise<boolean>;
+  listarPorTurma(turmaId: string, trx?: Knex.Transaction): Promise<Fazenda[]>;
+  listarPorUsuario(
+    usuarioId: string,
+    trx?: Knex.Transaction,
+  ): Promise<Fazenda[]>;
+  buscarPorId(id: string, trx?: Knex.Transaction): Promise<Fazenda | null>;
+  pertenceAoUsuario(
+    fazendaId: string,
+    usuarioId: string,
+    trx?: Knex.Transaction,
+  ): Promise<boolean>;
   aplicarModificadorTurma(
     turmaId: string,
     modificador: Modificador,
