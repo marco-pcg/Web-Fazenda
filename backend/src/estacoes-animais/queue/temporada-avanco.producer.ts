@@ -1,16 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { database as knex } from '../../db/knex-connection';
-import { TemporadasService } from '../temporadas/temporadas.service';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { TemporadasRepository } from '../temporadas/temporadas.repository';
-import { EventosClimaticosService } from '../eventos-climaticos/eventos-climaticos.service';
 import { StatusTemporada } from '../../common/enums/enums';
+import {
+  DadosAvancoTemporada,
+  FILA_ESTACOES_ANIMAIS,
+  JOB_AVANCAR_TEMPORADA,
+} from './queue.constants';
 
 @Injectable()
 export class TemporadaAvancoProducer {
   constructor(
-    private readonly temporadasService: TemporadasService,
+    @InjectQueue(FILA_ESTACOES_ANIMAIS)
+    private readonly fila: Queue<DadosAvancoTemporada>,
     private readonly temporadasRepository: TemporadasRepository,
-    private readonly eventosClimaticosService: EventosClimaticosService,
   ) {}
 
   async enfileirar(
@@ -18,27 +22,25 @@ export class TemporadaAvancoProducer {
     status_anterior: StatusTemporada,
   ): Promise<string> {
     try {
-      await knex.transaction(async (trx) => {
-        if (status_anterior === StatusTemporada.PLANEJADA) {
-          await this.temporadasService.ativar(temporada_id, trx);
-        } else {
-          await this.eventosClimaticosService.encerrarAtivosDaTemporada(
-            temporada_id,
-            trx,
-          );
-          await this.temporadasService.encerrarEAtivarProxima(
-            temporada_id,
-            trx,
-          );
-        }
-      });
-    } catch (erro) {
+      const job = await this.fila.add(
+        JOB_AVANCAR_TEMPORADA,
+        { temporada_id, status_anterior },
+        {
+          jobId: `avancar-${temporada_id}-${status_anterior}`,
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 2000 },
+          removeOnComplete: { count: 100 },
+          removeOnFail: false,
+        },
+      );
+      return String(job.id);
+    } catch {
       await this.temporadasRepository.update(temporada_id, {
         status: status_anterior,
       });
-      throw erro;
+      throw new ServiceUnavailableException(
+        'A fila de processamento está indisponível no momento. Tente novamente em instantes.',
+      );
     }
-
-    return `provisorio-${temporada_id}`;
   }
 }
