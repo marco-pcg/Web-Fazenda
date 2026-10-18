@@ -7,3 +7,13 @@ export interface Producao {
   fator_aplicado: number;
   created_at: Date;
 }
+
+export interface FiltrosProducao {
+  produto?: string;
+  data_inicio?: string;
+  data_fim?: string;
+  rebanho_id?: string;
+  temporada_id?: string;
+  fazenda_ids?: string[];
+  search?: string;
+}

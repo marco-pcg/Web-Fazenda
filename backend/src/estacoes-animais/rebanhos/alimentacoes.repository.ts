@@ -7,6 +7,18 @@ import { Alimentacao } from './alimentacao.types';
 export class AlimentacoesRepository {
   private readonly table = 'alimentacoes';
 
+  async findDoRebanhoNaTemporada(
+    rebanho_id: string,
+    temporada_id: string,
+    trx?: Knex.Transaction,
+  ): Promise<Alimentacao | undefined> {
+    const db = trx || knex;
+    const alimentacao = await db<Alimentacao>(this.table)
+      .where({ rebanho_id, temporada_id })
+      .first();
+    return alimentacao;
+  }
+
   async findById(
     id: string,
     trx?: Knex.Transaction,
