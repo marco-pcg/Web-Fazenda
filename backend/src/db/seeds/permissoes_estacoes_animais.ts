@@ -73,6 +73,30 @@ const permissoes = [
     modulo: 'eventos',
     acao: 'encerrar',
   },
+  {
+    nome: 'rebanhos:listar',
+    descricao: 'Listar rebanhos das fazendas',
+    modulo: 'rebanhos',
+    acao: 'listar',
+  },
+  {
+    nome: 'rebanhos:criar',
+    descricao: 'Adicionar animais a uma fazenda',
+    modulo: 'rebanhos',
+    acao: 'criar',
+  },
+  {
+    nome: 'rebanhos:alimentar',
+    descricao: 'Alimentar rebanhos com ração do estoque',
+    modulo: 'rebanhos',
+    acao: 'alimentar',
+  },
+  {
+    nome: 'producoes:listar',
+    descricao: 'Listar produções dos rebanhos',
+    modulo: 'producoes',
+    acao: 'listar',
+  },
 ];
 
 const permissoesPorPerfil: Record<string, string[]> = {
@@ -88,12 +112,20 @@ const permissoesPorPerfil: Record<string, string[]> = {
     'eventos:listar',
     'eventos:criar',
     'eventos:encerrar',
+    'rebanhos:listar',
+    'rebanhos:criar',
+    'rebanhos:alimentar',
+    'producoes:listar',
   ],
   aluno: [
     'estacoes:listar',
     'especies:listar',
     'temporadas:listar',
     'eventos:listar',
+    'rebanhos:listar',
+    'rebanhos:criar',
+    'rebanhos:alimentar',
+    'producoes:listar',
   ],
 };
 
