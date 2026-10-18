@@ -212,6 +212,10 @@ describe('AlimentacoesService', () => {
 
     await service.alimentarRebanho('id-rebanho');
 
+    expect(mockFazendasPort.buscarPorId).toHaveBeenCalledWith(
+      'id-fazenda',
+      'trx-falso',
+    );
     expect(mockTemporadasRepository.findAtivaDaTurma).toHaveBeenCalledWith(
       'id-turma',
       'trx-falso',
@@ -234,6 +238,31 @@ describe('AlimentacoesService', () => {
     expect(mockFazendasPort.buscarPorId).not.toHaveBeenCalled();
     expect(mockAlimentacoesRepository.insert).toHaveBeenCalledWith(
       expect.objectContaining({ temporada_id: 'id-temporada' }),
+      trxRecebida,
+    );
+  });
+
+  it('propaga a transação recebida ao resolver a temporada da fazenda', async () => {
+    const trxRecebida = {} as Knex.Transaction;
+    mockFazendasPort.buscarPorId.mockResolvedValue({
+      id: 'id-fazenda',
+      nome: 'Fazenda',
+      turmaId: 'id-turma',
+      usuarioId: 'id-aluno',
+    });
+    mockTemporadasRepository.findAtivaDaTurma.mockResolvedValue({
+      id: 'id-temporada-ativa',
+    });
+    mockEstoquePort.obterRacao.mockResolvedValue(1000);
+
+    await service.alimentarRebanho('id-rebanho', { trx: trxRecebida });
+
+    expect(mockFazendasPort.buscarPorId).toHaveBeenCalledWith(
+      'id-fazenda',
+      trxRecebida,
+    );
+    expect(mockTemporadasRepository.findAtivaDaTurma).toHaveBeenCalledWith(
+      'id-turma',
       trxRecebida,
     );
   });
