@@ -17,6 +17,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { TurmasService } from './turmas.service';
 import { CreateTurmaDto } from './dto/create-turma.dto';
@@ -55,6 +56,7 @@ export class TurmasController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da turma' })
   @RequirePermissions('turmas:visualizar')
   @ApiOperation({ summary: 'Busca turma por ID e seus alunos matriculados' })
   @ApiResponse({ status: 200, description: 'Turma encontrada' })
@@ -68,6 +70,7 @@ export class TurmasController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da turma' })
   @RequirePermissions('turmas:editar')
   @ApiOperation({ summary: 'Atualiza dados de uma turma' })
   @ApiResponse({ status: 200, description: 'Turma atualizada com sucesso' })
@@ -85,6 +88,7 @@ export class TurmasController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da turma' })
   @RequirePermissions('turmas:deletar')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remove uma turma por ID' })
@@ -99,6 +103,7 @@ export class TurmasController {
   }
 
   @Post(':id/alunos')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da turma' })
   @RequirePermissions('turmas:editar')
   @ApiOperation({ summary: 'Matricula um aluno em uma turma' })
   @ApiResponse({ status: 201, description: 'Aluno matriculado com sucesso' })

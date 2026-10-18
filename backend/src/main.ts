@@ -22,9 +22,16 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Fazendinha API')
     .setDescription(
-      'API de Gestão da Fazendinha - Módulo de Acesso, Usuários e Turmas (Integrante 1)',
+      'API de gestão de usuários, turmas, permissões, culturas, fazendas, talhões, plantios e colheitas.',
     )
     .setVersion('1.0')
+    .setContact(
+      'Web Fazenda',
+      'https://github.com/marco-pcg/Web-Fazenda',
+      'web-fazenda@example.com',
+    )
+    .setLicense('UNLICENSED', 'https://github.com/marco-pcg/Web-Fazenda')
+    .addServer('http://localhost:3000', 'Desenvolvimento local')
     .addBearerAuth(
       {
         type: 'http',
@@ -42,6 +49,10 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
+      displayRequestDuration: true,
+      filter: true,
+      operationsSorter: 'method',
+      tagsSorter: 'alpha',
     },
   });
 

@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { PerfisService } from './perfis.service';
 import { CreatePerfilDto } from './dto/create-perfil.dto';
@@ -53,6 +54,7 @@ export class PerfisController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do perfil' })
   @RequirePermissions('perfis:visualizar')
   @ApiOperation({
     summary: 'Busca perfil por ID com suas permissões associadas',
@@ -64,6 +66,7 @@ export class PerfisController {
   }
 
   @Patch(':id/permissoes')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do perfil' })
   @RequirePermissions('perfis:editar')
   @ApiOperation({ summary: 'Vincula permissões a um perfil' })
   @ApiResponse({
@@ -82,6 +85,7 @@ export class PerfisController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do perfil' })
   @RequirePermissions('perfis:editar')
   @ApiOperation({ summary: 'Atualiza dados de um perfil' })
   @ApiResponse({ status: 200, description: 'Perfil atualizado com sucesso' })
@@ -91,6 +95,7 @@ export class PerfisController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID do perfil' })
   @RequirePermissions('perfis:deletar')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remove um perfil' })

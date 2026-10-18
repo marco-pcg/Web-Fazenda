@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -17,6 +18,7 @@ import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 import { ColheitasService } from './colheitas.service';
 import { FiltroColheitaDto } from './dto/filtro-colheita.dto';
+import { Colheita } from './entities/colheita.entity';
 
 @ApiTags('Colheitas')
 @ApiBearerAuth('jwt')
@@ -34,9 +36,10 @@ export class ColheitasController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', format: 'uuid', description: 'ID da colheita' })
   @RequirePermissions('colheitas:visualizar')
   @ApiOperation({ summary: 'Mostra uma colheita' })
-  @ApiResponse({ status: 200, description: 'Colheita encontrada' })
+  @ApiResponse({ status: 200, description: 'Colheita encontrada', type: Colheita })
   @ApiResponse({ status: 404, description: 'Colheita não encontrada' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.colheitasService.findOne(id);
