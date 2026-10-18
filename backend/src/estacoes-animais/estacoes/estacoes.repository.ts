@@ -38,6 +38,26 @@ export class EstacoesRepository {
     return estacao;
   }
 
+  async findSeguinte(
+    ordem: number,
+    trx?: Knex.Transaction,
+  ): Promise<Estacao | undefined> {
+    const db = trx || knex;
+    const estacao = await db<Estacao>(this.table)
+      .where('ordem', '>', ordem)
+      .orderBy('ordem', 'asc')
+      .first();
+    return estacao;
+  }
+
+  async findPrimeira(trx?: Knex.Transaction): Promise<Estacao | undefined> {
+    const db = trx || knex;
+    const estacao = await db<Estacao>(this.table)
+      .orderBy('ordem', 'asc')
+      .first();
+    return estacao;
+  }
+
   async findById(
     id: string,
     trx?: Knex.Transaction,
