@@ -1,3 +1,7 @@
+import type { RestricaoEntity } from './restricao.entity.js';
+import type { TentativaEntity } from './tentativa.entity.js';
+import type { VariavelEntity } from './variavel.entity.js';
+
 export enum TipoObjetivo {
   MAXIMIZACAO = 'MAXIMIZACAO',
   MINIMIZACAO = 'MINIMIZACAO',
@@ -6,6 +10,11 @@ export enum TipoObjetivo {
 export interface CoeficienteObjetivo {
   variavelId: string;
   coeficiente: number;
+}
+
+export interface VerticeRegiaoViavel {
+  x: number;
+  y: number;
 }
 
 export class ProblemaEntity {
@@ -22,9 +31,10 @@ export class ProblemaEntity {
   funcaoObjetivo: CoeficienteObjetivo[];
   valorOtimoZ: number; // Z* calculado pelo professor ao criar
 
-  variaveis: any[];
-  restricoes: any[];
-  tentativas: any[];
+  variaveis: VariavelEntity[];
+  restricoes: RestricaoEntity[];
+  tentativas: TentativaEntity[];
+  verticesRegiaoViavel: VerticeRegiaoViavel[];
 
   // Regra 13: Verifica se o problema possui tentativas vinculadas
   temTentativas(): boolean {

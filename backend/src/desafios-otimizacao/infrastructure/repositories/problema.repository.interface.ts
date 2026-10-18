@@ -1,7 +1,7 @@
-import { ProblemaEntity } from '../entities/problema.entity';
-import { RestricaoEntity } from '../entities/restricao.entity';
-import { VariavelEntity } from '../entities/variavel.entity';
-import { FiltrarProblemaDto } from '../../presentation/dtos/filtrar-problema.dto';
+import type { ProblemaEntity } from '../../domain/entities/problema.entity.js';
+import type { RestricaoEntity } from '../../domain/entities/restricao.entity.js';
+import type { VariavelEntity } from '../../domain/entities/variavel.entity.js';
+import type { FiltrarProblemaDto } from '../../presentation/dtos/filtrar-problema.dto.js';
 
 // Token para Injeção de Dependências no NestJS
 export const IPROBLEMA_REPOSITORY = 'IProblemaRepository';

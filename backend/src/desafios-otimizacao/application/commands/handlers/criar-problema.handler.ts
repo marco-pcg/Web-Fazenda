@@ -1,14 +1,28 @@
-import { TipoObjetivo } from '../../domain/entities/problema.entity';
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { IPROBLEMA_REPOSITORY } from '../../../infrastructure/repositories/problema.repository.interface.js';
+import type { IProblemaRepository } from '../../../infrastructure/repositories/problema.repository.interface.js';
+import { CriarProblemaCommand } from '../criar-problema.command.js';
 
-export class CriarProblemaCommand {
-  constructor(
-    public readonly titulo: string,
-    public readonly descricao: string,
-    public readonly nivel: number,
-    public readonly tipo: TipoObjetivo,
-    public readonly prazoLimite: Date,
-    public readonly limiteTentativas: number,
-    public readonly funcaoObjetivo: { variavelId: string; coeficiente: number }[],
-    public readonly valorOtimoZ: number,
-  ) {}
+@CommandHandler(CriarProblemaCommand)
+export class CriarProblemaHandler implements ICommandHandler<CriarProblemaCommand> {
+  constructor(@Inject(IPROBLEMA_REPOSITORY) private readonly problemaRepo: IProblemaRepository) {}
+
+  execute(command: CriarProblemaCommand) {
+    return this.problemaRepo.salvar({
+      titulo: command.titulo,
+      descricao: command.descricao,
+      nivel: command.nivel,
+      tipo: command.tipo,
+      prazoLimite: command.prazoLimite,
+      limiteTentativas: command.limiteTentativas,
+      funcaoObjetivo: command.funcaoObjetivo,
+      valorOtimoZ: command.valorOtimoZ,
+      publicado: false,
+      variaveis: [],
+      restricoes: [],
+      tentativas: [],
+      verticesRegiaoViavel: [],
+    });
+  }
 }

@@ -1,45 +1,45 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventPublisher } from '@nestjs/cqrs';
+import { vi } from 'vitest';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { SubmeterTentativaHandler } from './submeter-tentativa.handler';
 import { SubmeterTentativaCommand } from '../submeter-tentativa.command';
-import { ProblemaRepository } from '../../../infrastructure/repositories/problema.repository';
-import { TentativaRepository } from '../../../infrastructure/repositories/tentativa.repository';
+import { IPROBLEMA_REPOSITORY } from '../../../infrastructure/repositories/problema.repository.interface.js';
+import { ITENTATIVA_REPOSITORY } from '../../../infrastructure/repositories/tentativa.repository.interface.js';
 import { AvaliadorOtimizacaoService } from '../../../domain/services/avaliador-otimizacao.service';
 
 describe('SubmeterTentativaHandler (Testes Unitários)', () => {
   let handler: SubmeterTentativaHandler;
-  let problemaRepo: jest.Mocked<ProblemaRepository>;
-  let tentativaRepo: jest.Mocked<TentativaRepository>;
-  let avaliadorService: jest.Mocked<AvaliadorOtimizacaoService>;
+  let problemaRepo: { findById: ReturnType<typeof vi.fn> };
+  let tentativaRepo: { findByAlunoEProblema: ReturnType<typeof vi.fn>; obterMaiorNotaNivelAnterior: ReturnType<typeof vi.fn>; salvar: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SubmeterTentativaHandler,
         {
-          provide: ProblemaRepository,
-          useValue: { findById: jest.fn() },
+          provide: IPROBLEMA_REPOSITORY,
+          useValue: { findById: vi.fn() },
         },
         {
-          provide: TentativaRepository,
+          provide: ITENTATIVA_REPOSITORY,
           useValue: {
-            findByAlunoEProblema: jest.fn(),
-            obterMaiorNotaNivelAnterior: jest.fn(),
-            salvar: jest.fn(),
+            findByAlunoEProblema: vi.fn(),
+            obterMaiorNotaNivelAnterior: vi.fn(),
+            salvar: vi.fn(),
           },
         },
         {
           provide: AvaliadorOtimizacaoService,
-          useValue: { avaliarTentativa: jest.fn() },
+          useValue: { avaliarTentativa: vi.fn() },
         },
         {
           provide: EventPublisher,
           useValue: {
-            mergeObjectContext: jest.fn().mockImplementation((obj) => ({
+            mergeObjectContext: vi.fn().mockImplementation((obj) => ({
               ...obj,
-              apply: jest.fn(),
-              commit: jest.fn(),
+              apply: vi.fn(),
+              commit: vi.fn(),
             })),
           },
         },
@@ -47,9 +47,8 @@ describe('SubmeterTentativaHandler (Testes Unitários)', () => {
     }).compile();
 
     handler = module.get<SubmeterTentativaHandler>(SubmeterTentativaHandler);
-    problemaRepo = module.get(ProblemaRepository);
-    tentativaRepo = module.get(TentativaRepository);
-    avaliadorService = module.get(AvaliadorOtimizacaoService);
+    problemaRepo = module.get(IPROBLEMA_REPOSITORY);
+    tentativaRepo = module.get(ITENTATIVA_REPOSITORY);
   });
 
   it('deve lançar NotFoundException se o problema não existir', async () => {

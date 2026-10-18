@@ -1,25 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 import { ObterRankingProblemaHandler } from './obter-ranking-problema.handler';
 import { ObterRankingProblemaQuery } from '../obter-ranking-problema.query';
-import { RankingReadRepository } from '../../../infrastructure/repositories/ranking-read.repository';
+import { IRANKING_READ_REPOSITORY } from '../../../infrastructure/repositories/ranking-read.repository.interface.js';
 
 describe('ObterRankingProblemaHandler (Testes Unitários)', () => {
   let handler: ObterRankingProblemaHandler;
-  let rankingReadRepo: jest.Mocked<RankingReadRepository>;
+  let rankingReadRepo: { obterRankingPorProblema: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ObterRankingProblemaHandler,
         {
-          provide: RankingReadRepository,
-          useValue: { obterRankingPorProblema: jest.fn() },
+          provide: IRANKING_READ_REPOSITORY,
+          useValue: { obterRankingPorProblema: vi.fn() },
         },
       ],
     }).compile();
 
     handler = module.get<ObterRankingProblemaHandler>(ObterRankingProblemaHandler);
-    rankingReadRepo = module.get(RankingReadRepository);
+    rankingReadRepo = module.get(IRANKING_READ_REPOSITORY);
   });
 
   it('deve retornar o ranking consultando a tabela de leitura desnormalizada', async () => {

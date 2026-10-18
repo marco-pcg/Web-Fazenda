@@ -1,16 +1,18 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
-import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { SubmeterTentativaCommand } from '../submeter-tentativa.command';
-import { AvaliadorOtimizacaoService } from '../../../domain/services/avaliador-otimizacao.service';
-import { ProblemaRepository } from '../../../infrastructure/repositories/problema.repository';
-import { TentativaRepository } from '../../../infrastructure/repositories/tentativa.repository';
-import { TentativaSubmetidaEvent } from '../../events/tentativa-submetida.event';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
+import { SubmeterTentativaCommand } from '../submeter-tentativa.command.js';
+import { AvaliadorOtimizacaoService } from '../../../domain/services/avaliador-otimizacao.service.js';
+import { IPROBLEMA_REPOSITORY } from '../../../infrastructure/repositories/problema.repository.interface.js';
+import type { IProblemaRepository } from '../../../infrastructure/repositories/problema.repository.interface.js';
+import { ITENTATIVA_REPOSITORY } from '../../../infrastructure/repositories/tentativa.repository.interface.js';
+import type { ITentativaRepository } from '../../../infrastructure/repositories/tentativa.repository.interface.js';
+import { TentativaSubmetidaEvent } from '../../events/tentativa-submetida.event.js';
 
 @CommandHandler(SubmeterTentativaCommand)
 export class SubmeterTentativaHandler implements ICommandHandler<SubmeterTentativaCommand> {
   constructor(
-    private readonly problemaRepo: ProblemaRepository,
-    private readonly tentativaRepo: TentativaRepository,
+    @Inject(IPROBLEMA_REPOSITORY) private readonly problemaRepo: IProblemaRepository,
+    @Inject(ITENTATIVA_REPOSITORY) private readonly tentativaRepo: ITentativaRepository,
     private readonly avaliadorService: AvaliadorOtimizacaoService,
     private readonly eventPublisher: EventPublisher,
   ) {}
@@ -48,6 +50,7 @@ export class SubmeterTentativaHandler implements ICommandHandler<SubmeterTentati
     const novaTentativa = await this.tentativaRepo.salvar({
       problemaId,
       alunoId,
+      nivel: problema.nivel,
       valores,
       nota: resultado.nota,
       viavel: resultado.viavel,

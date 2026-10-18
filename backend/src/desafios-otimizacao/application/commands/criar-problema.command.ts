@@ -1,4 +1,4 @@
-import { TipoObjetivo } from '../../domain/entities/problema.entity';
+import { TipoObjetivo } from '../../domain/entities/problema.entity.js';
 
 export class CriarProblemaCommand {
   constructor(
