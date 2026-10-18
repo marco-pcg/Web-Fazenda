@@ -11,10 +11,12 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiParam,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { EspecieResponse, EspeciesPaginadasResponse } from '../swagger.schemas';
 import { EspeciesService } from './especies.service';
 import { CreateEspecieDto } from './dto/create-especie.dto';
 import { UpdateEspecieDto } from './dto/update-especie.dto';
@@ -33,7 +35,11 @@ export class EspeciesController {
   @Get()
   @RequirePermissions('especies:listar')
   @ApiOperation({ summary: 'Lista as espécies com filtros por nome e produto' })
-  @ApiResponse({ status: 200, description: 'Lista paginada de espécies' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de espécies',
+    type: EspeciesPaginadasResponse,
+  })
   @ApiResponse({ status: 400, description: 'Filtros inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para listar' })
@@ -44,7 +50,11 @@ export class EspeciesController {
   @Post()
   @RequirePermissions('especies:criar')
   @ApiOperation({ summary: 'Cadastra uma nova espécie (admin e professor)' })
-  @ApiResponse({ status: 201, description: 'Espécie cadastrada com sucesso' })
+  @ApiResponse({
+    status: 201,
+    description: 'Espécie cadastrada com sucesso',
+    type: EspecieResponse,
+  })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para cadastrar' })
@@ -54,11 +64,20 @@ export class EspeciesController {
   }
 
   @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    description: 'ID da espécie',
+  })
   @RequirePermissions('especies:editar')
   @ApiOperation({
     summary: 'Atualiza dados de uma espécie (admin e professor)',
   })
-  @ApiResponse({ status: 200, description: 'Espécie atualizada com sucesso' })
+  @ApiResponse({
+    status: 200,
+    description: 'Espécie atualizada com sucesso',
+    type: EspecieResponse,
+  })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 401, description: 'Usuário não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão para editar' })
