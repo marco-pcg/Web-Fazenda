@@ -1,48 +1,48 @@
 import { Module } from '@nestjs/common';
-import { ProdutosController } from './produtos/produtos.controller';
-import { CotacoesController } from './cotacoes/cotacoes.controller';
-import { EstoqueController } from './estoque/estoque.controller';
-import { OrdensController } from './ordens/ordens.controller';
-import { TransacoesController } from './transacoes/transacoes.controller';
-import { CooperativaController } from './cooperativa/cooperativa.controller';
-import { ContextoMercadoRepository } from './shared/contexto-mercado.repository';
-import { ProdutosRepository } from './produtos/produtos.repository';
-import { CotacoesRepository } from './cotacoes/cotacoes.repository';
-import { EstoqueRepository } from './estoque/estoque.repository';
-import { OrdensRepository } from './ordens/ordens.repository';
-import { TransacoesRepository } from './transacoes/transacoes.repository';
-import { CooperativaRepository } from './cooperativa/cooperativa.repository';
-import { EstoqueService } from './estoque/estoque.service';
-import { CotacoesService } from './cotacoes/cotacoes.service';
-import { ProdutosService } from './produtos/produtos.service';
-import { OrdensService } from './ordens/ordens.service';
-import { TransacoesService } from './transacoes/transacoes.service';
-import { CooperativaService } from './cooperativa/cooperativa.service';
+import { ProdutosControlador } from './produtos/produtos.controller';
+import { CotacoesControlador } from './cotacoes/cotacoes.controller';
+import { EstoqueControlador } from './estoque/estoque.controller';
+import { OrdensControlador } from './ordens/ordens.controller';
+import { TransacoesControlador } from './transacoes/transacoes.controller';
+import { CooperativaControlador } from './cooperativa/cooperativa.controller';
+import { ContextoMercadoRepositorio } from './shared/contexto-mercado.repository';
+import { ProdutosRepositorio } from './produtos/produtos.repository';
+import { CotacoesRepositorio } from './cotacoes/cotacoes.repository';
+import { EstoqueRepositorio } from './estoque/estoque.repository';
+import { OrdensRepositorio } from './ordens/ordens.repository';
+import { TransacoesRepositorio } from './transacoes/transacoes.repository';
+import { CooperativaRepositorio } from './cooperativa/cooperativa.repository';
+import { EstoqueServico } from './estoque/estoque.service';
+import { CotacoesServico } from './cotacoes/cotacoes.service';
+import { ProdutosServico } from './produtos/produtos.service';
+import { OrdensServico } from './ordens/ordens.service';
+import { TransacoesServico } from './transacoes/transacoes.service';
+import { CooperativaServico } from './cooperativa/cooperativa.service';
 
 @Module({
   controllers: [
-    ProdutosController,
-    CotacoesController,
-    EstoqueController,
-    OrdensController,
-    TransacoesController,
-    CooperativaController,
+    ProdutosControlador,
+    CotacoesControlador,
+    EstoqueControlador,
+    OrdensControlador,
+    TransacoesControlador,
+    CooperativaControlador,
   ],
   providers: [
-    ContextoMercadoRepository,
-    ProdutosRepository,
-    CotacoesRepository,
-    EstoqueRepository,
-    OrdensRepository,
-    TransacoesRepository,
-    CooperativaRepository,
-    EstoqueService,
-    CotacoesService,
-    ProdutosService,
-    OrdensService,
-    TransacoesService,
-    CooperativaService,
+    ContextoMercadoRepositorio,
+    ProdutosRepositorio,
+    CotacoesRepositorio,
+    EstoqueRepositorio,
+    OrdensRepositorio,
+    TransacoesRepositorio,
+    CooperativaRepositorio,
+    EstoqueServico,
+    CotacoesServico,
+    ProdutosServico,
+    OrdensServico,
+    TransacoesServico,
+    CooperativaServico,
   ],
-  exports: [EstoqueService],
+  exports: [EstoqueServico],
 })
-export class MercadoModule {}
+export class MercadoModulo {}

@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
-import { database } from '../../db/knex-connection';
+import { database as bancoDeDados } from '../../db/knex-connection';
 import { VendaConjunta } from '../cooperativa/entities/venda-conjunta.entity';
 import { UsuarioMercado } from '../shared/mercado.types';
 import { paginar } from '../shared/paginar';
 import { FiltroVendasConjuntasDto } from './dto/filtro-vendas-conjuntas.dto';
 
 @Injectable()
-export class CooperativaRepository {
-  async findAll(filtro: FiltroVendasConjuntasDto, usuario: UsuarioMercado) {
-    const query = database<VendaConjunta>('vendas_conjuntas as vc').select(
-      'vc.*',
-    );
+export class CooperativaRepositorio {
+  async listar(filtro: FiltroVendasConjuntasDto, usuario: UsuarioMercado) {
+    const consulta = bancoDeDados<VendaConjunta>(
+      'vendas_conjuntas as vc',
+    ).select('vc.*');
     if (usuario.perfil === 'aluno') {
-      query.whereExists(function () {
+      consulta.whereExists(function () {
         this.select('f.id')
           .from('fazendas as f')
           .whereRaw('f.turma_id = vc.turma_id')
@@ -21,58 +21,60 @@ export class CooperativaRepository {
       });
     }
     if (usuario.perfil === 'professor') {
-      query
+      consulta
         .join('turmas as t', 't.id', 'vc.turma_id')
         .where('t.professor_id', usuario.id);
     }
     if (filtro.produto_id) {
-      query.where('vc.produto_id', filtro.produto_id);
+      consulta.where('vc.produto_id', filtro.produto_id);
     }
     if (filtro.status) {
-      query.where('vc.status', filtro.status);
+      consulta.where('vc.status', filtro.status);
     }
     if (filtro.turma_id) {
-      query.where('vc.turma_id', filtro.turma_id);
+      consulta.where('vc.turma_id', filtro.turma_id);
     }
     if (filtro.temporada) {
-      query.where('vc.temporada', filtro.temporada);
+      consulta.where('vc.temporada', filtro.temporada);
     }
     return paginar(
-      query.orderBy('vc.created_at', 'desc'),
+      consulta.orderBy('vc.created_at', 'desc'),
       filtro.page,
       filtro.limit,
     );
   }
 
-  async findOne(
+  async buscarPorId(
     id: string,
-    trx: Knex = database,
-    lock = false,
+    transacaoBanco: Knex = bancoDeDados,
+    bloqueio = false,
   ): Promise<VendaConjunta | undefined> {
-    const query = trx<VendaConjunta>('vendas_conjuntas').where({ id });
-    if (lock) {
-      query.forUpdate();
+    const consulta = transacaoBanco<VendaConjunta>('vendas_conjuntas').where({
+      id,
+    });
+    if (bloqueio) {
+      consulta.forUpdate();
     }
-    return query.first();
+    return consulta.first();
   }
 
-  async create(
+  async criar(
     dados: Partial<VendaConjunta>,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<VendaConjunta> {
-    const [grupo] = await trx<VendaConjunta>('vendas_conjuntas')
+    const [grupo] = await transacaoBanco<VendaConjunta>('vendas_conjuntas')
       .insert(dados)
       .returning('*');
     return grupo;
   }
 
-  async update(
+  async atualizar(
     id: string,
     dados: Partial<VendaConjunta> & { taxa?: number; valor_liquido?: number },
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<void> {
-    await trx('vendas_conjuntas')
+    await transacaoBanco('vendas_conjuntas')
       .where({ id })
-      .update({ ...dados, updated_at: trx.fn.now() });
+      .update({ ...dados, updated_at: transacaoBanco.fn.now() });
   }
 }

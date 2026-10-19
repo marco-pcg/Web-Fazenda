@@ -21,7 +21,7 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/guards/permissions.guard';
 import { RequirePermissions } from '../../auth/decorators/permissions.decorator';
-import { CooperativaService } from './cooperativa.service';
+import { CooperativaServico } from './cooperativa.service';
 import type { UsuarioMercado } from '../shared/mercado.types';
 import { AlterarContribuicaoDto } from './dto/alterar-contribuicao.dto';
 import { ContribuirDto } from './dto/contribuir.dto';
@@ -33,8 +33,8 @@ import { FiltroTransacoesDto } from '../transacoes/dto/filtro-transacoes.dto';
 @ApiBearerAuth('jwt')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('cooperativa')
-export class CooperativaController {
-  constructor(private readonly cooperativa: CooperativaService) {}
+export class CooperativaControlador {
+  constructor(private readonly cooperativa: CooperativaServico) {}
 
   @Get('vendas-conjuntas')
   @RequirePermissions('mercado:consultar')
@@ -42,9 +42,9 @@ export class CooperativaController {
   @ApiResponse({ status: 200, description: 'Vendas conjuntas encontradas' })
   listar(
     @Query() filtro: FiltroVendasConjuntasDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.listar(filtro, req.user);
+    return this.cooperativa.listar(filtro, requisicao.user);
   }
 
   @Post('vendas-conjuntas')
@@ -53,9 +53,9 @@ export class CooperativaController {
   @ApiResponse({ status: 201, description: 'Venda conjunta criada' })
   criar(
     @Body() dto: CriarVendaDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.criar(dto, req.user);
+    return this.cooperativa.criar(dto, requisicao.user);
   }
 
   @Get('vendas-conjuntas/:id')
@@ -64,9 +64,9 @@ export class CooperativaController {
   @ApiResponse({ status: 200, description: 'Venda conjunta encontrada' })
   detalhe(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.detalhe(id, req.user);
+    return this.cooperativa.detalhe(id, requisicao.user);
   }
 
   @Post('vendas-conjuntas/:id/contribuicoes')
@@ -76,9 +76,9 @@ export class CooperativaController {
   contribuir(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: ContribuirDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.contribuir(id, dto, req.user);
+    return this.cooperativa.contribuir(id, dto, requisicao.user);
   }
 
   @Patch('vendas-conjuntas/:id/contribuicoes/:ordemId')
@@ -89,9 +89,9 @@ export class CooperativaController {
     @Param('id', ParseUUIDPipe) id: string,
     @Param('ordemId', ParseUUIDPipe) ordemId: string,
     @Body() dto: AlterarContribuicaoDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.alterar(id, ordemId, dto, req.user);
+    return this.cooperativa.alterar(id, ordemId, dto, requisicao.user);
   }
 
   @Delete('vendas-conjuntas/:id/contribuicoes/:ordemId')
@@ -101,9 +101,9 @@ export class CooperativaController {
   retirar(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('ordemId', ParseUUIDPipe) ordemId: string,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.retirar(id, ordemId, req.user);
+    return this.cooperativa.retirar(id, ordemId, requisicao.user);
   }
 
   @Post('vendas-conjuntas/:id/distribuir')
@@ -112,9 +112,9 @@ export class CooperativaController {
   @ApiResponse({ status: 201, description: 'Distribuição concluída' })
   distribuir(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.distribuir(id, req.user);
+    return this.cooperativa.distribuir(id, requisicao.user);
   }
 
   @Get('extrato')
@@ -125,8 +125,8 @@ export class CooperativaController {
   @ApiResponse({ status: 200, description: 'Extrato encontrado' })
   extrato(
     @Query() filtro: FiltroTransacoesDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cooperativa.extrato(filtro, req.user);
+    return this.cooperativa.extrato(filtro, requisicao.user);
   }
 }

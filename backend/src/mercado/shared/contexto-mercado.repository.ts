@@ -1,30 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
-import { database } from '../../db/knex-connection';
+import { database as bancoDeDados } from '../../db/knex-connection';
 import { FazendaMercado } from './mercado.types';
 
 @Injectable()
-export class ContextoMercadoRepository {
-  async findFazenda(
+export class ContextoMercadoRepositorio {
+  async buscarFazenda(
     id: string,
-    trx: Knex = database,
+    transacaoBanco: Knex = bancoDeDados,
   ): Promise<FazendaMercado | undefined> {
-    return trx<FazendaMercado>('fazendas').where({ id }).first();
+    return transacaoBanco<FazendaMercado>('fazendas').where({ id }).first();
   }
 
-  async findFazendaDoUsuario(
+  async buscarFazendaDoUsuario(
     turmaId: string,
     usuarioId: string,
   ): Promise<FazendaMercado | undefined> {
-    return database<FazendaMercado>('fazendas')
+    return bancoDeDados<FazendaMercado>('fazendas')
       .where({ turma_id: turmaId, usuario_id: usuarioId })
       .first();
   }
 
-  async findTurma(
+  async buscarTurma(
     id: string,
   ): Promise<{ id: string; professor_id: string } | undefined> {
-    return database<{ id: string; professor_id: string }>('turmas')
+    return bancoDeDados<{ id: string; professor_id: string }>('turmas')
       .where({ id })
       .first();
   }

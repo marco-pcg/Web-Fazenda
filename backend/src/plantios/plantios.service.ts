@@ -14,7 +14,7 @@ import { ColheitasRepository } from '../colheitas/colheitas.repository';
 import { CreatePlantioDto } from './dto/create-plantio.dto';
 import { ColherPlantioDto } from './dto/colher-plantio.dto';
 import { FiltroPlantioDto } from './dto/filtro-plantio.dto';
-import { EstoqueService } from '../mercado/estoque/estoque.service';
+import { EstoqueServico } from '../mercado/estoque/estoque.service';
 import { Plantio } from './entities/plantio.entity';
 import { Talhao } from '../talhoes/entities/talhao.entity';
 
@@ -26,7 +26,7 @@ export class PlantiosService {
     private readonly fazendasRepository: FazendasRepository,
     private readonly culturasRepository: CulturasRepository,
     private readonly colheitasRepository: ColheitasRepository,
-    private readonly estoqueService: EstoqueService,
+    private readonly estoqueService: EstoqueServico,
   ) {}
 
   async create(createPlantioDto: CreatePlantioDto) {

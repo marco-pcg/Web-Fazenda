@@ -1,47 +1,47 @@
-import { database } from '../../db/knex-connection';
-import { ProdutosRepository } from './produtos.repository';
+import { database as bancoDeDados } from '../../db/knex-connection';
+import { ProdutosRepositorio } from './produtos.repository';
 import {
   ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CotacoesService } from '../cotacoes/cotacoes.service';
+import { CotacoesServico } from '../cotacoes/cotacoes.service';
 import { UsuarioMercado } from '../shared/mercado.types';
 import { CriarProdutoDto } from './dto/criar-produto.dto';
 import { EditarProdutoDto } from './dto/editar-produto.dto';
 import { FiltroProdutosDto } from './dto/filtro-produtos.dto';
 
 @Injectable()
-export class ProdutosService {
+export class ProdutosServico {
   constructor(
-    private readonly produtosRepository: ProdutosRepository,
-    private readonly cotacoes: CotacoesService,
+    private readonly produtosRepositorio: ProdutosRepositorio,
+    private readonly cotacoes: CotacoesServico,
   ) {}
 
   async listar(filtro: FiltroProdutosDto) {
-    return this.produtosRepository.findAll(filtro);
+    return this.produtosRepositorio.listar(filtro);
   }
 
   async criar(dto: CriarProdutoDto, usuario: UsuarioMercado) {
     this.exigirAdmin(usuario);
     try {
-      return this.produtosRepository.create(dto);
-    } catch (error) {
-      if (this.isUniqueViolation(error)) {
+      return this.produtosRepositorio.criar(dto);
+    } catch (erro) {
+      if (this.ehViolacaoDeUnicidade(erro)) {
         throw new ConflictException('Nome ou chave de estoque já cadastrados.');
       }
-      throw error;
+      throw erro;
     }
   }
 
   async editar(id: string, dto: EditarProdutoDto, usuario: UsuarioMercado) {
     this.exigirAdmin(usuario);
     try {
-      const produto = await database.transaction(async (trx) => {
-        const atual = await this.produtosRepository.findOne(
+      const produto = await bancoDeDados.transaction(async (transacaoBanco) => {
+        const atual = await this.produtosRepositorio.buscarPorId(
           id,
-          trx,
+          transacaoBanco,
           false,
           'update',
         );
@@ -49,17 +49,21 @@ export class ProdutosService {
           throw new NotFoundException('Produto não encontrado.');
         }
 
-        const atualizado = await this.produtosRepository.update(id, dto, trx);
-        await this.cotacoes.recalcularProduto(atualizado, trx);
+        const atualizado = await this.produtosRepositorio.atualizar(
+          id,
+          dto,
+          transacaoBanco,
+        );
+        await this.cotacoes.recalcularProduto(atualizado, transacaoBanco);
         return atualizado;
       });
       await this.cotacoes.invalidar(id);
       return produto;
-    } catch (error) {
-      if (this.isUniqueViolation(error)) {
+    } catch (erro) {
+      if (this.ehViolacaoDeUnicidade(erro)) {
         throw new ConflictException('Nome ou chave de estoque já cadastrados.');
       }
-      throw error;
+      throw erro;
     }
   }
 
@@ -69,12 +73,12 @@ export class ProdutosService {
     }
   }
 
-  private isUniqueViolation(error: unknown): boolean {
+  private ehViolacaoDeUnicidade(erro: unknown): boolean {
     return (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      error.code === '23505'
+      typeof erro === 'object' &&
+      erro !== null &&
+      'code' in erro &&
+      erro.code === '23505'
     );
   }
 }

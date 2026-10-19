@@ -1,5 +1,5 @@
-import { EstoqueRepository } from './estoque.repository';
-import { ContextoMercadoRepository } from '../shared/contexto-mercado.repository';
+import { EstoqueRepositorio } from './estoque.repository';
+import { ContextoMercadoRepositorio } from '../shared/contexto-mercado.repository';
 import {
   BadRequestException,
   ForbiddenException,
@@ -11,24 +11,24 @@ import { UsuarioMercado } from '../shared/mercado.types';
 import { FiltroEstoqueDto } from './dto/filtro-estoque.dto';
 
 @Injectable()
-export class EstoqueService {
+export class EstoqueServico {
   constructor(
-    private readonly estoqueRepository: EstoqueRepository,
-    private readonly contextoMercadoRepository: ContextoMercadoRepository,
+    private readonly estoqueRepositorio: EstoqueRepositorio,
+    private readonly contextoMercadoRepositorio: ContextoMercadoRepositorio,
   ) {}
 
   async fazendaDoAluno(
     fazendaId: string,
     usuario: UsuarioMercado,
-    trx?: Knex.Transaction,
+    transacaoBanco?: Knex.Transaction,
   ) {
     if (usuario.perfil !== 'aluno' && usuario.perfil !== 'admin') {
       throw new ForbiddenException('A operação exige um aluno.');
     }
 
-    const fazenda = await this.contextoMercadoRepository.findFazenda(
+    const fazenda = await this.contextoMercadoRepositorio.buscarFazenda(
       fazendaId,
-      trx,
+      transacaoBanco,
     );
 
     if (!fazenda) {
@@ -50,10 +50,13 @@ export class EstoqueService {
     fazendaId: string,
     chave: string,
     diferenca: number,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<void> {
-    await this.estoqueRepository.ensure(fazendaId, trx);
-    const estoque = await this.estoqueRepository.findForUpdate(fazendaId, trx);
+    await this.estoqueRepositorio.garantir(fazendaId, transacaoBanco);
+    const estoque = await this.estoqueRepositorio.buscarParaAtualizar(
+      fazendaId,
+      transacaoBanco,
+    );
     if (!estoque) {
       throw new NotFoundException('Estoque não encontrado.');
     }
@@ -69,16 +72,25 @@ export class EstoqueService {
     }
     produtos[chave] = proximo;
 
-    await this.estoqueRepository.updateProducts(fazendaId, produtos, trx);
+    await this.estoqueRepositorio.atualizarProdutos(
+      fazendaId,
+      produtos,
+      transacaoBanco,
+    );
   }
 
   async creditarColheita(
     fazendaId: string,
     culturaId: string,
     quantidade: number,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<void> {
-    await this.ajustar(fazendaId, `cultura:${culturaId}`, quantidade, trx);
+    await this.ajustar(
+      fazendaId,
+      `cultura:${culturaId}`,
+      quantidade,
+      transacaoBanco,
+    );
   }
 
   async listar(filtro: FiltroEstoqueDto, usuario: UsuarioMercado) {
@@ -86,6 +98,6 @@ export class EstoqueService {
       throw new ForbiddenException('O estoque das fazendas não é público.');
     }
 
-    return this.estoqueRepository.findAll(filtro, usuario);
+    return this.estoqueRepositorio.listar(filtro, usuario);
   }
 }

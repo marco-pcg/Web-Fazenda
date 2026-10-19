@@ -1,21 +1,21 @@
 import { Knex } from 'knex';
 
 export async function paginar(
-  query: Knex.QueryBuilder<any, any>,
-  page = 1,
-  limit = 10,
+  consulta: Knex.QueryBuilder<any, any>,
+  pagina = 1,
+  limite = 10,
 ): Promise<{ dados: unknown[]; total: number; page: number; limit: number }> {
-  const pageSize = Math.min(limit, 100);
-  const totalRows: unknown = await query
+  const tamanhoPagina = Math.min(limite, 100);
+  const linhasTotais: unknown = await consulta
     .clone()
     .clearSelect()
     .clearOrder()
     .count({ total: '*' });
-  const rows = totalRows as Array<{ total: string | number }>;
-  const total = Number(rows[0].total);
-  const dados = (await query
-    .limit(pageSize)
-    .offset((page - 1) * pageSize)) as unknown[];
+  const linhas = linhasTotais as Array<{ total: string | number }>;
+  const total = Number(linhas[0].total);
+  const dados = (await consulta
+    .limit(tamanhoPagina)
+    .offset((pagina - 1) * tamanhoPagina)) as unknown[];
 
-  return { dados, total, page, limit: pageSize };
+  return { dados, total, page: pagina, limit: tamanhoPagina };
 }

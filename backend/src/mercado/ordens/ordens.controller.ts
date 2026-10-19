@@ -20,7 +20,7 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/guards/permissions.guard';
 import { RequirePermissions } from '../../auth/decorators/permissions.decorator';
-import { OrdensService } from './ordens.service';
+import { OrdensServico } from './ordens.service';
 import type { UsuarioMercado } from '../shared/mercado.types';
 import { ComprarDto } from './dto/comprar.dto';
 import { CriarVendaDto } from './dto/criar-venda.dto';
@@ -30,8 +30,8 @@ import { FiltroOrdensDto } from './dto/filtro-ordens.dto';
 @ApiBearerAuth('jwt')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('ordens')
-export class OrdensController {
-  constructor(private readonly ordens: OrdensService) {}
+export class OrdensControlador {
+  constructor(private readonly ordens: OrdensServico) {}
 
   @Get()
   @RequirePermissions('mercado:consultar')
@@ -41,9 +41,9 @@ export class OrdensController {
   @ApiResponse({ status: 200, description: 'Ordens encontradas' })
   listar(
     @Query() filtro: FiltroOrdensDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.ordens.listar(filtro, req.user);
+    return this.ordens.listar(filtro, requisicao.user);
   }
 
   @Post('venda')
@@ -52,9 +52,9 @@ export class OrdensController {
   @ApiResponse({ status: 201, description: 'Oferta criada' })
   vender(
     @Body() dto: CriarVendaDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.ordens.vender(dto, req.user);
+    return this.ordens.vender(dto, requisicao.user);
   }
 
   @Post('compra')
@@ -65,9 +65,9 @@ export class OrdensController {
   @ApiResponse({ status: 201, description: 'Compra concluída' })
   comprar(
     @Body() dto: ComprarDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.ordens.comprar(dto, req.user);
+    return this.ordens.comprar(dto, requisicao.user);
   }
 
   @Get(':id')
@@ -76,9 +76,9 @@ export class OrdensController {
   @ApiResponse({ status: 200, description: 'Ordem encontrada' })
   detalhe(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.ordens.detalhe(id, req.user);
+    return this.ordens.detalhe(id, requisicao.user);
   }
 
   @Patch(':id/cancelar')
@@ -87,8 +87,8 @@ export class OrdensController {
   @ApiResponse({ status: 200, description: 'Oferta cancelada' })
   cancelar(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.ordens.cancelar(id, req.user);
+    return this.ordens.cancelar(id, requisicao.user);
   }
 }

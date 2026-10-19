@@ -1,7 +1,7 @@
-import { database } from '../../db/knex-connection';
-import { CotacoesRepository } from './cotacoes.repository';
-import { ProdutosRepository } from '../produtos/produtos.repository';
-import { ContextoMercadoRepository } from '../shared/contexto-mercado.repository';
+import { database as bancoDeDados } from '../../db/knex-connection';
+import { CotacoesRepositorio } from './cotacoes.repository';
+import { ProdutosRepositorio } from '../produtos/produtos.repository';
+import { ContextoMercadoRepositorio } from '../shared/contexto-mercado.repository';
 import {
   ForbiddenException,
   Injectable,
@@ -18,15 +18,15 @@ import { FiltroCotacoesDto } from './dto/filtro-cotacoes.dto';
 import { Cotacao } from './entities/cotacao.entity';
 
 @Injectable()
-export class CotacoesService implements OnModuleInit, OnModuleDestroy {
-  private client: RedisClientType;
+export class CotacoesServico implements OnModuleInit, OnModuleDestroy {
+  private clienteRedis: RedisClientType;
 
   constructor(
-    private readonly cotacoesRepository: CotacoesRepository,
-    private readonly produtosRepository: ProdutosRepository,
-    private readonly contextoMercadoRepository: ContextoMercadoRepository,
+    private readonly cotacoesRepositorio: CotacoesRepositorio,
+    private readonly produtosRepositorio: ProdutosRepositorio,
+    private readonly contextoMercadoRepositorio: ContextoMercadoRepositorio,
   ) {
-    this.client = createClient({
+    this.clienteRedis = createClient({
       socket: {
         host: process.env.REDIS_HOST || 'localhost',
         port: Number(process.env.REDIS_PORT || 6379),
@@ -34,20 +34,20 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
         reconnectStrategy: false,
       },
     });
-    this.client.on('error', () => undefined);
+    this.clienteRedis.on('error', () => undefined);
   }
 
   async onModuleInit(): Promise<void> {
     try {
-      await this.client.connect();
+      await this.clienteRedis.connect();
     } catch {
       return;
     }
   }
 
   async onModuleDestroy(): Promise<void> {
-    if (this.client.isOpen) {
-      await this.client.quit();
+    if (this.clienteRedis.isOpen) {
+      await this.clienteRedis.quit();
     }
   }
 
@@ -64,12 +64,12 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
     ) {
       throw new ForbiddenException('Perfil sem acesso às cotações.');
     }
-    return this.cotacoesRepository.findAll(filtro, usuario);
+    return this.cotacoesRepositorio.listar(filtro, usuario);
   }
 
-  async atual(query: CotacaoAtualDto, usuario: UsuarioMercado) {
-    const fazenda = await this.contextoMercadoRepository.findFazenda(
-      query.fazenda_id,
+  async atual(consulta: CotacaoAtualDto, usuario: UsuarioMercado) {
+    const fazenda = await this.contextoMercadoRepositorio.buscarFazenda(
+      consulta.fazenda_id,
     );
     if (!fazenda || !fazenda.turma_id) {
       throw new NotFoundException('Fazenda vinculada a turma não encontrada.');
@@ -78,7 +78,7 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
       throw new ForbiddenException('A fazenda não pertence ao aluno.');
     }
     if (usuario.perfil === 'professor') {
-      const turma = await this.contextoMercadoRepository.findTurma(
+      const turma = await this.contextoMercadoRepositorio.buscarTurma(
         fazenda.turma_id,
       );
       if (turma?.professor_id !== usuario.id) {
@@ -91,31 +91,31 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
       throw new ForbiddenException('Perfil sem acesso às cotações.');
     }
 
-    const chave = `mercado:cotacao:${query.produto_id}:${fazenda.turma_id}:${fazenda.temporada_atual}`;
-    if (this.client.isReady) {
+    const chave = `mercado:cotacao:${consulta.produto_id}:${fazenda.turma_id}:${fazenda.temporada_atual}`;
+    if (this.clienteRedis.isReady) {
       try {
-        const cached = await this.client.get(chave);
-        if (cached) {
-          return JSON.parse(cached) as Cotacao;
+        const emCache = await this.clienteRedis.get(chave);
+        if (emCache) {
+          return JSON.parse(emCache) as Cotacao;
         }
       } catch {
-        await this.client.disconnect();
+        await this.clienteRedis.disconnect();
       }
     }
 
-    const cotacao = await database.transaction(async (trx) => {
+    const cotacao = await bancoDeDados.transaction(async (transacaoBanco) => {
       return this.obter(
-        query.produto_id,
+        consulta.produto_id,
         fazenda.turma_id as string,
         fazenda.temporada_atual,
-        trx,
+        transacaoBanco,
       );
     });
-    if (this.client.isReady) {
+    if (this.clienteRedis.isReady) {
       try {
-        await this.client.set(chave, JSON.stringify(cotacao), { EX: 60 });
+        await this.clienteRedis.set(chave, JSON.stringify(cotacao), { EX: 60 });
       } catch {
-        await this.client.disconnect();
+        await this.clienteRedis.disconnect();
       }
     }
     return cotacao;
@@ -125,11 +125,11 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
     produtoId: string,
     turmaId: string,
     temporada: number,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ) {
-    const produto = await this.produtosRepository.findOne(
+    const produto = await this.produtosRepositorio.buscarPorId(
       produtoId,
-      trx,
+      transacaoBanco,
       true,
       'share',
     );
@@ -137,19 +137,19 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
       throw new NotFoundException('Produto ativo não encontrado.');
     }
 
-    await this.cotacoesRepository.ensure(
+    await this.cotacoesRepositorio.garantir(
       produtoId,
       turmaId,
       temporada,
       this.preco(produto, 0),
-      trx,
+      transacaoBanco,
     );
 
-    const cotacao = await this.cotacoesRepository.findForUpdate(
+    const cotacao = await this.cotacoesRepositorio.buscarParaAtualizar(
       produtoId,
       turmaId,
       temporada,
-      trx,
+      transacaoBanco,
     );
     if (!cotacao) {
       throw new NotFoundException('Cotação não encontrada.');
@@ -157,7 +157,11 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
 
     const precoAtual = this.preco(produto, Number(cotacao.quantidade_vendida));
     if (Number(cotacao.preco_atual) !== precoAtual) {
-      await this.cotacoesRepository.updatePrice(cotacao.id, precoAtual, trx);
+      await this.cotacoesRepositorio.atualizarPreco(
+        cotacao.id,
+        precoAtual,
+        transacaoBanco,
+      );
       cotacao.preco_atual = precoAtual;
     }
     return cotacao;
@@ -166,52 +170,54 @@ export class CotacoesService implements OnModuleInit, OnModuleDestroy {
   async registrarVenda(
     cotacao: Cotacao,
     quantidade: number,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ) {
-    const produto = await this.produtosRepository.findOne(
+    const produto = await this.produtosRepositorio.buscarPorId(
       cotacao.produto_id,
-      trx,
+      transacaoBanco,
     );
     if (!produto) {
       throw new NotFoundException('Produto não encontrado.');
     }
     const quantidadeVendida = Number(cotacao.quantidade_vendida) + quantidade;
-    await this.cotacoesRepository.recordSale(
+    await this.cotacoesRepositorio.registrarVenda(
       cotacao.id,
       quantidadeVendida,
       this.preco(produto, quantidadeVendida),
-      trx,
+      transacaoBanco,
     );
   }
 
   async recalcularProduto(
     produto: Produto,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<void> {
-    const cotacoes = await this.cotacoesRepository.findCurrentForProduct(
+    const cotacoes = await this.cotacoesRepositorio.buscarAtuaisDoProduto(
       produto.id,
-      trx,
+      transacaoBanco,
     );
     for (const cotacao of cotacoes) {
-      await this.cotacoesRepository.updatePrice(
+      await this.cotacoesRepositorio.atualizarPreco(
         cotacao.id,
         this.preco(produto, Number(cotacao.quantidade_vendida)),
-        trx,
+        transacaoBanco,
       );
     }
   }
 
   async invalidar(produtoId: string): Promise<void> {
-    if (!this.client.isReady) {
+    if (!this.clienteRedis.isReady) {
       return;
     }
     try {
-      const chaves = await this.client.keys(`mercado:cotacao:${produtoId}:*`);
+      const chaves = await this.clienteRedis.keys(
+        `mercado:cotacao:${produtoId}:*`,
+      );
       if (chaves.length > 0) {
-        await this.client.del(chaves);
+        await this.clienteRedis.del(chaves);
       }
     } catch {
-      await this.client.disconnect();
+      await this.clienteRedis.disconnect();
     }
   }
 }

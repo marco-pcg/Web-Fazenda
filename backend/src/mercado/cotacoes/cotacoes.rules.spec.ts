@@ -1,15 +1,15 @@
 import { ForbiddenException } from '@nestjs/common';
-import { CotacoesService } from './cotacoes.service';
-import { CotacoesRepository } from './cotacoes.repository';
-import { ProdutosRepository } from '../produtos/produtos.repository';
-import { ContextoMercadoRepository } from '../shared/contexto-mercado.repository';
+import { CotacoesServico } from './cotacoes.service';
+import { CotacoesRepositorio } from './cotacoes.repository';
+import { ProdutosRepositorio } from '../produtos/produtos.repository';
+import { ContextoMercadoRepositorio } from '../shared/contexto-mercado.repository';
 import { Produto } from '../produtos/entities/produto.entity';
 
 describe('Cotações', () => {
-  const cotacoes = new CotacoesService(
-    {} as CotacoesRepository,
-    {} as ProdutosRepository,
-    {} as ContextoMercadoRepository,
+  const cotacoes = new CotacoesServico(
+    {} as CotacoesRepositorio,
+    {} as ProdutosRepositorio,
+    {} as ContextoMercadoRepositorio,
   );
   const produto = {
     id: 'produto',
@@ -34,23 +34,23 @@ describe('Cotações', () => {
   });
 
   it('impede o aluno de consultar a cotação por outra fazenda', async () => {
-    const repository = {
-      findFazenda: () =>
+    const repositorio = {
+      buscarFazenda: () =>
         Promise.resolve({
           id: 'fazenda',
           usuario_id: 'outro-aluno',
           turma_id: 'turma',
           temporada_atual: 1,
         }),
-    } as unknown as ContextoMercadoRepository;
-    const service = new CotacoesService(
-      {} as CotacoesRepository,
-      {} as ProdutosRepository,
-      repository,
+    } as unknown as ContextoMercadoRepositorio;
+    const servico = new CotacoesServico(
+      {} as CotacoesRepositorio,
+      {} as ProdutosRepositorio,
+      repositorio,
     );
 
     await expect(
-      service.atual(
+      servico.atual(
         { produto_id: 'produto', fazenda_id: 'fazenda' },
         { id: 'aluno', perfil: 'aluno', permissoes: [] },
       ),

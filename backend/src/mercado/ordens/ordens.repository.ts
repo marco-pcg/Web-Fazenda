@@ -1,89 +1,91 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
-import { database } from '../../db/knex-connection';
+import { database as bancoDeDados } from '../../db/knex-connection';
 import { Ordem } from '../ordens/entities/ordem.entity';
 import { UsuarioMercado } from '../shared/mercado.types';
 import { paginar } from '../shared/paginar';
 import { FiltroOrdensDto } from './dto/filtro-ordens.dto';
 
 @Injectable()
-export class OrdensRepository {
-  async findAll(filtro: FiltroOrdensDto, usuario: UsuarioMercado) {
-    const query = database<Ordem>('ordens as o')
+export class OrdensRepositorio {
+  async listar(filtro: FiltroOrdensDto, usuario: UsuarioMercado) {
+    const consulta = bancoDeDados<Ordem>('ordens as o')
       .leftJoin('fazendas as f', 'f.id', 'o.fazenda_id')
       .select('o.*');
     if (usuario.perfil === 'aluno') {
-      query.where('o.usuario_id', usuario.id);
+      consulta.where('o.usuario_id', usuario.id);
     }
     if (usuario.perfil === 'comprador') {
-      query.where((builder) => {
-        builder.where('o.usuario_id', usuario.id).orWhere((open) => {
-          open
-            .where('o.tipo', 'VENDA')
-            .where('o.modalidade', 'AVULSA')
-            .where('o.status', 'ABERTA');
-        });
+      consulta.where((consultaAgrupada) => {
+        consultaAgrupada
+          .where('o.usuario_id', usuario.id)
+          .orWhere((ofertasAbertas) => {
+            ofertasAbertas
+              .where('o.tipo', 'VENDA')
+              .where('o.modalidade', 'AVULSA')
+              .where('o.status', 'ABERTA');
+          });
       });
     }
     if (usuario.perfil === 'professor') {
-      query
+      consulta
         .join('turmas as t', 't.id', 'f.turma_id')
         .where('t.professor_id', usuario.id);
     }
     if (filtro.tipo) {
-      query.where('o.tipo', filtro.tipo);
+      consulta.where('o.tipo', filtro.tipo);
     }
     if (filtro.status) {
-      query.where('o.status', filtro.status);
+      consulta.where('o.status', filtro.status);
     }
     if (filtro.produto_id) {
-      query.where('o.produto_id', filtro.produto_id);
+      consulta.where('o.produto_id', filtro.produto_id);
     }
     if (filtro.modalidade) {
-      query.where('o.modalidade', filtro.modalidade);
+      consulta.where('o.modalidade', filtro.modalidade);
     }
     return paginar(
-      query.orderBy('o.created_at', 'desc'),
+      consulta.orderBy('o.created_at', 'desc'),
       filtro.page,
       filtro.limit,
     );
   }
 
-  async findOne(
+  async buscarPorId(
     id: string,
-    trx: Knex = database,
-    lock = false,
+    transacaoBanco: Knex = bancoDeDados,
+    bloqueio = false,
   ): Promise<Ordem | undefined> {
-    const query = trx<Ordem>('ordens').where({ id });
-    if (lock) {
-      query.forUpdate();
+    const consulta = transacaoBanco<Ordem>('ordens').where({ id });
+    if (bloqueio) {
+      consulta.forUpdate();
     }
-    return query.first();
+    return consulta.first();
   }
 
-  async findContribution(
+  async buscarContribuicao(
     id: string,
     grupoId: string,
-    trx: Knex.Transaction,
-    lock = false,
+    transacaoBanco: Knex.Transaction,
+    bloqueio = false,
   ): Promise<Ordem | undefined> {
-    const query = trx<Ordem>('ordens').where({
+    const consulta = transacaoBanco<Ordem>('ordens').where({
       id,
       venda_conjunta_id: grupoId,
       tipo: 'VENDA',
     });
-    if (lock) {
-      query.forUpdate();
+    if (bloqueio) {
+      consulta.forUpdate();
     }
-    return query.first();
+    return consulta.first();
   }
 
-  async findOpenContribution(
+  async buscarContribuicaoAberta(
     grupoId: string,
     fazendaId: string,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<Ordem | undefined> {
-    return trx<Ordem>('ordens')
+    return transacaoBanco<Ordem>('ordens')
       .where({
         venda_conjunta_id: grupoId,
         fazenda_id: fazendaId,
@@ -92,51 +94,56 @@ export class OrdensRepository {
       .first();
   }
 
-  async findContributions(
+  async listarContribuicoes(
     grupoId: string,
     status: 'ABERTA' | 'EXECUTADA',
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<Ordem[]> {
-    return trx<Ordem>('ordens')
+    return transacaoBanco<Ordem>('ordens')
       .where({ venda_conjunta_id: grupoId, status, tipo: 'VENDA' })
       .orderBy('id');
   }
 
-  async findActiveContributions(grupoId: string): Promise<Ordem[]> {
-    return database<Ordem>('ordens')
+  async listarContribuicoesAtivas(grupoId: string): Promise<Ordem[]> {
+    return bancoDeDados<Ordem>('ordens')
       .where({ venda_conjunta_id: grupoId, tipo: 'VENDA' })
       .whereNot('status', 'CANCELADA')
       .orderBy('created_at');
   }
 
-  async create(dados: Partial<Ordem>, trx: Knex.Transaction): Promise<Ordem> {
-    const [ordem] = await trx<Ordem>('ordens').insert(dados).returning('*');
-    return ordem;
-  }
-
-  async update(
-    id: string,
+  async criar(
     dados: Partial<Ordem>,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<Ordem> {
-    const [ordem] = await trx<Ordem>('ordens')
-      .where({ id })
-      .update({ ...dados, updated_at: trx.fn.now() })
+    const [ordem] = await transacaoBanco<Ordem>('ordens')
+      .insert(dados)
       .returning('*');
     return ordem;
   }
 
-  async executeContributions(
+  async atualizar(
+    id: string,
+    dados: Partial<Ordem>,
+    transacaoBanco: Knex.Transaction,
+  ): Promise<Ordem> {
+    const [ordem] = await transacaoBanco<Ordem>('ordens')
+      .where({ id })
+      .update({ ...dados, updated_at: transacaoBanco.fn.now() })
+      .returning('*');
+    return ordem;
+  }
+
+  async executarContribuicoes(
     grupoId: string,
     preco: number,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ): Promise<void> {
-    await trx('ordens')
+    await transacaoBanco('ordens')
       .where({ venda_conjunta_id: grupoId, status: 'ABERTA', tipo: 'VENDA' })
       .update({
         status: 'EXECUTADA',
         preco_unitario: preco,
-        updated_at: trx.fn.now(),
+        updated_at: transacaoBanco.fn.now(),
       });
   }
 }

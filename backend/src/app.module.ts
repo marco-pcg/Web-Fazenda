@@ -19,10 +19,14 @@ import { TalhoesModule } from './talhoes/talhoes.module';
 import { PlantiosModule } from './plantios/plantios.module';
 import { ColheitasModule } from './colheitas/colheitas.module';
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
 =======
 import { MercadoModule } from './mercado/mercado.module';
 >>>>>>> fab846a (Integra rotas do mercado e crédito das colheitas)
+=======
+import { MercadoModulo } from './mercado/mercado.module';
+>>>>>>> dd24370 (Padroniza nomes de classes e métodos em português no Mercado)
 
 @Module({
   imports: [
@@ -47,10 +51,14 @@ import { MercadoModule } from './mercado/mercado.module';
     PlantiosModule,
     ColheitasModule,
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> aa15cf5 (adiciona bonus task scheduling nos plantios e registra os modulos)
 =======
     MercadoModule,
 >>>>>>> fab846a (Integra rotas do mercado e crédito das colheitas)
+=======
+    MercadoModulo,
+>>>>>>> dd24370 (Padroniza nomes de classes e métodos em português no Mercado)
   ],
 <<<<<<< HEAD
 =======
