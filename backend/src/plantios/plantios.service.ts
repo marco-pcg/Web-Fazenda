@@ -14,6 +14,9 @@ import { ColheitasRepository } from '../colheitas/colheitas.repository';
 import { CreatePlantioDto } from './dto/create-plantio.dto';
 import { ColherPlantioDto } from './dto/colher-plantio.dto';
 import { FiltroPlantioDto } from './dto/filtro-plantio.dto';
+import { EstoqueServico } from '../mercado/estoque/estoque.service';
+import { Plantio } from './entities/plantio.entity';
+import { Talhao } from '../talhoes/entities/talhao.entity';
 
 @Injectable()
 export class PlantiosService {
@@ -23,6 +26,7 @@ export class PlantiosService {
     private readonly fazendasRepository: FazendasRepository,
     private readonly culturasRepository: CulturasRepository,
     private readonly colheitasRepository: ColheitasRepository,
+    private readonly estoqueService: EstoqueServico,
   ) {}
 
   async create(createPlantioDto: CreatePlantioDto) {
@@ -172,6 +176,24 @@ export class PlantiosService {
       plantio.quantidade * cultura.valor_por_unidade * aproveitamento;
 
     return database.transaction(async (trx) => {
+      const plantioAtual = await trx<Plantio>('plantios')
+        .where({ id })
+        .forUpdate()
+        .first();
+      if (!plantioAtual) {
+        throw new NotFoundException('Plantio não encontrado.');
+      }
+      if (plantioAtual.status === 'colhido') {
+        throw new ConflictException('Esse plantio já foi colhido.');
+      }
+
+      const talhao = await trx<Talhao>('talhoes')
+        .where({ id: plantio.talhao_id })
+        .first();
+      if (!talhao) {
+        throw new NotFoundException('Talhão não encontrado.');
+      }
+
       const colheita = await this.colheitasRepository.create(
         {
           plantio_id: plantio.id,
@@ -189,6 +211,13 @@ export class PlantiosService {
       await this.talhoesRepository.update(
         plantio.talhao_id,
         { status: 'livre' },
+        trx,
+      );
+
+      await this.estoqueService.creditarColheita(
+        talhao.fazenda_id,
+        plantio.cultura_id,
+        colheita.quantidade_colhida,
         trx,
       );
 
