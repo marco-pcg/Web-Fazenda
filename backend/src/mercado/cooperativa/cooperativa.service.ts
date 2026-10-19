@@ -1,9 +1,9 @@
-import { database } from '../../db/knex-connection';
-import { CooperativaRepository } from './cooperativa.repository';
-import { OrdensRepository } from '../ordens/ordens.repository';
-import { ProdutosRepository } from '../produtos/produtos.repository';
-import { TransacoesRepository } from '../transacoes/transacoes.repository';
-import { ContextoMercadoRepository } from '../shared/contexto-mercado.repository';
+import { database as bancoDeDados } from '../../db/knex-connection';
+import { CooperativaRepositorio } from './cooperativa.repository';
+import { OrdensRepositorio } from '../ordens/ordens.repository';
+import { ProdutosRepositorio } from '../produtos/produtos.repository';
+import { TransacoesRepositorio } from '../transacoes/transacoes.repository';
+import { ContextoMercadoRepositorio } from '../shared/contexto-mercado.repository';
 import {
   BadRequestException,
   ConflictException,
@@ -12,7 +12,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Knex } from 'knex';
-import { EstoqueService } from '../estoque/estoque.service';
+import { EstoqueServico } from '../estoque/estoque.service';
 import { FazendaMercado, UsuarioMercado } from '../shared/mercado.types';
 import { Ordem } from '../ordens/entities/ordem.entity';
 import { VendaConjunta } from './entities/venda-conjunta.entity';
@@ -24,29 +24,29 @@ import { FiltroTransacoesDto } from '../transacoes/dto/filtro-transacoes.dto';
 import { calcularDistribuicao } from './distribuicao';
 
 @Injectable()
-export class CooperativaService {
+export class CooperativaServico {
   constructor(
-    private readonly cooperativaRepository: CooperativaRepository,
-    private readonly ordensRepository: OrdensRepository,
-    private readonly produtosRepository: ProdutosRepository,
-    private readonly transacoesRepository: TransacoesRepository,
-    private readonly contextoMercadoRepository: ContextoMercadoRepository,
-    private readonly estoque: EstoqueService,
+    private readonly cooperativaRepositorio: CooperativaRepositorio,
+    private readonly ordensRepositorio: OrdensRepositorio,
+    private readonly produtosRepositorio: ProdutosRepositorio,
+    private readonly transacoesRepositorio: TransacoesRepositorio,
+    private readonly contextoMercadoRepositorio: ContextoMercadoRepositorio,
+    private readonly estoque: EstoqueServico,
   ) {}
 
   async listar(filtro: FiltroVendasConjuntasDto, usuario: UsuarioMercado) {
     this.verificarPerfilConsulta(usuario);
-    return this.cooperativaRepository.findAll(filtro, usuario);
+    return this.cooperativaRepositorio.listar(filtro, usuario);
   }
 
   async detalhe(id: string, usuario: UsuarioMercado) {
-    const grupo = await this.cooperativaRepository.findOne(id);
+    const grupo = await this.cooperativaRepositorio.buscarPorId(id);
     if (!grupo) {
       throw new NotFoundException('Venda conjunta não encontrada.');
     }
     await this.verificarAcesso(grupo, usuario);
     const contribuicoes =
-      await this.ordensRepository.findActiveContributions(id);
+      await this.ordensRepositorio.listarContribuicoesAtivas(id);
     return {
       ...grupo,
       contribuicoes,
@@ -62,20 +62,20 @@ export class CooperativaService {
 
   async criar(dto: CriarVendaDto, usuario: UsuarioMercado) {
     this.exigirAluno(usuario);
-    return database.transaction(async (trx) => {
+    return bancoDeDados.transaction(async (transacaoBanco) => {
       const fazenda = await this.estoque.fazendaDoAluno(
         dto.fazenda_id,
         usuario,
-        trx,
+        transacaoBanco,
       );
-      const produto = await this.produtoAtivo(dto.produto_id, trx);
+      const produto = await this.produtoAtivo(dto.produto_id, transacaoBanco);
       await this.estoque.ajustar(
         fazenda.id,
         produto.chave_estoque,
         -dto.quantidade,
-        trx,
+        transacaoBanco,
       );
-      const grupo = await this.cooperativaRepository.create(
+      const grupo = await this.cooperativaRepositorio.criar(
         {
           produto_id: produto.id,
           turma_id: fazenda.turma_id as string,
@@ -83,9 +83,9 @@ export class CooperativaService {
           temporada: fazenda.temporada_atual,
           status: 'ABERTA',
         },
-        trx,
+        transacaoBanco,
       );
-      await this.ordensRepository.create(
+      await this.ordensRepositorio.criar(
         {
           tipo: 'VENDA',
           modalidade: 'CONJUNTA',
@@ -97,7 +97,7 @@ export class CooperativaService {
           temporada: fazenda.temporada_atual,
           quantidade: dto.quantidade,
         },
-        trx,
+        transacaoBanco,
       );
       return grupo;
     });
@@ -105,32 +105,32 @@ export class CooperativaService {
 
   async contribuir(id: string, dto: ContribuirDto, usuario: UsuarioMercado) {
     this.exigirAluno(usuario);
-    return database.transaction(async (trx) => {
-      const grupo = await this.grupoAberto(id, trx);
+    return bancoDeDados.transaction(async (transacaoBanco) => {
+      const grupo = await this.grupoAberto(id, transacaoBanco);
       const fazenda = await this.estoque.fazendaDoAluno(
         dto.fazenda_id,
         usuario,
-        trx,
+        transacaoBanco,
       );
       this.verificarMesmaTurmaTemporada(grupo, fazenda);
-      const existente = await this.ordensRepository.findOpenContribution(
+      const existente = await this.ordensRepositorio.buscarContribuicaoAberta(
         id,
         fazenda.id,
-        trx,
+        transacaoBanco,
       );
       if (existente) {
         throw new ConflictException(
           'A fazenda já contribuiu. Altere a contribuição existente.',
         );
       }
-      const produto = await this.produtoAtivo(grupo.produto_id, trx);
+      const produto = await this.produtoAtivo(grupo.produto_id, transacaoBanco);
       await this.estoque.ajustar(
         fazenda.id,
         produto.chave_estoque,
         -dto.quantidade,
-        trx,
+        transacaoBanco,
       );
-      const contribuicao = await this.ordensRepository.create(
+      const contribuicao = await this.ordensRepositorio.criar(
         {
           tipo: 'VENDA',
           modalidade: 'CONJUNTA',
@@ -142,7 +142,7 @@ export class CooperativaService {
           temporada: fazenda.temporada_atual,
           quantidade: dto.quantidade,
         },
-        trx,
+        transacaoBanco,
       );
       return contribuicao;
     });
@@ -155,20 +155,25 @@ export class CooperativaService {
     usuario: UsuarioMercado,
   ) {
     this.exigirAluno(usuario);
-    return database.transaction(async (trx) => {
-      const grupo = await this.grupoAberto(id, trx);
-      const ordem = await this.contribuicaoAberta(id, ordemId, usuario, trx);
-      const produto = await this.produto(grupo.produto_id, trx);
+    return bancoDeDados.transaction(async (transacaoBanco) => {
+      const grupo = await this.grupoAberto(id, transacaoBanco);
+      const ordem = await this.contribuicaoAberta(
+        id,
+        ordemId,
+        usuario,
+        transacaoBanco,
+      );
+      const produto = await this.produto(grupo.produto_id, transacaoBanco);
       await this.estoque.ajustar(
         ordem.fazenda_id as string,
         produto.chave_estoque,
         Number(ordem.quantidade) - dto.quantidade,
-        trx,
+        transacaoBanco,
       );
-      const atualizada = await this.ordensRepository.update(
+      const atualizada = await this.ordensRepositorio.atualizar(
         ordemId,
         { quantidade: dto.quantidade },
-        trx,
+        transacaoBanco,
       );
       return atualizada;
     });
@@ -176,27 +181,36 @@ export class CooperativaService {
 
   async retirar(id: string, ordemId: string, usuario: UsuarioMercado) {
     this.exigirAluno(usuario);
-    return database.transaction(async (trx) => {
-      const grupo = await this.grupoAberto(id, trx);
-      const ordem = await this.contribuicaoAberta(id, ordemId, usuario, trx);
-      const produto = await this.produto(grupo.produto_id, trx);
+    return bancoDeDados.transaction(async (transacaoBanco) => {
+      const grupo = await this.grupoAberto(id, transacaoBanco);
+      const ordem = await this.contribuicaoAberta(
+        id,
+        ordemId,
+        usuario,
+        transacaoBanco,
+      );
+      const produto = await this.produto(grupo.produto_id, transacaoBanco);
       await this.estoque.ajustar(
         ordem.fazenda_id as string,
         produto.chave_estoque,
         Number(ordem.quantidade),
-        trx,
+        transacaoBanco,
       );
-      await this.ordensRepository.update(ordemId, { status: 'CANCELADA' }, trx);
-      const restantes = await this.ordensRepository.findContributions(
+      await this.ordensRepositorio.atualizar(
+        ordemId,
+        { status: 'CANCELADA' },
+        transacaoBanco,
+      );
+      const restantes = await this.ordensRepositorio.listarContribuicoes(
         id,
         'ABERTA',
-        trx,
+        transacaoBanco,
       );
       if (restantes.length === 0) {
-        await this.cooperativaRepository.update(
+        await this.cooperativaRepositorio.atualizar(
           id,
           { status: 'CANCELADA' },
-          trx,
+          transacaoBanco,
         );
       }
       return { status: restantes.length === 0 ? 'CANCELADA' : 'ABERTA' };
@@ -204,8 +218,12 @@ export class CooperativaService {
   }
 
   async distribuir(id: string, usuario: UsuarioMercado) {
-    return database.transaction(async (trx) => {
-      const grupo = await this.cooperativaRepository.findOne(id, trx, true);
+    return bancoDeDados.transaction(async (transacaoBanco) => {
+      const grupo = await this.cooperativaRepositorio.buscarPorId(
+        id,
+        transacaoBanco,
+        true,
+      );
       if (!grupo) {
         throw new NotFoundException('Venda conjunta não encontrada.');
       }
@@ -225,10 +243,10 @@ export class CooperativaService {
           'A venda não está aguardando distribuição.',
         );
       }
-      const contribuicoes = await this.ordensRepository.findContributions(
+      const contribuicoes = await this.ordensRepositorio.listarContribuicoes(
         id,
         'EXECUTADA',
-        trx,
+        transacaoBanco,
       );
       if (contribuicoes.length === 0) {
         throw new BadRequestException('A venda não possui contribuições.');
@@ -245,7 +263,7 @@ export class CooperativaService {
         const ordem = contribuicoes.find(
           (item) => item.id === parcela.id,
         ) as Ordem;
-        await this.transacoesRepository.create(
+        await this.transacoesRepositorio.criar(
           {
             tipo: 'REPASSE',
             ordem_id: ordem.id,
@@ -254,25 +272,25 @@ export class CooperativaService {
             fazenda_id: ordem.fazenda_id,
             valor: parcela.centavos / 100,
           },
-          trx,
+          transacaoBanco,
         );
       }
-      await this.transacoesRepository.create(
+      await this.transacoesRepositorio.criar(
         {
           tipo: 'TAXA',
           venda_conjunta_id: id,
           valor: calculo.taxaCentavos / 100,
         },
-        trx,
+        transacaoBanco,
       );
-      await this.cooperativaRepository.update(
+      await this.cooperativaRepositorio.atualizar(
         id,
         {
           status: 'DISTRIBUIDA',
           taxa: calculo.taxaCentavos / 100,
           valor_liquido: calculo.liquidoCentavos / 100,
         },
-        trx,
+        transacaoBanco,
       );
       return {
         venda_conjunta_id: id,
@@ -295,11 +313,15 @@ export class CooperativaService {
 
   async extrato(filtro: FiltroTransacoesDto, usuario: UsuarioMercado) {
     this.verificarPerfilConsulta(usuario);
-    return this.transacoesRepository.findAll(filtro, usuario, true);
+    return this.transacoesRepositorio.listar(filtro, usuario, true);
   }
 
-  private async grupoAberto(id: string, trx: Knex.Transaction) {
-    const grupo = await this.cooperativaRepository.findOne(id, trx, true);
+  private async grupoAberto(id: string, transacaoBanco: Knex.Transaction) {
+    const grupo = await this.cooperativaRepositorio.buscarPorId(
+      id,
+      transacaoBanco,
+      true,
+    );
     if (!grupo) {
       throw new NotFoundException('Venda conjunta não encontrada.');
     }
@@ -313,12 +335,12 @@ export class CooperativaService {
     id: string,
     ordemId: string,
     usuario: UsuarioMercado,
-    trx: Knex.Transaction,
+    transacaoBanco: Knex.Transaction,
   ) {
-    const ordem = await this.ordensRepository.findContribution(
+    const ordem = await this.ordensRepositorio.buscarContribuicao(
       ordemId,
       id,
-      trx,
+      transacaoBanco,
       true,
     );
     if (!ordem) {
@@ -333,16 +355,24 @@ export class CooperativaService {
     return ordem;
   }
 
-  private async produto(id: string, trx: Knex.Transaction, ativo = false) {
-    const produto = await this.produtosRepository.findOne(id, trx, ativo);
+  private async produto(
+    id: string,
+    transacaoBanco: Knex.Transaction,
+    ativo = false,
+  ) {
+    const produto = await this.produtosRepositorio.buscarPorId(
+      id,
+      transacaoBanco,
+      ativo,
+    );
     if (!produto) {
       throw new NotFoundException('Produto não encontrado.');
     }
     return produto;
   }
 
-  private produtoAtivo(id: string, trx: Knex.Transaction) {
-    return this.produto(id, trx, true);
+  private produtoAtivo(id: string, transacaoBanco: Knex.Transaction) {
+    return this.produto(id, transacaoBanco, true);
   }
 
   private verificarMesmaTurmaTemporada(
@@ -381,7 +411,7 @@ export class CooperativaService {
       return;
     }
     if (usuario.perfil === 'professor') {
-      const turma = await this.contextoMercadoRepository.findTurma(
+      const turma = await this.contextoMercadoRepositorio.buscarTurma(
         grupo.turma_id,
       );
       if (turma?.professor_id === usuario.id) {
@@ -389,10 +419,11 @@ export class CooperativaService {
       }
     }
     if (usuario.perfil === 'aluno') {
-      const fazenda = await this.contextoMercadoRepository.findFazendaDoUsuario(
-        grupo.turma_id,
-        usuario.id,
-      );
+      const fazenda =
+        await this.contextoMercadoRepositorio.buscarFazendaDoUsuario(
+          grupo.turma_id,
+          usuario.id,
+        );
       if (fazenda) {
         return;
       }
