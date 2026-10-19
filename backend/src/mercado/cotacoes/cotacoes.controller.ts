@@ -9,7 +9,7 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/guards/permissions.guard';
 import { RequirePermissions } from '../../auth/decorators/permissions.decorator';
-import { CotacoesService } from './cotacoes.service';
+import { CotacoesServico } from './cotacoes.service';
 import type { UsuarioMercado } from '../shared/mercado.types';
 import { CotacaoAtualDto } from './dto/cotacao-atual.dto';
 import { FiltroCotacoesDto } from './dto/filtro-cotacoes.dto';
@@ -18,8 +18,8 @@ import { FiltroCotacoesDto } from './dto/filtro-cotacoes.dto';
 @ApiBearerAuth('jwt')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('cotacoes')
-export class CotacoesController {
-  constructor(private readonly cotacoes: CotacoesService) {}
+export class CotacoesControlador {
+  constructor(private readonly cotacoes: CotacoesServico) {}
 
   @Get()
   @RequirePermissions('mercado:consultar')
@@ -27,9 +27,9 @@ export class CotacoesController {
   @ApiResponse({ status: 200, description: 'Cotações encontradas' })
   listar(
     @Query() filtro: FiltroCotacoesDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cotacoes.listar(filtro, req.user);
+    return this.cotacoes.listar(filtro, requisicao.user);
   }
 
   @Get('atual')
@@ -37,9 +37,9 @@ export class CotacoesController {
   @ApiOperation({ summary: 'Obtém a cotação da temporada atual da fazenda' })
   @ApiResponse({ status: 200, description: 'Cotação atual' })
   atual(
-    @Query() query: CotacaoAtualDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Query() consulta: CotacaoAtualDto,
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.cotacoes.atual(query, req.user);
+    return this.cotacoes.atual(consulta, requisicao.user);
   }
 }

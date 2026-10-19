@@ -9,7 +9,7 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/guards/permissions.guard';
 import { RequirePermissions } from '../../auth/decorators/permissions.decorator';
-import { EstoqueService } from './estoque.service';
+import { EstoqueServico } from './estoque.service';
 import type { UsuarioMercado } from '../shared/mercado.types';
 import { FiltroEstoqueDto } from './dto/filtro-estoque.dto';
 
@@ -17,8 +17,8 @@ import { FiltroEstoqueDto } from './dto/filtro-estoque.dto';
 @ApiBearerAuth('jwt')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('estoque')
-export class EstoqueController {
-  constructor(private readonly estoque: EstoqueService) {}
+export class EstoqueControlador {
+  constructor(private readonly estoque: EstoqueServico) {}
 
   @Get()
   @RequirePermissions('mercado:consultar')
@@ -26,8 +26,8 @@ export class EstoqueController {
   @ApiResponse({ status: 200, description: 'Estoque encontrado' })
   listar(
     @Query() filtro: FiltroEstoqueDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.estoque.listar(filtro, req.user);
+    return this.estoque.listar(filtro, requisicao.user);
   }
 }

@@ -1,9 +1,9 @@
-import { database } from '../../db/knex-connection';
-import { OrdensRepository } from './ordens.repository';
-import { ProdutosRepository } from '../produtos/produtos.repository';
-import { CooperativaRepository } from '../cooperativa/cooperativa.repository';
-import { TransacoesRepository } from '../transacoes/transacoes.repository';
-import { ContextoMercadoRepository } from '../shared/contexto-mercado.repository';
+import { database as bancoDeDados } from '../../db/knex-connection';
+import { OrdensRepositorio } from './ordens.repository';
+import { ProdutosRepositorio } from '../produtos/produtos.repository';
+import { CooperativaRepositorio } from '../cooperativa/cooperativa.repository';
+import { TransacoesRepositorio } from '../transacoes/transacoes.repository';
+import { ContextoMercadoRepositorio } from '../shared/contexto-mercado.repository';
 import {
   BadRequestException,
   ConflictException,
@@ -11,32 +11,32 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EstoqueService } from '../estoque/estoque.service';
-import { CotacoesService } from '../cotacoes/cotacoes.service';
+import { EstoqueServico } from '../estoque/estoque.service';
+import { CotacoesServico } from '../cotacoes/cotacoes.service';
 import { UsuarioMercado } from '../shared/mercado.types';
 import { ComprarDto } from './dto/comprar.dto';
 import { CriarVendaDto } from './dto/criar-venda.dto';
 import { FiltroOrdensDto } from './dto/filtro-ordens.dto';
 
 @Injectable()
-export class OrdensService {
+export class OrdensServico {
   constructor(
-    private readonly ordensRepository: OrdensRepository,
-    private readonly produtosRepository: ProdutosRepository,
-    private readonly cooperativaRepository: CooperativaRepository,
-    private readonly transacoesRepository: TransacoesRepository,
-    private readonly contextoMercadoRepository: ContextoMercadoRepository,
-    private readonly estoque: EstoqueService,
-    private readonly cotacoes: CotacoesService,
+    private readonly ordensRepositorio: OrdensRepositorio,
+    private readonly produtosRepositorio: ProdutosRepositorio,
+    private readonly cooperativaRepositorio: CooperativaRepositorio,
+    private readonly transacoesRepositorio: TransacoesRepositorio,
+    private readonly contextoMercadoRepositorio: ContextoMercadoRepositorio,
+    private readonly estoque: EstoqueServico,
+    private readonly cotacoes: CotacoesServico,
   ) {}
 
   async listar(filtro: FiltroOrdensDto, usuario: UsuarioMercado) {
     this.verificarPerfilConsulta(usuario);
-    return this.ordensRepository.findAll(filtro, usuario);
+    return this.ordensRepositorio.listar(filtro, usuario);
   }
 
   async detalhe(id: string, usuario: UsuarioMercado) {
-    const ordem = await this.ordensRepository.findOne(id);
+    const ordem = await this.ordensRepositorio.buscarPorId(id);
     if (!ordem) {
       throw new NotFoundException('Ordem não encontrada.');
     }
@@ -52,11 +52,11 @@ export class OrdensService {
       return ordem;
     }
     if (usuario.perfil === 'professor' && ordem.fazenda_id) {
-      const fazenda = await this.contextoMercadoRepository.findFazenda(
+      const fazenda = await this.contextoMercadoRepositorio.buscarFazenda(
         ordem.fazenda_id,
       );
       if (fazenda?.turma_id) {
-        const turma = await this.contextoMercadoRepository.findTurma(
+        const turma = await this.contextoMercadoRepositorio.buscarTurma(
           fazenda.turma_id,
         );
         if (turma?.professor_id === usuario.id) {
@@ -71,20 +71,20 @@ export class OrdensService {
     if (usuario.perfil !== 'aluno') {
       throw new ForbiddenException('Somente alunos podem vender.');
     }
-    return database.transaction(async (trx) => {
+    return bancoDeDados.transaction(async (transacaoBanco) => {
       const fazenda = await this.estoque.fazendaDoAluno(
         dto.fazenda_id,
         usuario,
-        trx,
+        transacaoBanco,
       );
-      const produto = await this.produtoAtivo(dto.produto_id, trx);
+      const produto = await this.produtoAtivo(dto.produto_id, transacaoBanco);
       await this.estoque.ajustar(
         fazenda.id,
         produto.chave_estoque,
         -dto.quantidade,
-        trx,
+        transacaoBanco,
       );
-      const ordem = await this.ordensRepository.create(
+      const ordem = await this.ordensRepositorio.criar(
         {
           tipo: 'VENDA',
           modalidade: 'AVULSA',
@@ -95,15 +95,19 @@ export class OrdensService {
           temporada: fazenda.temporada_atual,
           quantidade: dto.quantidade,
         },
-        trx,
+        transacaoBanco,
       );
       return ordem;
     });
   }
 
   async cancelar(id: string, usuario: UsuarioMercado) {
-    return database.transaction(async (trx) => {
-      const ordem = await this.ordensRepository.findOne(id, trx, true);
+    return bancoDeDados.transaction(async (transacaoBanco) => {
+      const ordem = await this.ordensRepositorio.buscarPorId(
+        id,
+        transacaoBanco,
+        true,
+      );
       if (!ordem) {
         throw new NotFoundException('Ordem não encontrada.');
       }
@@ -118,17 +122,17 @@ export class OrdensService {
       if (ordem.status !== 'ABERTA' || !ordem.fazenda_id) {
         throw new ConflictException('A ordem não está aberta.');
       }
-      const produto = await this.produto(ordem.produto_id, trx);
+      const produto = await this.produto(ordem.produto_id, transacaoBanco);
       await this.estoque.ajustar(
         ordem.fazenda_id,
         produto.chave_estoque,
         Number(ordem.quantidade),
-        trx,
+        transacaoBanco,
       );
-      const cancelada = await this.ordensRepository.update(
+      const cancelada = await this.ordensRepositorio.atualizar(
         id,
         { status: 'CANCELADA' },
-        trx,
+        transacaoBanco,
       );
       return cancelada;
     });
@@ -138,7 +142,7 @@ export class OrdensService {
     if (usuario.perfil !== 'comprador') {
       throw new ForbiddenException('Somente compradores podem comprar.');
     }
-    const resultado = await database.transaction(async (trx) => {
+    const resultado = await bancoDeDados.transaction(async (transacaoBanco) => {
       let produtoId: string;
       let turmaId: string;
       let temporada: number;
@@ -149,9 +153,9 @@ export class OrdensService {
       let ordemOrigemId: string | null = null;
 
       if (dto.origem === 'ORDEM') {
-        const ordem = await this.ordensRepository.findOne(
+        const ordem = await this.ordensRepositorio.buscarPorId(
           dto.origem_id,
-          trx,
+          transacaoBanco,
           true,
         );
         if (!ordem || ordem.tipo !== 'VENDA' || ordem.modalidade !== 'AVULSA') {
@@ -160,9 +164,9 @@ export class OrdensService {
         if (ordem.status !== 'ABERTA' || !ordem.fazenda_id) {
           throw new ConflictException('A oferta não está aberta.');
         }
-        const fazenda = await this.contextoMercadoRepository.findFazenda(
+        const fazenda = await this.contextoMercadoRepositorio.buscarFazenda(
           ordem.fazenda_id,
-          trx,
+          transacaoBanco,
         );
         if (!fazenda?.turma_id) {
           throw new BadRequestException(
@@ -177,9 +181,9 @@ export class OrdensService {
         vendedorId = ordem.usuario_id;
         ordemOrigemId = ordem.id;
       } else {
-        const grupo = await this.cooperativaRepository.findOne(
+        const grupo = await this.cooperativaRepositorio.buscarPorId(
           dto.origem_id,
-          trx,
+          transacaoBanco,
           true,
         );
         if (!grupo) {
@@ -188,19 +192,19 @@ export class OrdensService {
         if (grupo.status !== 'ABERTA') {
           throw new ConflictException('A venda conjunta não está aberta.');
         }
-        const contribuicoes = await this.ordensRepository.findContributions(
+        const contribuicoes = await this.ordensRepositorio.listarContribuicoes(
           grupo.id,
           'ABERTA',
-          trx,
+          transacaoBanco,
         );
         if (new Set(contribuicoes.map((item) => item.fazenda_id)).size < 2) {
           throw new BadRequestException(
             'A venda conjunta exige duas fazendas distintas.',
           );
         }
-        const fazenda = await this.contextoMercadoRepository.findFazenda(
+        const fazenda = await this.contextoMercadoRepositorio.buscarFazenda(
           contribuicoes[0].fazenda_id as string,
-          trx,
+          transacaoBanco,
         );
         if (!fazenda?.turma_id) {
           throw new BadRequestException('Fazenda sem turma.');
@@ -219,7 +223,7 @@ export class OrdensService {
         produtoId,
         turmaId,
         temporada,
-        trx,
+        transacaoBanco,
       );
       const preco = Number(cotacao.preco_atual);
       const valor = Math.round(quantidade * preco * 100) / 100;
@@ -228,7 +232,7 @@ export class OrdensService {
           'O valor da compra precisa ser de pelo menos um centavo.',
         );
       }
-      const compra = await this.ordensRepository.create(
+      const compra = await this.ordensRepositorio.criar(
         {
           tipo: 'COMPRA',
           modalidade: grupoId ? 'CONJUNTA' : 'AVULSA',
@@ -243,32 +247,36 @@ export class OrdensService {
           preco_unitario: preco,
           valor_total: valor,
         },
-        trx,
+        transacaoBanco,
       );
 
       if (grupoId) {
-        await this.ordensRepository.executeContributions(grupoId, preco, trx);
-        await this.cooperativaRepository.update(
+        await this.ordensRepositorio.executarContribuicoes(
+          grupoId,
+          preco,
+          transacaoBanco,
+        );
+        await this.cooperativaRepositorio.atualizar(
           grupoId,
           {
             status: 'AGUARDANDO_DISTRIBUICAO',
             valor_bruto: valor,
           },
-          trx,
+          transacaoBanco,
         );
       } else {
-        await this.ordensRepository.update(
+        await this.ordensRepositorio.atualizar(
           ordemOrigemId as string,
           {
             status: 'EXECUTADA',
             preco_unitario: preco,
             valor_total: valor,
           },
-          trx,
+          transacaoBanco,
         );
       }
 
-      await this.transacoesRepository.create(
+      await this.transacoesRepositorio.criar(
         {
           tipo: grupoId ? 'COMPRA_CONJUNTA' : 'COMPRA_AVULSA',
           ordem_id: compra.id,
@@ -278,9 +286,9 @@ export class OrdensService {
           fazenda_id: fazendaId,
           valor,
         },
-        trx,
+        transacaoBanco,
       );
-      await this.cotacoes.registrarVenda(cotacao, quantidade, trx);
+      await this.cotacoes.registrarVenda(cotacao, quantidade, transacaoBanco);
       return compra;
     });
     await this.cotacoes.invalidar(resultado.produto_id);
@@ -289,18 +297,25 @@ export class OrdensService {
 
   private async produto(
     id: string,
-    trx: import('knex').Knex.Transaction,
+    transacaoBanco: import('knex').Knex.Transaction,
     ativo = false,
   ) {
-    const produto = await this.produtosRepository.findOne(id, trx, ativo);
+    const produto = await this.produtosRepositorio.buscarPorId(
+      id,
+      transacaoBanco,
+      ativo,
+    );
     if (!produto) {
       throw new NotFoundException('Produto não encontrado.');
     }
     return produto;
   }
 
-  private produtoAtivo(id: string, trx: import('knex').Knex.Transaction) {
-    return this.produto(id, trx, true);
+  private produtoAtivo(
+    id: string,
+    transacaoBanco: import('knex').Knex.Transaction,
+  ) {
+    return this.produto(id, transacaoBanco, true);
   }
 
   private verificarPerfilConsulta(usuario: UsuarioMercado): void {
