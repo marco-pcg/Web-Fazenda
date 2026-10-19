@@ -20,7 +20,7 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/guards/permissions.guard';
 import { RequirePermissions } from '../../auth/decorators/permissions.decorator';
-import { ProdutosService } from './produtos.service';
+import { ProdutosServico } from './produtos.service';
 import type { UsuarioMercado } from '../shared/mercado.types';
 import { CriarProdutoDto } from './dto/criar-produto.dto';
 import { EditarProdutoDto } from './dto/editar-produto.dto';
@@ -30,8 +30,8 @@ import { FiltroProdutosDto } from './dto/filtro-produtos.dto';
 @ApiBearerAuth('jwt')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('produtos')
-export class ProdutosController {
-  constructor(private readonly produtos: ProdutosService) {}
+export class ProdutosControlador {
+  constructor(private readonly produtos: ProdutosServico) {}
 
   @Get()
   @RequirePermissions('mercado:consultar')
@@ -47,9 +47,9 @@ export class ProdutosController {
   @ApiResponse({ status: 201, description: 'Produto criado' })
   criar(
     @Body() dto: CriarProdutoDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.produtos.criar(dto, req.user);
+    return this.produtos.criar(dto, requisicao.user);
   }
 
   @Patch(':id')
@@ -59,8 +59,8 @@ export class ProdutosController {
   editar(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: EditarProdutoDto,
-    @Req() req: Request & { user: UsuarioMercado },
+    @Req() requisicao: Request & { user: UsuarioMercado },
   ) {
-    return this.produtos.editar(id, dto, req.user);
+    return this.produtos.editar(id, dto, requisicao.user);
   }
 }
