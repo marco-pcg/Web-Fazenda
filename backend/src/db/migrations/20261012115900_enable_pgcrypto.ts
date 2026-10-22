@@ -5,5 +5,4 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(_knex: Knex): Promise<void> {
-  // pgcrypto may be shared by tables outside this application's migrations.
 }

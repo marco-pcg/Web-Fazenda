@@ -155,7 +155,6 @@ export class TurmasRepository {
   }
 
   async adicionarAluno(turmaId: string, alunoId: string) {
-    // Adiciona na tabela pivot e atualiza turma_id no cadastro do usuário
     const [matricula] = await knex(this.pivotTable)
       .insert({
         turma_id: turmaId,
