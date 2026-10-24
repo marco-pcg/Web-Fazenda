@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTurmaDto } from './dto/create-turma.dto';
 import { UpdateTurmaDto } from './dto/update-turma.dto';
+import { TurmasRepository } from './turmas.repository';
+import { httpExceptions } from 'src/common/errors-handler/http-exceptions';
+import { randomUUID } from 'crypto';
+import { FilterTurmasDto } from './dto/filter-turma.dto';
 
 @Injectable()
 export class TurmasService {
-  create(createTurmaDto: CreateTurmaDto) {
-    return 'This action adds a new turma';
+  constructor(private readonly repository: TurmasRepository) { }
+
+  async create(createTurmaDto: CreateTurmaDto) {
+    const turmaExistente = await this.repository.findByCode(createTurmaDto.codigoTurma);
+
+    if (turmaExistente) {
+      throw httpExceptions().conflict();
+    }
+
+    const turma = { id: randomUUID(), ...createTurmaDto };
+    const [created] = await this.repository.create(turma);
+    return created;
   }
 
-  findAll() {
-    return `This action returns all turmas`;
+  async associarAlunos(turmaId: string, alunoId: string, user: any) {
+    const turmaExistente = await this.repository.findById(turmaId);
+
+    if (!turmaExistente) {
+      throw httpExceptions().notFound();
+    }
+
+    if (user?.perfil === "professor" && turmaExistente.professorId !== user.id) {
+      throw httpExceptions().forbidden();
+    }
+
+    const matriculado = await this.repository.verificarMatricula(turmaId, alunoId);
+
+    if (matriculado) {
+      throw httpExceptions().conflict();
+    }
+
+    const total = await this.repository.countAlunos(turmaId);
+
+    if (total >= turmaExistente.maxAlunos) {
+      throw httpExceptions().badRequest();
+    }
+
+    const [associated] = await this.repository.associarAlunos(turmaId, alunoId);
+    return associated;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} turma`;
-  }
-
-  update(id: number, updateTurmaDto: UpdateTurmaDto) {
-    return `This action updates a #${id} turma`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} turma`;
+  async findAll(filter: FilterTurmasDto) {
+    const turmas = await this.repository.findAll(filter);
+    return turmas;
   }
 }

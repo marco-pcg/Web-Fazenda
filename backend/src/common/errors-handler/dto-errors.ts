@@ -14,6 +14,15 @@ export function dtoErrors() {
         },
         isNotUUID: () => {
             return "O campo deve ser um UUID válido.";
+        },
+        isNotInt: () => {
+            return "O campo deve ser um número inteiro.";
+        },
+        belowTheMin: () => {
+            return "É necessário que o valor seja equivalente ou superior ao mínimo permitido.";
+        },
+        outsideTheLength: () => {
+            return "O valor deve estar dentro do tamanho permitido.";
         }
     }
 }
