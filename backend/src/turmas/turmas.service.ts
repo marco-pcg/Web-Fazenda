@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTurmaDto } from './dto/create-turma.dto';
-import { UpdateTurmaDto } from './dto/update-turma.dto';
 import { TurmasRepository } from './turmas.repository';
 import { httpExceptions } from 'src/common/errors-handler/http-exceptions';
 import { randomUUID } from 'crypto';

@@ -23,6 +23,9 @@ export function dtoErrors() {
         },
         outsideTheLength: () => {
             return "O valor deve estar dentro do tamanho permitido.";
+        },
+        isNotEmail: () => {
+            return "O campo deve ser um e-mail válido.";
         }
     }
 }

@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Param, Req, Query } from '@nestjs/common';
 import { TurmasService } from './turmas.service';
 import { CreateTurmaDto } from './dto/create-turma.dto';
-import { UpdateTurmaDto } from './dto/update-turma.dto';
 import { FilterTurmasDto } from './dto/filter-turma.dto';
 import { AssociarAlunosDto } from './dto/associar-aluno.dto';
 
