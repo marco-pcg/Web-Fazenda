@@ -2,10 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PerfisService } from './perfis.service';
 import { CreatePerfiDto } from './dto/create-perfi.dto';
 import { UpdatePerfiDto } from './dto/update-perfi.dto';
+import { VincularPermissoesDto } from './dto/vincular-permissoes.dto';
 
 @Controller('perfis')
 export class PerfisController {
-  constructor(private readonly perfisService: PerfisService) {}
+  constructor(private readonly perfisService: PerfisService) { }
 
   @Post()
   create(@Body() createPerfiDto: CreatePerfiDto) {
@@ -19,16 +20,11 @@ export class PerfisController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.perfisService.findOne(+id);
+    return this.perfisService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePerfiDto: UpdatePerfiDto) {
-    return this.perfisService.update(+id, updatePerfiDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.perfisService.remove(+id);
+  @Patch(':id/permissoes')
+  vincularPermissoes(@Param('id') id: string, @Body() vincularPermissoesDto: VincularPermissoesDto) {
+    return this.perfisService.vincularPermissoes(id, vincularPermissoesDto.permissoes);
   }
 }
