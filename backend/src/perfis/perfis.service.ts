@@ -4,6 +4,7 @@ import { UpdatePerfiDto } from './dto/update-perfi.dto';
 import { PerfisRepository } from './perfis.repository';
 import { httpExceptions } from 'src/common/errors-handler/http-exceptions';
 import { randomUUID } from 'crypto';
+import { PaginacaoDto } from 'src/common/dtos/paginacao.dto';
 
 @Injectable()
 export class PerfisService {
@@ -21,8 +22,8 @@ export class PerfisService {
     return created;
   }
 
-  async findAll() {
-    const perfis = await this.repository.findAll();
+  async findAll(filter: PaginacaoDto) {
+    const perfis = await this.repository.findAll(filter);
     return perfis;
   }
 
@@ -44,7 +45,7 @@ export class PerfisService {
       throw httpExceptions().notFound();
     }
 
-    const [updated] = await this.repository.vincularPermissoes(id, permissoes);
-    return { updated, message: "Permissões vinculadas com sucesso." };
+    await this.repository.vincularPermissoes(id, permissoes);
+    return { message: "Permissões vinculadas com sucesso." };
   }
 }

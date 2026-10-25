@@ -1,0 +1,26 @@
+import { Knex } from 'knex';
+
+export async function up(knex: Knex): Promise<void> {
+    await knex.schema.createTable('perfis', (table) => {
+        table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+        table.string('nome').notNullable();
+        table.string('descricao').defaultTo("");
+        table.boolean('ativo').defaultTo(true);
+        table.timestamps(true, true)
+    });
+
+    await knex.schema.createTable('permissoes', (table) => {
+        table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+        table.string('nome').unique().notNullable();
+        table.string('descricao').defaultTo("");
+        table.string('modulo').notNullable();
+        table.string('acao').notNullable();
+        table.timestamps(true, true)
+    });
+
+    await knex.schema.createTable('perfis_permissoes', (table) => {
+        table.uuid('perfilId').references('id').inTable('perfis').onDelete('CASCADE');
+        table.uuid('permissaoId').references('id').inTable('permissoes').onDelete('CASCADE');
+        table.primary(['perfilId', 'permissaoId'])
+    });
+}

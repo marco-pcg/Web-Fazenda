@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PerfisService } from './perfis.service';
 import { CreatePerfiDto } from './dto/create-perfi.dto';
 import { UpdatePerfiDto } from './dto/update-perfi.dto';
 import { VincularPermissoesDto } from './dto/vincular-permissoes.dto';
+import { PaginacaoDto } from 'src/common/dtos/paginacao.dto';
 
 @Controller('perfis')
 export class PerfisController {
@@ -14,8 +15,8 @@ export class PerfisController {
   }
 
   @Get()
-  findAll() {
-    return this.perfisService.findAll();
+  findAll(@Query() filter: PaginacaoDto) {
+    return this.perfisService.findAll(filter);
   }
 
   @Get(':id')
