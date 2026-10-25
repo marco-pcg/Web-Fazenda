@@ -23,4 +23,21 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid('permissaoId').references('id').inTable('permissoes').onDelete('CASCADE');
         table.primary(['perfilId', 'permissaoId'])
     });
+
+    await knex.schema.createTable('turmas', (table) => {
+        table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+        table.string('codigoTurma', 4).unique().notNullable();
+        table.string('nome').notNullable();
+        table.integer('ano').notNullable();
+        table.integer('maxAlunos').defaultTo(40);
+        table.uuid('professorId').notNullable();
+        table.timestamps(true, true);
+    });
+
+    await knex.schema.createTable('turma-alunos', (table) => {
+        table.uuid('turmaId').references('id').inTable('turmas').onDelete('CASCADE');
+        table.uuid('alunoId').references('id').inTable('usuarios').onDelete('CASCADE');
+        table.timestamp('created_at').defaultTo(knex.fn.now());
+        table.primary(['turmaId', 'alunoId'])
+    });
 }

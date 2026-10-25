@@ -38,7 +38,8 @@ export class TurmasService {
       throw httpExceptions().conflict();
     }
 
-    const total = await this.repository.countAlunos(turmaId);
+    const countResult = await this.repository.countAlunos(turmaId);
+    const total = countResult ? Number(countResult.count) : 0;
 
     if (total >= turmaExistente.maxAlunos) {
       throw httpExceptions().badRequest();
