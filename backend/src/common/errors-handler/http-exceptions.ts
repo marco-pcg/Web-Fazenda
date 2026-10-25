@@ -1,4 +1,4 @@
-import { ConflictException, HttpStatus, NotFoundException, ForbiddenException, BadRequestException } from "@nestjs/common";
+import { ConflictException, HttpStatus, NotFoundException, ForbiddenException, BadRequestException, UnauthorizedException } from "@nestjs/common";
 
 export function httpExceptions() {
     return {
@@ -13,6 +13,9 @@ export function httpExceptions() {
         },
         badRequest: () => {
             return new BadRequestException({ status: HttpStatus.BAD_REQUEST, message: 'Requisição inválida.' });
+        },
+        unauthorized: () => {
+            return new UnauthorizedException({ status: HttpStatus.UNAUTHORIZED, message: 'Não autorizado.' });
         }
     }
 }

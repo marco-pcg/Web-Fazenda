@@ -65,4 +65,8 @@ export class UsuariosRepository {
     async delete(id: string) {
         await knex(this.table).where({ id }).del();
     }
+
+    async findForAuth(email: string) {
+        return knex(this.table).join('perfis', 'usuarios.perfilId', '=', 'perfis.id').select(['usuarios.*', 'perfis.nome as perfil_nome']).where({ 'usuarios.email': email }).first();
+    }
 }
