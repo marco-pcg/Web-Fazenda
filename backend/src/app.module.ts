@@ -8,6 +8,12 @@ import { TurmasModule } from './turmas/turmas.module';
 import { PerfisModule } from './perfis/perfis.module';
 import { PermissoesModule } from './permissoes/permissoes.module';
 import { AuthModule } from './auth/auth.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CulturasModule } from './culturas/culturas.module';
+import { FazendasModule } from './fazendas/fazendas.module';
+import { TalhoesModule } from './talhoes/talhoes.module';
+import { PlantiosModule } from './plantios/plantios.module';
+import { ColheitasModule } from './colheitas/colheitas.module';
 
 @Module({
   imports: [
@@ -17,11 +23,17 @@ import { AuthModule } from './auth/auth.module';
         limit: 100,
       },
     ]),
+    ScheduleModule.forRoot(),
     PermissoesModule,
     PerfisModule,
     TurmasModule,
     UsuariosModule,
     AuthModule,
+    CulturasModule,
+    FazendasModule,
+    TalhoesModule,
+    PlantiosModule,
+    ColheitasModule,
   ],
   controllers: [AppController],
   providers: [
