@@ -13,7 +13,6 @@ export class ObterGraficoProblemaHandler implements IQueryHandler<ObterGraficoPr
       throw new NotFoundException('Desafio não encontrado.');
     }
 
-    // Retorna a estrutura necessária para a plotagem dos vértices da região viável no Frontend
     return {
       problemaId: problema.id,
       tipo: problema.tipo,
@@ -21,7 +20,6 @@ export class ObterGraficoProblemaHandler implements IQueryHandler<ObterGraficoPr
         x: problema.variaveis[0]?.nome || 'x1',
         y: problema.variaveis[1]?.nome || 'x2',
       },
-      // Calculado a partir do sistema de equações lineares do problema
       verticesRegiaoViavel: problema.verticesRegiaoViavel || [],
       pontoOtimo: {
         valorOtimoZ: problema.valorOtimoZ,

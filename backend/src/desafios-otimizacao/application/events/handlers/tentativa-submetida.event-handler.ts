@@ -7,7 +7,6 @@ export class TentativaSubmetidaEventHandler implements IEventHandler<TentativaSu
   constructor(private readonly rankingReadRepo: RankingReadRepository) {}
 
   async handle(event: TentativaSubmetidaEvent) {
-    // Sincroniza e atualiza a Tabela de Leitura (RankingReadModel)
     await this.rankingReadRepo.atualizarRanking({
       alunoId: event.alunoId,
       problemaId: event.problemaId,

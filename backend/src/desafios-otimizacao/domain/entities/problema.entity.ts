@@ -10,23 +10,21 @@ export interface CoeficienteObjetivo {
 
 export class ProblemaEntity {
   id: string;
-  titulo: string; // Ex: "Otimização de Plantio: Milho vs Soja"
+  titulo: string;
   descricao: string;
-  nivel: number; // Ex: 1, 2, 3
+  nivel: number;
   tipo: TipoObjetivo;
   prazoLimite: Date;
   limiteTentativas: number;
   publicado: boolean;
 
-  // Função Objetivo: Z = c1*x1 + c2*x2 + ...
   funcaoObjetivo: CoeficienteObjetivo[];
-  valorOtimoZ: number; // Z* calculado pelo professor ao criar
+  valorOtimoZ: number;
 
   variaveis: any[];
   restricoes: any[];
   tentativas: any[];
 
-  // Regra 13: Verifica se o problema possui tentativas vinculadas
   temTentativas(): boolean {
     return Array.isArray(this.tentativas) && this.tentativas.length > 0;
   }

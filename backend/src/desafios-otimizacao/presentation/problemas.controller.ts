@@ -50,7 +50,6 @@ export class ProblemasController {
     // Adiciona restrição
   }
 
-  // BÔNUS CQRS: Invocação do Command de Gravação + Correção
   @Post(':id/tentativas')
   async submeterTentativa(
     @Param('id') problemaId: string,

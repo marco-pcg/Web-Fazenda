@@ -7,7 +7,6 @@ export class ObterRankingProblemaHandler implements IQueryHandler<ObterRankingPr
   constructor(private readonly rankingReadRepo: RankingReadRepository) {}
 
   async execute(query: ObterRankingProblemaQuery) {
-    // Consulta direta e ultra-rápida na Tabela de Leitura (CQRS)
     return this.rankingReadRepo.obterRankingPorProblema(query.problemaId);
   }
 }

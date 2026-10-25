@@ -44,7 +44,6 @@ export class SubmeterTentativaHandler implements ICommandHandler<SubmeterTentati
     // Regra 10: Avaliação e Correção
     const resultado = this.avaliadorService.avaliarTentativa(problema, valores);
 
-    // Grava no banco de escrita
     const novaTentativa = await this.tentativaRepo.salvar({
       problemaId,
       alunoId,
@@ -55,7 +54,6 @@ export class SubmeterTentativaHandler implements ICommandHandler<SubmeterTentati
       criadoEm: new Date(),
     });
 
-    // Publica evento para atualizar a Tabela de Leitura (CQRS / Ranking)
     const publisher = this.eventPublisher.mergeObjectContext(novaTentativa);
     publisher.apply(new TentativaSubmetidaEvent(alunoId, problemaId, resultado.nota));
     publisher.commit();
