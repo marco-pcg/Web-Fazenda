@@ -40,4 +40,14 @@ export async function up(knex: Knex): Promise<void> {
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.primary(['turmaId', 'alunoId'])
     });
+
+    await knex.schema.createTable('usuarios', (table) => {
+        table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+        table.string('nome').notNullable();
+        table.string('email').unique().notNullable();
+        table.string('senha').notNullable();
+        table.uuid('perfilId').references('id').inTable('perfis').onDelete('RESTRICT').nullable();
+        table.uuid('turmaId').references('id').inTable('turmas').onDelete('SET NULL').nullable();
+        table.timestamps(true, true);
+    })
 }
