@@ -14,6 +14,7 @@ import { FazendasModule } from './fazendas/fazendas.module';
 import { TalhoesModule } from './talhoes/talhoes.module';
 import { PlantiosModule } from './plantios/plantios.module';
 import { ColheitasModule } from './colheitas/colheitas.module';
+import { DesafiosOtimizacaoModule } from './desafios-otimizacao/desafios-otimizacao.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ColheitasModule } from './colheitas/colheitas.module';
     TalhoesModule,
     PlantiosModule,
     ColheitasModule,
+    DesafiosOtimizacaoModule,
   ],
   controllers: [AppController],
   providers: [
