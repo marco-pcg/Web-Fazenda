@@ -4,16 +4,16 @@ import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
 
 export async function seed(knex: Knex): Promise<void> {
-  await knex('turma_alunos').del();
+  await knex('turma-alunos').del();
   await knex('usuarios').del();
   await knex('turmas').del();
-  await knex('perfil_permissao').del();
+  await knex('perfis_permissoes').del();
   await knex('permissoes').del();
   await knex('perfis').del();
 
-  const adminPerfilId = process.env.ADMIN_PERFIL_ID;
-  const professorPerfilId = process.env.PROF_PERFIL_ID;
-  const alunoPerfilId = process.env.ALUNO_PERFIL_ID;
+  const adminPerfilId = process.env.ADMIN_PERFIL_ID || randomUUID();
+  const professorPerfilId = process.env.PROF_PERFIL_ID || randomUUID();
+  const alunoPerfilId = process.env.ALUNO_PERFIL_ID || randomUUID();
 
   await knex('perfis').insert([
     { id: adminPerfilId, nome: 'admin', ativo: true },
@@ -109,10 +109,10 @@ export async function seed(knex: Knex): Promise<void> {
 
   await knex('permissoes').insert(permissoesComId);
 
-  const vinculos: { perfilId: string | undefined; permissoesId: string }[] = [];
+  const vinculos: { perfilId: string; permissaoId: string }[] = [];
 
   for (const perm of permissoesComId) {
-    vinculos.push({ perfilId: adminPerfilId, permissoesId: perm.id });
+    vinculos.push({ perfilId: adminPerfilId, permissaoId: perm.id });
   }
 
   const professorPerms = [
@@ -124,14 +124,14 @@ export async function seed(knex: Knex): Promise<void> {
   ];
   for (const perm of permissoesComId) {
     if (professorPerms.includes(perm.nome)) {
-      vinculos.push({ perfilId: professorPerfilId, permissoesId: perm.id });
+      vinculos.push({ perfilId: professorPerfilId, permissaoId: perm.id });
     }
   }
 
   const alunoPerms = ['LISTAR_TURMAS', 'BUSCAR_TURMA'];
   for (const perm of permissoesComId) {
     if (alunoPerms.includes(perm.nome)) {
-      vinculos.push({ perfilId: alunoPerfilId, permissoesId: perm.id });
+      vinculos.push({ perfilId: alunoPerfilId, permissaoId: perm.id });
     }
   }
 
@@ -148,7 +148,7 @@ export async function seed(knex: Knex): Promise<void> {
     nome: 'Administrador',
     email: `${process.env.ADMIN_E_ADR}`,
     senha: adminSenhaHash,
-    perfil_id: adminPerfilId,
-    turma_id: null,
+    perfilId: adminPerfilId,
+    turmaId: null,
   });
 }

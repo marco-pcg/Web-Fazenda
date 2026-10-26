@@ -16,6 +16,7 @@ import { PlantiosModule } from './plantios/plantios.module';
 import { ColheitasModule } from './colheitas/colheitas.module';
 import { DesafiosOtimizacaoModule } from './desafios-otimizacao/desafios-otimizacao.module';
 import { EstacoesAnimaisModule } from './estacoes-animais/estacoes-animais.module';
+import { MercadoModulo } from './mercado/mercado.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { EstacoesAnimaisModule } from './estacoes-animais/estacoes-animais.modul
     ColheitasModule,
     DesafiosOtimizacaoModule,
     EstacoesAnimaisModule,
+    MercadoModulo,
   ],
   controllers: [AppController],
   providers: [

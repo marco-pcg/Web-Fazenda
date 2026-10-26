@@ -58,7 +58,7 @@ export class AuthService {
     }
 
     const usuario = { id: randomUUID(), nome: createUsuarioDto.nome, email: createUsuarioDto.email, senha: hashDeSenha, perfilId, turmaId: createUsuarioDto.turmaId || undefined };
-    const [created] = await this.usuariosRepository.create(usuario);
+    const created = await this.usuariosRepository.create(usuario);
     const { senha, ...userSemSenha } = created;
 
     return userSemSenha;

@@ -45,7 +45,7 @@ export class PerfisRepository {
     }
 
     async findPermissoesById(id: string) {
-        return knex(this.pivotTable).where({ perfilId: id }).pluck('permissaoId');
+        return knex(this.pivotTable).join('permissoes', 'permissoes.id', `${this.pivotTable}.permissaoId`).where({ perfilId: id }).select('permissoes.id', 'permissoes.nome');
     }
 
     async vincularPermissoes(perfilId: string, permissoes: string[]) {

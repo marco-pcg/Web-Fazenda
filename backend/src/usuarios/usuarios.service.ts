@@ -25,7 +25,7 @@ export class UsuariosService {
 
     const usuario = { id: randomUUID(), ...dadosLimpos, senha: hashDeSenha };
 
-    const [created] = await this.repository.create(usuario);
+    const created = await this.repository.create(usuario);
     const { senha, ...userSemSenha } = created;
     return userSemSenha;
   }
@@ -68,7 +68,7 @@ export class UsuariosService {
       updatedData.senha = await bcrypt.hash(updateUsuarioDto.senha, salt);
     }
 
-    const [updated] = await this.repository.update(id, updatedData);
+    const updated = await this.repository.update(id, updatedData);
     const { senha, ...usuario } = updated;
     return usuario;
   }

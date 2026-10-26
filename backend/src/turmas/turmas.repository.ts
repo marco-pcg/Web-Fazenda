@@ -10,10 +10,10 @@ export class TurmasRepository {
     private readonly pivotTable = 'turma-alunos';
 
     async findByCode(codigo: string) {
-        return knex(this.table).where({ codigo }).first();
+        return knex(this.table).where({ codigoTurma: codigo }).first();
     }
 
-    async create(data: CreateTurmaDto) {
+    async create(data: Omit<CreateTurmaDto, 'idProfessor'> & { id: string; professorId: string }) {
         return knex(this.table).insert(data).returning('*');
     }
 

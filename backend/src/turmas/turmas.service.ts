@@ -16,7 +16,8 @@ export class TurmasService {
       throw httpExceptions().conflict();
     }
 
-    const turma = { id: randomUUID(), ...createTurmaDto };
+    const { idProfessor, ...dadosTurma } = createTurmaDto;
+    const turma = { id: randomUUID(), ...dadosTurma, professorId: idProfessor };
     const [created] = await this.repository.create(turma);
     return created;
   }
@@ -45,7 +46,7 @@ export class TurmasService {
       throw httpExceptions().badRequest();
     }
 
-    const [associated] = await this.repository.associarAlunos(turmaId, alunoId);
+    const associated = await this.repository.associarAlunos(turmaId, alunoId);
     return associated;
   }
 
