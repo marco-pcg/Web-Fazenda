@@ -19,7 +19,7 @@ export class CreateTurmaDto {
 
     @IsInt({ message: dtoErrors().isNotInt() })
     @IsNotEmpty({ message: dtoErrors().isEmpty() })
-    @Min(valorMin, { message: dtoErrors().belowTheMin() })
+    @Min(valorMin, { message: dtoErrors().belowTheMin() + " " + valorMin })
     maxAlunos: number;
 
     @IsUUID('all', { message: dtoErrors().isNotUUID() })
