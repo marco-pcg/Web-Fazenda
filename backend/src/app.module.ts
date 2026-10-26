@@ -15,6 +15,7 @@ import { TalhoesModule } from './talhoes/talhoes.module';
 import { PlantiosModule } from './plantios/plantios.module';
 import { ColheitasModule } from './colheitas/colheitas.module';
 import { DesafiosOtimizacaoModule } from './desafios-otimizacao/desafios-otimizacao.module';
+import { EstacoesAnimaisModule } from './estacoes-animais/estacoes-animais.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { DesafiosOtimizacaoModule } from './desafios-otimizacao/desafios-otimiza
     PlantiosModule,
     ColheitasModule,
     DesafiosOtimizacaoModule,
+    EstacoesAnimaisModule,
   ],
   controllers: [AppController],
   providers: [
