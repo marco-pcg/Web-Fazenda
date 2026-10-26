@@ -47,7 +47,7 @@ export class PlantiosController {
 
   @Post(':id/colher')
   @RequirePermissions('COLHER_PLANTIO')
-  @ApiOperation({ summary: 'Colhe um plantio' })
+  @ApiOperation({ summary: 'Colhe um plantio e credita no estoque' })
   colher(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dados: ColherPlantioDto,
