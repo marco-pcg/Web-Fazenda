@@ -34,13 +34,6 @@ export async function up(knex: Knex): Promise<void> {
         table.timestamps(true, true);
     });
 
-    await knex.schema.createTable('turma-alunos', (table) => {
-        table.uuid('turmaId').references('id').inTable('turmas').onDelete('CASCADE');
-        table.uuid('alunoId').references('id').inTable('usuarios').onDelete('CASCADE');
-        table.timestamp('created_at').defaultTo(knex.fn.now());
-        table.primary(['turmaId', 'alunoId'])
-    });
-
     await knex.schema.createTable('usuarios', (table) => {
         table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
         table.string('nome').notNullable();
@@ -50,4 +43,20 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid('turmaId').references('id').inTable('turmas').onDelete('SET NULL').nullable();
         table.timestamps(true, true);
     })
+
+    await knex.schema.createTable('turma-alunos', (table) => {
+        table.uuid('turmaId').references('id').inTable('turmas').onDelete('CASCADE');
+        table.uuid('alunoId').references('id').inTable('usuarios').onDelete('CASCADE');
+        table.timestamp('created_at').defaultTo(knex.fn.now());
+        table.primary(['turmaId', 'alunoId'])
+    });
+}
+
+export async function down(knex: Knex): Promise<void> {
+    await knex.schema.dropTableIfExists('turma-alunos');
+    await knex.schema.dropTableIfExists('usuarios');
+    await knex.schema.dropTableIfExists('turmas');
+    await knex.schema.dropTableIfExists('perfis_permissoes');
+    await knex.schema.dropTableIfExists('permissoes');
+    await knex.schema.dropTableIfExists('perfis');
 }

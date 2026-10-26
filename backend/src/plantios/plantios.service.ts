@@ -11,7 +11,6 @@ import { TalhoesRepository } from '../talhoes/talhoes.repository';
 import { FazendasRepository } from '../fazendas/fazendas.repository';
 import { CulturasRepository } from '../culturas/culturas.repository';
 import { ColheitasRepository } from '../colheitas/colheitas.repository';
-import { EstoqueServico } from '../mercado/estoque/estoque.service';
 import { CreatePlantioDto } from './dto/create-plantio.dto';
 import { ColherPlantioDto } from './dto/colher-plantio.dto';
 import { FiltroPlantioDto } from './dto/filtro-plantio.dto';
@@ -29,7 +28,6 @@ export class PlantiosService {
     private readonly fazendasRepository: FazendasRepository,
     private readonly culturasRepository: CulturasRepository,
     private readonly colheitasRepository: ColheitasRepository,
-    private readonly estoqueService: EstoqueServico,
   ) {}
 
   async create(dados: CreatePlantioDto) {
@@ -191,13 +189,6 @@ export class PlantiosService {
         { status: 'livre' },
         trx,
       );
-      await this.estoqueService.creditarColheita(
-        talhao.fazendaId,
-        plantio.culturaId,
-        colheita.quantidadeColhida,
-        trx,
-      );
-
       return colheita;
     });
   }
