@@ -77,7 +77,7 @@ export class TemporadasController {
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({
     summary:
-      'Avança a temporada: ativa uma planejada ou encerra a ativa e ativa a próxima',
+      'Avança a temporada em segundo plano: ativa uma planejada ou processa rebanhos, encerra a ativa e ativa a próxima',
   })
   @ApiResponse({ status: 202, description: 'Avanço da temporada iniciado' })
   @ApiResponse({ status: 400, description: 'ID inválido' })
@@ -94,6 +94,10 @@ export class TemporadasController {
   @ApiResponse({
     status: 422,
     description: 'Já existe uma temporada ativa na turma',
+  })
+  @ApiResponse({
+    status: 503,
+    description: 'Fila de processamento indisponível',
   })
   async avancar(
     @Param('id', ParseUUIDPipe) id: string,

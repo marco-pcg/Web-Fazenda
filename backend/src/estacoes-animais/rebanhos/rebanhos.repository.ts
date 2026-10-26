@@ -37,6 +37,21 @@ export class RebanhosRepository {
     return paginar<Rebanho>(query, page, limit);
   }
 
+  async listarPorFazendas(
+    fazenda_ids: string[],
+    trx?: Knex.Transaction,
+  ): Promise<Rebanho[]> {
+    if (fazenda_ids.length === 0) {
+      return [];
+    }
+
+    const db = trx || knex;
+    const rebanhos = await db<Rebanho>(this.table)
+      .whereIn('fazenda_id', fazenda_ids)
+      .orderBy('created_at', 'asc');
+    return rebanhos;
+  }
+
   async findPorFazendaEEspecie(
     fazenda_id: string,
     especie_id: string,
