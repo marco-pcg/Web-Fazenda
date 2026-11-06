@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Web Fazenda — frontend
 
-## Getting Started
+Interface em Next.js, React e TypeScript.
 
-First, run the development server:
+## Desenvolvimento
 
-```bash
+Use Node.js 24 (a versão usada no CI, definida em `.nvmrc`):
+
+```sh
+cd frontend
+nvm use
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Verificações
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Execute todas as verificações antes de enviar alterações:
 
-## Learn More
+```sh
+npm run check
+```
 
-To learn more about Next.js, take a look at the following resources:
+O comando executa, em ordem: ESLint sem avisos, geração dos tipos de rotas e
+checagem TypeScript, todos os testes com cobertura e build de produção.
+A primeira falha interrompe o comando com código de saída diferente de zero.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Comandos individuais:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Comando                 | Finalidade                                   |
+| ----------------------- | -------------------------------------------- |
+| `npm run lint`          | ESLint                                       |
+| `npm run typecheck`     | Tipos das rotas Next.js e TypeScript         |
+| `npm test`              | Todos os arquivos `*.test.ts` e `*.test.tsx` |
+| `npm run test:watch`    | Testes em modo interativo                    |
+| `npm run test:coverage` | Testes e relatórios em `coverage/`           |
+| `npm run build`         | Build de produção                            |
 
-## Deploy on Vercel
+Os testes usam Vitest, jsdom e React Testing Library. A configuração está em
+`vitest.config.mts`; `tests/setup.ts` registra os matchers de DOM e limpa a página
+entre os testes. A suíte inicial verifica a navegação pelos módulos, a seleção de
+recursos e a limpeza da seleção ao trocar de módulo. Não depende do backend.
+O relatório HTML pode ser aberto em `coverage/index.html` após rodar a cobertura.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## GitHub Actions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+O workflow `.github/workflows/frontend-ci.yml` executa as mesmas verificações
+em pushes e pull requests que alterem `frontend/` ou o próprio workflow.
+Ele usa Node.js 24, instalação reproduzível com `npm ci`, cache do npm,
+permissão de leitura e cancelamento de execuções anteriores da mesma branch/PR.
+Os passos separados mostram qual verificação falhou. Também há acionamento
+manual em **Actions → Frontend CI → Run workflow** após o workflow estar na
+branch padrão.
+
+Para exigir sucesso antes do merge, configure o check **Frontend checks** nas
+regras de proteção da branch. O workflow precisa executar primeiro para que o
+check possa ser selecionado. Como há filtro por caminho, use essa exigência
+somente com uma regra que considere PRs sem alterações no frontend.
+
+O build usa `next/font/google` e precisa acessar o Google Fonts. Este workflow
+valida o frontend; deployment automático depende da escolha do provedor e das
+credenciais do ambiente.

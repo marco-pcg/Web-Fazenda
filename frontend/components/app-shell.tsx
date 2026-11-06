@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ModuleCard, type FarmModule } from "./module-card";
 import { EmptyState } from "./empty-state";
 
@@ -60,12 +61,12 @@ export function AppShell() {
         Pular para o conteúdo
       </a>
       <aside className="sidebar">
-        <a className="brand" href="/" aria-label="Web Fazenda, início">
+        <Link className="brand" href="/" aria-label="Web Fazenda, início">
           <span className="brand-mark">wf.</span>
           <span>
             web fazenda<small>APRENDER. CULTIVAR. CRESCER.</small>
           </span>
-        </a>
+        </Link>
         <p className="nav-label">ESPAÇO DE TRABALHO</p>
         <nav aria-label="Navegação principal">
           <button
