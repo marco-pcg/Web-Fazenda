@@ -1,10 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-<<<<<<< HEAD
-import { AppService } from './app.service';
-=======
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AppService } from './app.service.js';
->>>>>>> 0320435 (feat: add Swagger documentation to the API)
+import { AppService } from './app.service';
 
 @ApiTags('health')
 @Controller()

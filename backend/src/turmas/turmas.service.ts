@@ -39,14 +39,12 @@ export class TurmasService {
       throw new NotFoundException(`Turma não encontrada`);
     }
 
-    // Regra de negócio: o professor só acessa a própria turma
     if (user?.perfil === 'professor' && turma.professor_id !== user.id) {
       throw new ForbiddenException(
         'Você só pode acessar turmas das quais é o professor responsável.',
       );
     }
 
-    // Regra de negócio: aluno só acessa a própria turma
     if (user?.perfil === 'aluno') {
       const alunoMatriculado = await this.repository.verificarMatricula(
         turma.id,
