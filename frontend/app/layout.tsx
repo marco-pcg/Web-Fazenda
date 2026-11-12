@@ -1,29 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { ReactNode } from "react";
+import { ContextProvider } from "@/components/providers/context-provider";
+import { WorkspaceShell } from "@/components/shared/workspace-shell";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Web-Fazenda",
+  title: { default: "Web Fazenda", template: "%s | Web Fazenda" },
   description: "Plataforma de gestão acadêmica e agropecuária",
 };
-
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className="bg-background text-foreground antialiased">
+        <ContextProvider>
+          <WorkspaceShell>{children}</WorkspaceShell>
+        </ContextProvider>
+      </body>
     </html>
   );
 }

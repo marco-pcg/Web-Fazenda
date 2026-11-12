@@ -40,8 +40,8 @@ Comandos individuais:
 
 Os testes usam Vitest, jsdom e React Testing Library. A configuração está em
 `vitest.config.mts`; `tests/setup.ts` registra os matchers de DOM e limpa a página
-entre os testes. A suíte inicial verifica a navegação pelos módulos, a seleção de
-recursos e a limpeza da seleção ao trocar de módulo. Não depende do backend.
+entre os testes. A suíte verifica serialização dos formulários, confirmações, paginação,
+permissões de componentes e troca de tema. Não depende do backend.
 O relatório HTML pode ser aberto em `coverage/index.html` após rodar a cobertura.
 
 ## GitHub Actions
@@ -62,3 +62,9 @@ somente com uma regra que considere PRs sem alterações no frontend.
 O build usa `next/font/google` e precisa acessar o Google Fonts. Este workflow
 valida o frontend; deployment automático depende da escolha do provedor e das
 credenciais do ambiente.
+
+## Componentes e rotas
+
+A base de componentes usa shadcn/ui, ícones Lucide, Tailwind e next-themes.
+Consulte [a estrutura e os limites desta etapa](docs/frontend-foundation.md).
+A fonte dos contratos está em `docs/backend-endpoints.json`.

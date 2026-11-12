@@ -1,0 +1,3713 @@
+[
+  {
+    "key": "saude",
+    "title": "health",
+    "endpoints": [
+      {
+        "id": "getHello",
+        "method": "GET",
+        "path": "/",
+        "route": "/saude",
+        "title": "Verifica se a API está disponível",
+        "permission": null,
+        "authenticated": false,
+        "body": [],
+        "query": [],
+        "params": [],
+        "source": "backend/src/app.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "auth",
+    "title": "Auth",
+    "endpoints": [
+      {
+        "id": "login",
+        "method": "POST",
+        "path": "/auth/login",
+        "route": "/auth/login",
+        "title": "Realiza autenticação e retorna o JWT",
+        "permission": null,
+        "authenticated": false,
+        "body": [
+          {
+            "name": "email",
+            "label": "E-mail",
+            "kind": "email",
+            "required": true,
+            "description": "E-mail do usuário"
+          },
+          {
+            "name": "senha",
+            "label": "Senha",
+            "kind": "password",
+            "required": true,
+            "description": "Senha de acesso",
+            "minLength": 6
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "LoginDto",
+        "source": "backend/src/auth/auth.controller.ts"
+      },
+      {
+        "id": "registro",
+        "method": "POST",
+        "path": "/auth/registro",
+        "route": "/auth/registro",
+        "title": "Registra um novo usuário no sistema",
+        "permission": null,
+        "authenticated": false,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome do usuário"
+          },
+          {
+            "name": "email",
+            "label": "E-mail",
+            "kind": "email",
+            "required": true,
+            "description": "E-mail do usuário"
+          },
+          {
+            "name": "senha",
+            "label": "Senha",
+            "kind": "password",
+            "required": true,
+            "description": "Senha de acesso",
+            "minLength": 6
+          },
+          {
+            "name": "perfil_id",
+            "label": "ID do perfil",
+            "kind": "text",
+            "required": false,
+            "description": "ID do perfil associado",
+            "format": "uuid"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "ID da turma vinculada (caso seja aluno)",
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateUsuarioDto",
+        "source": "backend/src/auth/auth.controller.ts"
+      },
+      {
+        "id": "getMe",
+        "method": "GET",
+        "path": "/auth/me",
+        "route": "/auth/me",
+        "title": "Retorna informações do usuário autenticado no token",
+        "permission": null,
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [],
+        "source": "backend/src/auth/auth.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "colheitas",
+    "title": "Colheitas",
+    "endpoints": [
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/colheitas",
+        "route": "/colheitas",
+        "title": "Lista as colheitas",
+        "permission": "colheitas:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": false,
+            "description": "Id da fazenda",
+            "format": "uuid"
+          },
+          {
+            "name": "cultura_id",
+            "label": "ID da cultura",
+            "kind": "text",
+            "required": false,
+            "description": "Id da cultura",
+            "format": "uuid"
+          },
+          {
+            "name": "temporada",
+            "label": "Temporada",
+            "kind": "number",
+            "required": false,
+            "description": "Número da temporada",
+            "step": 1
+          },
+          {
+            "name": "antecipada",
+            "label": "Antecipada",
+            "kind": "select",
+            "required": false,
+            "description": "true ou false",
+            "options": ["true", "false"]
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroColheitaDto",
+        "source": "backend/src/colheitas/colheitas.controller.ts"
+      },
+      {
+        "id": "findOne",
+        "method": "GET",
+        "path": "/colheitas/:id",
+        "route": "/colheitas/[id]",
+        "title": "Mostra uma colheita",
+        "permission": "colheitas:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/colheitas/colheitas.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "culturas",
+    "title": "Culturas",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/culturas",
+        "route": "/culturas/novo",
+        "title": "Cadastra uma cultura",
+        "permission": "culturas:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome da cultura"
+          },
+          {
+            "name": "estacoes",
+            "label": "Estações",
+            "kind": "array",
+            "required": true,
+            "description": "Estações do plantio",
+            "options": ["primavera", "verao", "outono", "inverno"]
+          },
+          {
+            "name": "area_por_unidade",
+            "label": "Area por unidade",
+            "kind": "number",
+            "required": true,
+            "description": "Canteiros por unidade",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "agua_por_unidade",
+            "label": "Agua por unidade",
+            "kind": "number",
+            "required": true,
+            "description": "Baldes de água por unidade",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "dias_crescimento",
+            "label": "Dias crescimento",
+            "kind": "number",
+            "required": true,
+            "description": "Dias para crescer",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "rendimento_por_unidade",
+            "label": "Rendimento por unidade",
+            "kind": "number",
+            "required": true,
+            "description": "Kg colhidos por unidade",
+            "step": "any"
+          },
+          {
+            "name": "valor_por_unidade",
+            "label": "Valor por unidade",
+            "kind": "number",
+            "required": true,
+            "description": "Lucro por unidade",
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateCulturaDto",
+        "source": "backend/src/culturas/culturas.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/culturas",
+        "route": "/culturas",
+        "title": "Lista as culturas",
+        "permission": "culturas:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Parte do nome"
+          },
+          {
+            "name": "estacao",
+            "label": "Estacao",
+            "kind": "text",
+            "required": false,
+            "description": "primavera, verao, outono ou inverno"
+          },
+          {
+            "name": "dias_maximo",
+            "label": "Dias maximo",
+            "kind": "number",
+            "required": false,
+            "description": "Dias de crescimento no máximo",
+            "step": 1
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroCulturaDto",
+        "source": "backend/src/culturas/culturas.controller.ts"
+      },
+      {
+        "id": "findOne",
+        "method": "GET",
+        "path": "/culturas/:id",
+        "route": "/culturas/[id]",
+        "title": "Mostra uma cultura",
+        "permission": "culturas:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/culturas/culturas.controller.ts"
+      },
+      {
+        "id": "update",
+        "method": "PATCH",
+        "path": "/culturas/:id",
+        "route": "/culturas/[id]/editar",
+        "title": "Atualiza uma cultura",
+        "permission": "culturas:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Nome da cultura"
+          },
+          {
+            "name": "estacoes",
+            "label": "Estações",
+            "kind": "array",
+            "required": false,
+            "description": "Estações do plantio",
+            "options": ["primavera", "verao", "outono", "inverno"]
+          },
+          {
+            "name": "area_por_unidade",
+            "label": "Area por unidade",
+            "kind": "number",
+            "required": false,
+            "description": "Canteiros por unidade",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "agua_por_unidade",
+            "label": "Agua por unidade",
+            "kind": "number",
+            "required": false,
+            "description": "Baldes de água por unidade",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "dias_crescimento",
+            "label": "Dias crescimento",
+            "kind": "number",
+            "required": false,
+            "description": "Dias para crescer",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "rendimento_por_unidade",
+            "label": "Rendimento por unidade",
+            "kind": "number",
+            "required": false,
+            "description": "Kg colhidos por unidade",
+            "step": "any"
+          },
+          {
+            "name": "valor_por_unidade",
+            "label": "Valor por unidade",
+            "kind": "number",
+            "required": false,
+            "description": "Lucro por unidade",
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "UpdateCulturaDto",
+        "source": "backend/src/culturas/culturas.controller.ts"
+      },
+      {
+        "id": "remove",
+        "method": "DELETE",
+        "path": "/culturas/:id",
+        "route": "/culturas/[id]/excluir",
+        "title": "Exclui uma cultura",
+        "permission": "culturas:deletar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/culturas/culturas.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "especies",
+    "title": "Espécies",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/especies",
+        "route": "/especies",
+        "title": "Lista as espécies com filtros por nome e produto",
+        "permission": "especies:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar por parte do nome"
+          },
+          {
+            "name": "produto",
+            "label": "Produto",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar por parte do produto"
+          }
+        ],
+        "params": [],
+        "queryDto": "QueryEspecieDto",
+        "source": "backend/src/estacoes-animais/especies/especies.controller.ts"
+      },
+      {
+        "id": "criar",
+        "method": "POST",
+        "path": "/especies",
+        "route": "/especies/novo",
+        "title": "Cadastra uma nova espécie (admin e professor)",
+        "permission": "especies:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome da espécie",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          {
+            "name": "produto",
+            "label": "Produto",
+            "kind": "text",
+            "required": true,
+            "description": "Produto gerado pela espécie"
+          },
+          {
+            "name": "unidade_produto",
+            "label": "Unidade produto",
+            "kind": "text",
+            "required": true,
+            "description": "Unidade de medida do produto"
+          },
+          {
+            "name": "consumo_racao_por_animal",
+            "label": "Consumo racao por animal",
+            "kind": "number",
+            "required": true,
+            "description": "Quantidade de ração consumida por animal na temporada",
+            "min": 0,
+            "step": "any"
+          },
+          {
+            "name": "producao_por_animal",
+            "label": "Producao por animal",
+            "kind": "number",
+            "required": true,
+            "description": "Quantidade de produto gerada por animal na temporada",
+            "min": 0,
+            "step": "any"
+          },
+          {
+            "name": "preco_base",
+            "label": "Preço base",
+            "kind": "number",
+            "required": true,
+            "description": "Preço base de uma unidade do produto",
+            "min": 0,
+            "step": "any"
+          },
+          {
+            "name": "taxa_crescimento",
+            "label": "Taxa crescimento",
+            "kind": "number",
+            "required": true,
+            "description": "Taxa de crescimento do rebanho por temporada (0 a 1)",
+            "min": 0,
+            "max": 1,
+            "step": "any"
+          },
+          {
+            "name": "ativo",
+            "label": "Ativo",
+            "kind": "boolean",
+            "required": false,
+            "description": "Se a espécie está disponível"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateEspecieDto",
+        "source": "backend/src/estacoes-animais/especies/especies.controller.ts"
+      },
+      {
+        "id": "atualizar",
+        "method": "PATCH",
+        "path": "/especies/:id",
+        "route": "/especies/[id]/editar",
+        "title": "Atualiza dados de uma espécie (admin e professor)",
+        "permission": "especies:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Nome da espécie",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          {
+            "name": "produto",
+            "label": "Produto",
+            "kind": "text",
+            "required": false,
+            "description": "Produto gerado pela espécie"
+          },
+          {
+            "name": "unidade_produto",
+            "label": "Unidade produto",
+            "kind": "text",
+            "required": false,
+            "description": "Unidade de medida do produto"
+          },
+          {
+            "name": "consumo_racao_por_animal",
+            "label": "Consumo racao por animal",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de ração consumida por animal na temporada",
+            "min": 0,
+            "step": "any"
+          },
+          {
+            "name": "producao_por_animal",
+            "label": "Producao por animal",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de produto gerada por animal na temporada",
+            "min": 0,
+            "step": "any"
+          },
+          {
+            "name": "preco_base",
+            "label": "Preço base",
+            "kind": "number",
+            "required": false,
+            "description": "Preço base de uma unidade do produto",
+            "min": 0,
+            "step": "any"
+          },
+          {
+            "name": "taxa_crescimento",
+            "label": "Taxa crescimento",
+            "kind": "number",
+            "required": false,
+            "description": "Taxa de crescimento do rebanho por temporada (0 a 1)",
+            "min": 0,
+            "max": 1,
+            "step": "any"
+          },
+          {
+            "name": "ativo",
+            "label": "Ativo",
+            "kind": "boolean",
+            "required": false,
+            "description": "Se a espécie está disponível"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "UpdateEspecieDto",
+        "source": "backend/src/estacoes-animais/especies/especies.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "estacoes",
+    "title": "Estações",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/estacoes",
+        "route": "/estacoes",
+        "title": "Lista as estações com filtros por nome e ordem",
+        "permission": "estacoes:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "select",
+            "required": false,
+            "description": "Filtrar pelo nome da estação",
+            "options": ["PRIMAVERA", "VERAO", "OUTONO", "INVERNO"]
+          },
+          {
+            "name": "ordem",
+            "label": "Ordem",
+            "kind": "number",
+            "required": false,
+            "description": "Filtrar pela ordem",
+            "step": 1
+          }
+        ],
+        "params": [],
+        "queryDto": "QueryEstacaoDto",
+        "source": "backend/src/estacoes-animais/estacoes/estacoes.controller.ts"
+      },
+      {
+        "id": "criar",
+        "method": "POST",
+        "path": "/estacoes",
+        "route": "/estacoes/novo",
+        "title": "Cadastra uma nova estação (somente admin)",
+        "permission": "estacoes:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "select",
+            "required": true,
+            "description": "Nome da estação",
+            "options": ["PRIMAVERA", "VERAO", "OUTONO", "INVERNO"]
+          },
+          {
+            "name": "ordem",
+            "label": "Ordem",
+            "kind": "number",
+            "required": true,
+            "description": "Ordem da estação no ano",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "fator_produtividade",
+            "label": "Fator produtividade",
+            "kind": "number",
+            "required": false,
+            "description": "Multiplicador da produção na estação",
+            "step": "any"
+          },
+          {
+            "name": "fator_agua",
+            "label": "Fator agua",
+            "kind": "number",
+            "required": false,
+            "description": "Multiplicador do consumo de água na estação",
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateEstacaoDto",
+        "source": "backend/src/estacoes-animais/estacoes/estacoes.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "eventos",
+    "title": "Eventos climáticos",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/eventos",
+        "route": "/eventos",
+        "title": "Lista eventos climáticos com filtros (aluno só vê os da própria turma)",
+        "permission": "eventos:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "tipo",
+            "label": "Tipo",
+            "kind": "select",
+            "required": false,
+            "description": "Filtrar pelo tipo",
+            "options": [
+              "SECA",
+              "CHUVA_FORTE",
+              "GEADA",
+              "ONDA_CALOR",
+              "BOA_SAFRA"
+            ]
+          },
+          {
+            "name": "temporada_id",
+            "label": "ID da temporada",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pela temporada (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pela turma (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "kind": "select",
+            "required": false,
+            "description": "Filtrar pelo status",
+            "options": ["ATIVO", "ENCERRADO"]
+          }
+        ],
+        "params": [],
+        "queryDto": "QueryEventoClimaticoDto",
+        "source": "backend/src/estacoes-animais/eventos-climaticos/eventos-climaticos.controller.ts"
+      },
+      {
+        "id": "criar",
+        "method": "POST",
+        "path": "/eventos",
+        "route": "/eventos/novo",
+        "title": "Dispara um evento climático que afeta todas as fazendas da turma da temporada",
+        "permission": "eventos:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "temporada_id",
+            "label": "ID da temporada",
+            "kind": "text",
+            "required": true,
+            "description": "ID da temporada ativa (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "tipo",
+            "label": "Tipo",
+            "kind": "select",
+            "required": true,
+            "description": "Tipo do evento climático",
+            "options": [
+              "SECA",
+              "CHUVA_FORTE",
+              "GEADA",
+              "ONDA_CALOR",
+              "BOA_SAFRA"
+            ]
+          },
+          {
+            "name": "alvo",
+            "label": "Alvo",
+            "kind": "select",
+            "required": true,
+            "description": "O que o evento afeta nas fazendas",
+            "options": ["AGUA", "PRODUTIVIDADE"]
+          },
+          {
+            "name": "multiplicador",
+            "label": "Multiplicador",
+            "kind": "number",
+            "required": true,
+            "description": "Multiplicador aplicado ao alvo (menor que 1 reduz, maior que 1 aumenta)",
+            "max": 5,
+            "step": "any"
+          },
+          {
+            "name": "descricao",
+            "label": "Descrição",
+            "kind": "text",
+            "required": false,
+            "description": "Descrição do evento",
+            "maxLength": 200
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateEventoClimaticoDto",
+        "source": "backend/src/estacoes-animais/eventos-climaticos/eventos-climaticos.controller.ts"
+      },
+      {
+        "id": "encerrar",
+        "method": "DELETE",
+        "path": "/eventos/:id",
+        "route": "/eventos/[id]/excluir",
+        "title": "Encerra um evento climático e reverte seus efeitos",
+        "permission": "eventos:encerrar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/estacoes-animais/eventos-climaticos/eventos-climaticos.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "producoes",
+    "title": "Produções",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/producoes",
+        "route": "/producoes",
+        "title": "Lista produções com filtros por produto, período, rebanho, temporada e fazenda",
+        "permission": "producoes:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "produto",
+            "label": "Produto",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar por parte do produto"
+          },
+          {
+            "name": "data_inicio",
+            "label": "Data inicial",
+            "kind": "date",
+            "required": false,
+            "description": "Data inicial (AAAA-MM-DD)"
+          },
+          {
+            "name": "data_fim",
+            "label": "Data final",
+            "kind": "date",
+            "required": false,
+            "description": "Data final (AAAA-MM-DD)"
+          },
+          {
+            "name": "rebanho_id",
+            "label": "ID do rebanho",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pelo rebanho (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "temporada_id",
+            "label": "ID da temporada",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pela temporada (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pela fazenda (UUID)",
+            "format": "uuid"
+          }
+        ],
+        "params": [],
+        "queryDto": "QueryProducaoDto",
+        "source": "backend/src/estacoes-animais/producoes/producoes.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "rebanhos",
+    "title": "Rebanhos",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/rebanhos",
+        "route": "/rebanhos",
+        "title": "Lista rebanhos com filtros por espécie, saúde e fazenda (aluno só vê as fazendas dele)",
+        "permission": "rebanhos:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "especie_id",
+            "label": "ID da espécie",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pela espécie (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "saude",
+            "label": "Saude",
+            "kind": "select",
+            "required": false,
+            "description": "Filtrar pela saúde",
+            "options": ["SAUDAVEL", "SUBNUTRIDO"]
+          },
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pela fazenda (UUID)",
+            "format": "uuid"
+          }
+        ],
+        "params": [],
+        "queryDto": "QueryRebanhoDto",
+        "source": "backend/src/estacoes-animais/rebanhos/rebanhos.controller.ts"
+      },
+      {
+        "id": "criar",
+        "method": "POST",
+        "path": "/rebanhos",
+        "route": "/rebanhos/novo",
+        "title": "Adiciona animais a uma fazenda (soma no rebanho da espécie se ele já existir)",
+        "permission": "rebanhos:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": true,
+            "description": "ID da fazenda (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "especie_id",
+            "label": "ID da espécie",
+            "kind": "text",
+            "required": true,
+            "description": "ID da espécie (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "quantidade",
+            "label": "Quantidade",
+            "kind": "number",
+            "required": true,
+            "description": "Quantidade de animais",
+            "min": 1,
+            "step": 1
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateRebanhoDto",
+        "source": "backend/src/estacoes-animais/rebanhos/rebanhos.controller.ts"
+      },
+      {
+        "id": "alimentar",
+        "method": "POST",
+        "path": "/rebanhos/:id/alimentar",
+        "route": "/rebanhos/[id]/alimentar",
+        "title": "Alimenta o rebanho consumindo ração do estoque (se faltar, o rebanho fica subnutrido)",
+        "permission": "rebanhos:alimentar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/estacoes-animais/rebanhos/rebanhos.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "temporadas",
+    "title": "Temporadas",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/temporadas",
+        "route": "/temporadas",
+        "title": "Lista temporadas com filtros por turma e status (aluno só vê a própria turma)",
+        "permission": "temporadas:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar pela turma (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "kind": "select",
+            "required": false,
+            "description": "Filtrar pelo status",
+            "options": ["PLANEJADA", "ATIVA", "PROCESSANDO", "ENCERRADA"]
+          }
+        ],
+        "params": [],
+        "queryDto": "QueryTemporadaDto",
+        "source": "backend/src/estacoes-animais/temporadas/temporadas.controller.ts"
+      },
+      {
+        "id": "criar",
+        "method": "POST",
+        "path": "/temporadas",
+        "route": "/temporadas/novo",
+        "title": "Cria uma temporada planejada para uma turma",
+        "permission": "temporadas:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": true,
+            "description": "ID da turma (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "estacao_id",
+            "label": "ID da estação",
+            "kind": "text",
+            "required": true,
+            "description": "ID da estação (UUID)",
+            "format": "uuid"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome da temporada",
+            "minLength": 2,
+            "maxLength": 80
+          },
+          {
+            "name": "data_inicio",
+            "label": "Data inicial",
+            "kind": "date",
+            "required": false,
+            "description": "Data de início prevista"
+          },
+          {
+            "name": "data_fim",
+            "label": "Data final",
+            "kind": "date",
+            "required": false,
+            "description": "Data de fim prevista"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateTemporadaDto",
+        "source": "backend/src/estacoes-animais/temporadas/temporadas.controller.ts"
+      },
+      {
+        "id": "avancar",
+        "method": "POST",
+        "path": "/temporadas/:id/avancar",
+        "route": "/temporadas/[id]/avancar",
+        "title": "Avança a temporada: ativa uma planejada ou encerra a ativa e ativa a próxima",
+        "permission": "temporadas:avancar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/estacoes-animais/temporadas/temporadas.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "fazendas",
+    "title": "Fazendas",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/fazendas",
+        "route": "/fazendas/novo",
+        "title": "Cadastra uma fazenda",
+        "permission": "fazendas:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome da fazenda"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "Turma",
+            "format": "uuid"
+          },
+          {
+            "name": "usuario_id",
+            "label": "ID do usuário",
+            "kind": "text",
+            "required": false,
+            "description": "Aluno dono da fazenda",
+            "format": "uuid"
+          },
+          {
+            "name": "agua_total",
+            "label": "Água total",
+            "kind": "number",
+            "required": true,
+            "description": "Baldes de água",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "estacao_atual",
+            "label": "Estação atual",
+            "kind": "select",
+            "required": true,
+            "description": "Estação atual",
+            "options": ["primavera", "verao", "outono", "inverno"]
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateFazendaDto",
+        "source": "backend/src/fazendas/fazendas.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/fazendas",
+        "route": "/fazendas",
+        "title": "Lista as fazendas",
+        "permission": "fazendas:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Parte do nome"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "Id da turma",
+            "format": "uuid"
+          },
+          {
+            "name": "estacao",
+            "label": "Estacao",
+            "kind": "text",
+            "required": false,
+            "description": "Estação atual da fazenda"
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroFazendaDto",
+        "source": "backend/src/fazendas/fazendas.controller.ts"
+      },
+      {
+        "id": "findOne",
+        "method": "GET",
+        "path": "/fazendas/:id",
+        "route": "/fazendas/[id]",
+        "title": "Mostra a fazenda com os talhões e os recursos",
+        "permission": "fazendas:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/fazendas/fazendas.controller.ts"
+      },
+      {
+        "id": "update",
+        "method": "PATCH",
+        "path": "/fazendas/:id",
+        "route": "/fazendas/[id]/editar",
+        "title": "Atualiza uma fazenda",
+        "permission": "fazendas:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Nome da fazenda"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "Turma",
+            "format": "uuid"
+          },
+          {
+            "name": "usuario_id",
+            "label": "ID do usuário",
+            "kind": "text",
+            "required": false,
+            "description": "Aluno dono da fazenda",
+            "format": "uuid"
+          },
+          {
+            "name": "agua_total",
+            "label": "Água total",
+            "kind": "number",
+            "required": false,
+            "description": "Baldes de água",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "estacao_atual",
+            "label": "Estação atual",
+            "kind": "select",
+            "required": false,
+            "description": "Estação atual",
+            "options": ["primavera", "verao", "outono", "inverno"]
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "UpdateFazendaDto",
+        "source": "backend/src/fazendas/fazendas.controller.ts"
+      },
+      {
+        "id": "remove",
+        "method": "DELETE",
+        "path": "/fazendas/:id",
+        "route": "/fazendas/[id]/excluir",
+        "title": "Exclui uma fazenda",
+        "permission": "fazendas:deletar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/fazendas/fazendas.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "cooperativa",
+    "title": "Cooperativa",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/cooperativa/vendas-conjuntas",
+        "route": "/cooperativa/vendas-conjuntas",
+        "title": "Lista vendas conjuntas disponíveis e concluídas",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "produto_id",
+            "label": "ID do produto",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "kind": "select",
+            "required": false,
+            "options": [
+              "ABERTA",
+              "AGUARDANDO_DISTRIBUICAO",
+              "DISTRIBUIDA",
+              "CANCELADA"
+            ]
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          },
+          {
+            "name": "temporada",
+            "label": "Temporada",
+            "kind": "number",
+            "required": false,
+            "min": 1,
+            "step": 1
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroVendasConjuntasDto",
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      },
+      {
+        "id": "criar",
+        "method": "POST",
+        "path": "/cooperativa/vendas-conjuntas",
+        "route": "/cooperativa/vendas-conjuntas/novo",
+        "title": "Cria venda conjunta com a primeira contribuição",
+        "permission": "cooperativa:participar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "produto_id",
+            "label": "ID do produto",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "quantidade",
+            "label": "Quantidade",
+            "kind": "number",
+            "required": true,
+            "min": 0.0001,
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CriarVendaDto",
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      },
+      {
+        "id": "detalhe",
+        "method": "GET",
+        "path": "/cooperativa/vendas-conjuntas/:id",
+        "route": "/cooperativa/vendas-conjuntas/[id]",
+        "title": "Consulta venda conjunta e contribuições pelo ID",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      },
+      {
+        "id": "contribuir",
+        "method": "POST",
+        "path": "/cooperativa/vendas-conjuntas/:id/contribuicoes",
+        "route": "/cooperativa/vendas-conjuntas/[id]/contribuicoes",
+        "title": "Adiciona contribuição de uma fazenda",
+        "permission": "cooperativa:participar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "quantidade",
+            "label": "Quantidade",
+            "kind": "number",
+            "required": true,
+            "min": 0.0001,
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "ContribuirDto",
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      },
+      {
+        "id": "alterar",
+        "method": "PATCH",
+        "path": "/cooperativa/vendas-conjuntas/:id/contribuicoes/:ordemId",
+        "route": "/cooperativa/vendas-conjuntas/[id]/contribuicoes/[ordemId]/editar",
+        "title": "Altera a quantidade da própria contribuição",
+        "permission": "cooperativa:participar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "quantidade",
+            "label": "Quantidade",
+            "kind": "number",
+            "required": true,
+            "min": 0.0001,
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "ordemId",
+            "label": "ID da contribuição",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "AlterarContribuicaoDto",
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      },
+      {
+        "id": "retirar",
+        "method": "DELETE",
+        "path": "/cooperativa/vendas-conjuntas/:id/contribuicoes/:ordemId",
+        "route": "/cooperativa/vendas-conjuntas/[id]/contribuicoes/[ordemId]/excluir",
+        "title": "Retira a própria contribuição e libera estoque",
+        "permission": "cooperativa:participar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "ordemId",
+            "label": "ID da contribuição",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      },
+      {
+        "id": "distribuir",
+        "method": "POST",
+        "path": "/cooperativa/vendas-conjuntas/:id/distribuir",
+        "route": "/cooperativa/vendas-conjuntas/[id]/distribuir",
+        "title": "Retém taxa de 5% e distribui o valor líquido",
+        "permission": "cooperativa:distribuir",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      },
+      {
+        "id": "extrato",
+        "method": "GET",
+        "path": "/cooperativa/extrato",
+        "route": "/cooperativa/extrato",
+        "title": "Consulta o extrato da cooperativa por data e tipo",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "data_inicio",
+            "label": "Data inicial",
+            "kind": "date",
+            "required": false
+          },
+          {
+            "name": "data_fim",
+            "label": "Data final",
+            "kind": "date",
+            "required": false
+          },
+          {
+            "name": "tipo",
+            "label": "Tipo",
+            "kind": "select",
+            "required": false,
+            "options": ["COMPRA_AVULSA", "COMPRA_CONJUNTA", "REPASSE", "TAXA"]
+          },
+          {
+            "name": "venda_conjunta_id",
+            "label": "Venda conjunta id",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroTransacoesDto",
+        "source": "backend/src/mercado/cooperativa/cooperativa.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "cotacoes",
+    "title": "Cotações",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/cotacoes",
+        "route": "/cotacoes",
+        "title": "Lista cotações por produto, turma e temporada",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "produto_id",
+            "label": "ID do produto",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          },
+          {
+            "name": "temporada",
+            "label": "Temporada",
+            "kind": "number",
+            "required": false,
+            "min": 1,
+            "step": 1
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroCotacoesDto",
+        "source": "backend/src/mercado/cotacoes/cotacoes.controller.ts"
+      },
+      {
+        "id": "atual",
+        "method": "GET",
+        "path": "/cotacoes/atual",
+        "route": "/cotacoes/atual",
+        "title": "Obtém a cotação da temporada atual da fazenda",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "produto_id",
+            "label": "ID do produto",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "params": [],
+        "queryDto": "CotacaoAtualDto",
+        "source": "backend/src/mercado/cotacoes/cotacoes.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "estoque",
+    "title": "Estoque",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/estoque",
+        "route": "/estoque",
+        "title": "Lista estoque disponível por produto e fazenda",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "produto_id",
+            "label": "ID do produto",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          },
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroEstoqueDto",
+        "source": "backend/src/mercado/estoque/estoque.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "ordens",
+    "title": "Ordens",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/ordens",
+        "route": "/ordens",
+        "title": "Lista ordens por tipo, status, produto e modalidade",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "tipo",
+            "label": "Tipo",
+            "kind": "select",
+            "required": false,
+            "options": ["VENDA", "COMPRA"]
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "kind": "select",
+            "required": false,
+            "options": ["ABERTA", "EXECUTADA", "CANCELADA"]
+          },
+          {
+            "name": "produto_id",
+            "label": "ID do produto",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          },
+          {
+            "name": "modalidade",
+            "label": "Modalidade",
+            "kind": "select",
+            "required": false,
+            "options": ["AVULSA", "CONJUNTA"]
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroOrdensDto",
+        "source": "backend/src/mercado/ordens/ordens.controller.ts"
+      },
+      {
+        "id": "vender",
+        "method": "POST",
+        "path": "/ordens/venda",
+        "route": "/ordens/venda",
+        "title": "Cria oferta avulsa e reserva estoque",
+        "permission": "mercado:vender",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "produto_id",
+            "label": "ID do produto",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          },
+          {
+            "name": "quantidade",
+            "label": "Quantidade",
+            "kind": "number",
+            "required": true,
+            "min": 0.0001,
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CriarVendaDto",
+        "source": "backend/src/mercado/ordens/ordens.controller.ts"
+      },
+      {
+        "id": "comprar",
+        "method": "POST",
+        "path": "/ordens/compra",
+        "route": "/ordens/compra",
+        "title": "Compra uma oferta avulsa ou uma venda conjunta inteira",
+        "permission": "mercado:comprar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "origem",
+            "label": "Origem",
+            "kind": "select",
+            "required": true,
+            "options": ["ORDEM", "VENDA_CONJUNTA"]
+          },
+          {
+            "name": "origem_id",
+            "label": "ID da origem",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "ComprarDto",
+        "source": "backend/src/mercado/ordens/ordens.controller.ts"
+      },
+      {
+        "id": "detalhe",
+        "method": "GET",
+        "path": "/ordens/:id",
+        "route": "/ordens/[id]",
+        "title": "Consulta ordem pelo ID",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/mercado/ordens/ordens.controller.ts"
+      },
+      {
+        "id": "cancelar",
+        "method": "PATCH",
+        "path": "/ordens/:id/cancelar",
+        "route": "/ordens/[id]/cancelar",
+        "title": "Cancela oferta avulsa e libera estoque",
+        "permission": "mercado:vender",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/mercado/ordens/ordens.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "produtos",
+    "title": "Produtos",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/produtos",
+        "route": "/produtos",
+        "title": "Lista produtos com paginação e filtros",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false
+          },
+          {
+            "name": "ativo",
+            "label": "Ativo",
+            "kind": "select",
+            "required": false,
+            "options": ["true", "false"]
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroProdutosDto",
+        "source": "backend/src/mercado/produtos/produtos.controller.ts"
+      },
+      {
+        "id": "criar",
+        "method": "POST",
+        "path": "/produtos",
+        "route": "/produtos/novo",
+        "title": "Cadastra produto do mercado",
+        "permission": "produtos:gerenciar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "minLength": 2,
+            "maxLength": 80
+          },
+          {
+            "name": "unidade",
+            "label": "Unidade",
+            "kind": "text",
+            "required": true,
+            "minLength": 1,
+            "maxLength": 20
+          },
+          {
+            "name": "chave_estoque",
+            "label": "Chave do estoque",
+            "kind": "text",
+            "required": true,
+            "minLength": 3,
+            "maxLength": 120
+          },
+          {
+            "name": "preco_base",
+            "label": "Preço base",
+            "kind": "number",
+            "required": true,
+            "min": 0.01,
+            "step": "any"
+          },
+          {
+            "name": "sensibilidade",
+            "label": "Sensibilidade",
+            "kind": "number",
+            "required": true,
+            "min": 0,
+            "step": "any"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CriarProdutoDto",
+        "source": "backend/src/mercado/produtos/produtos.controller.ts"
+      },
+      {
+        "id": "editar",
+        "method": "PATCH",
+        "path": "/produtos/:id",
+        "route": "/produtos/[id]/editar",
+        "title": "Atualiza produto e recalcula as cotações",
+        "permission": "produtos:gerenciar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "minLength": 2,
+            "maxLength": 80
+          },
+          {
+            "name": "unidade",
+            "label": "Unidade",
+            "kind": "text",
+            "required": false,
+            "minLength": 1,
+            "maxLength": 20
+          },
+          {
+            "name": "preco_base",
+            "label": "Preço base",
+            "kind": "number",
+            "required": false,
+            "min": 0.01,
+            "step": "any"
+          },
+          {
+            "name": "sensibilidade",
+            "label": "Sensibilidade",
+            "kind": "number",
+            "required": false,
+            "min": 0,
+            "step": "any"
+          },
+          {
+            "name": "ativo",
+            "label": "Ativo",
+            "kind": "boolean",
+            "required": false
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "EditarProdutoDto",
+        "source": "backend/src/mercado/produtos/produtos.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "transacoes",
+    "title": "Transações",
+    "endpoints": [
+      {
+        "id": "listar",
+        "method": "GET",
+        "path": "/transacoes",
+        "route": "/transacoes",
+        "title": "Lista transações por data e tipo",
+        "permission": "mercado:consultar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "data_inicio",
+            "label": "Data inicial",
+            "kind": "date",
+            "required": false
+          },
+          {
+            "name": "data_fim",
+            "label": "Data final",
+            "kind": "date",
+            "required": false
+          },
+          {
+            "name": "tipo",
+            "label": "Tipo",
+            "kind": "select",
+            "required": false,
+            "options": ["COMPRA_AVULSA", "COMPRA_CONJUNTA", "REPASSE", "TAXA"]
+          },
+          {
+            "name": "venda_conjunta_id",
+            "label": "Venda conjunta id",
+            "kind": "text",
+            "required": false,
+            "format": "uuid"
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroTransacoesDto",
+        "source": "backend/src/mercado/transacoes/transacoes.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "perfis",
+    "title": "Perfis",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/perfis",
+        "route": "/perfis/novo",
+        "title": "Cria um novo perfil de acesso",
+        "permission": "perfis:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome identificador do perfil"
+          },
+          {
+            "name": "ativo",
+            "label": "Ativo",
+            "kind": "boolean",
+            "required": false,
+            "description": "Indica se o perfil está ativo"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreatePerfilDto",
+        "source": "backend/src/perfis/perfis.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/perfis",
+        "route": "/perfis",
+        "title": "Lista os perfis com filtros por nome e status ativo",
+        "permission": "perfis:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar por nome do perfil"
+          },
+          {
+            "name": "ativo",
+            "label": "Ativo",
+            "kind": "boolean",
+            "required": false,
+            "description": "Filtrar por status ativo (true/false)"
+          }
+        ],
+        "params": [],
+        "queryDto": "FilterPerfilDto",
+        "source": "backend/src/perfis/perfis.controller.ts"
+      },
+      {
+        "id": "findById",
+        "method": "GET",
+        "path": "/perfis/:id",
+        "route": "/perfis/[id]",
+        "title": "Busca perfil por ID com suas permissões associadas",
+        "permission": "perfis:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/perfis/perfis.controller.ts"
+      },
+      {
+        "id": "vincularPermissoes",
+        "method": "PATCH",
+        "path": "/perfis/:id/permissoes",
+        "route": "/perfis/[id]/permissoes",
+        "title": "Vincula permissões a um perfil",
+        "permission": "perfis:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "permissoes_ids",
+            "label": "IDs das permissões",
+            "kind": "array",
+            "required": true,
+            "description": "Lista de IDs (UUID) das permissões que serão vinculadas ao perfil",
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "bodyDto": "VincularPermissoesDto",
+        "source": "backend/src/perfis/perfis.controller.ts"
+      },
+      {
+        "id": "update",
+        "method": "PATCH",
+        "path": "/perfis/:id",
+        "route": "/perfis/[id]/editar",
+        "title": "Atualiza dados de um perfil",
+        "permission": "perfis:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Nome identificador do perfil"
+          },
+          {
+            "name": "ativo",
+            "label": "Ativo",
+            "kind": "boolean",
+            "required": false,
+            "description": "Indica se o perfil está ativo"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "bodyDto": "UpdatePerfilDto",
+        "source": "backend/src/perfis/perfis.controller.ts"
+      },
+      {
+        "id": "remove",
+        "method": "DELETE",
+        "path": "/perfis/:id",
+        "route": "/perfis/[id]/excluir",
+        "title": "Remove um perfil",
+        "permission": "perfis:deletar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/perfis/perfis.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "permissoes",
+    "title": "Permissões",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/permissoes",
+        "route": "/permissoes/novo",
+        "title": "Cria uma permissão",
+        "permission": "permissoes:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome único da permissão"
+          },
+          {
+            "name": "descricao",
+            "label": "Descrição",
+            "kind": "text",
+            "required": true,
+            "description": "Descrição funcional da permissão"
+          },
+          {
+            "name": "modulo",
+            "label": "Modulo",
+            "kind": "text",
+            "required": true,
+            "description": "Módulo protegido"
+          },
+          {
+            "name": "acao",
+            "label": "Acao",
+            "kind": "text",
+            "required": true,
+            "description": "Ação protegida"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreatePermissaoDto",
+        "source": "backend/src/permissoes/permissoes.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/permissoes",
+        "route": "/permissoes",
+        "title": "Lista permissões com filtros",
+        "permission": "permissoes:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "modulo",
+            "label": "Modulo",
+            "kind": "text",
+            "required": false,
+            "description": "Filtra pelo módulo"
+          },
+          {
+            "name": "acao",
+            "label": "Acao",
+            "kind": "text",
+            "required": false,
+            "description": "Filtra pela ação"
+          }
+        ],
+        "params": [],
+        "queryDto": "FilterPermissaoDto",
+        "source": "backend/src/permissoes/permissoes.controller.ts"
+      },
+      {
+        "id": "findById",
+        "method": "GET",
+        "path": "/permissoes/:id",
+        "route": "/permissoes/[id]",
+        "title": "Busca uma permissão por ID",
+        "permission": "permissoes:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/permissoes/permissoes.controller.ts"
+      },
+      {
+        "id": "update",
+        "method": "PATCH",
+        "path": "/permissoes/:id",
+        "route": "/permissoes/[id]/editar",
+        "title": "Atualiza uma permissão",
+        "permission": "permissoes:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Nome único da permissão"
+          },
+          {
+            "name": "descricao",
+            "label": "Descrição",
+            "kind": "text",
+            "required": false,
+            "description": "Descrição funcional da permissão"
+          },
+          {
+            "name": "modulo",
+            "label": "Modulo",
+            "kind": "text",
+            "required": false,
+            "description": "Módulo protegido"
+          },
+          {
+            "name": "acao",
+            "label": "Acao",
+            "kind": "text",
+            "required": false,
+            "description": "Ação protegida"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "bodyDto": "UpdatePermissaoDto",
+        "source": "backend/src/permissoes/permissoes.controller.ts"
+      },
+      {
+        "id": "remove",
+        "method": "DELETE",
+        "path": "/permissoes/:id",
+        "route": "/permissoes/[id]/excluir",
+        "title": "Remove uma permissão",
+        "permission": "permissoes:deletar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/permissoes/permissoes.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "plantios",
+    "title": "Plantios",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/plantios",
+        "route": "/plantios/novo",
+        "title": "Planta uma cultura em um talhão",
+        "permission": "plantios:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "talhao_id",
+            "label": "ID do talhão",
+            "kind": "text",
+            "required": true,
+            "description": "Talhão",
+            "format": "uuid"
+          },
+          {
+            "name": "cultura_id",
+            "label": "ID da cultura",
+            "kind": "text",
+            "required": true,
+            "description": "Cultura",
+            "format": "uuid"
+          },
+          {
+            "name": "quantidade",
+            "label": "Quantidade",
+            "kind": "number",
+            "required": true,
+            "description": "Quantidade plantada",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "data_plantio",
+            "label": "Data do plantio",
+            "kind": "date",
+            "required": false,
+            "description": "Data do plantio"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreatePlantioDto",
+        "source": "backend/src/plantios/plantios.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/plantios",
+        "route": "/plantios",
+        "title": "Lista os plantios",
+        "permission": "plantios:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": false,
+            "description": "Id da fazenda",
+            "format": "uuid"
+          },
+          {
+            "name": "cultura_id",
+            "label": "ID da cultura",
+            "kind": "text",
+            "required": false,
+            "description": "Id da cultura",
+            "format": "uuid"
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "kind": "text",
+            "required": false,
+            "description": "em_crescimento, pronto ou colhido"
+          },
+          {
+            "name": "temporada",
+            "label": "Temporada",
+            "kind": "number",
+            "required": false,
+            "description": "Número da temporada",
+            "step": 1
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroPlantioDto",
+        "source": "backend/src/plantios/plantios.controller.ts"
+      },
+      {
+        "id": "findOne",
+        "method": "GET",
+        "path": "/plantios/:id",
+        "route": "/plantios/[id]",
+        "title": "Mostra um plantio",
+        "permission": "plantios:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/plantios/plantios.controller.ts"
+      },
+      {
+        "id": "colher",
+        "method": "POST",
+        "path": "/plantios/:id/colher",
+        "route": "/plantios/[id]/colher",
+        "title": "Colhe um plantio",
+        "permission": "plantios:colher",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "data_colheita",
+            "label": "Data da colheita",
+            "kind": "date",
+            "required": false,
+            "description": "Data da colheita"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "ColherPlantioDto",
+        "source": "backend/src/plantios/plantios.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "talhoes",
+    "title": "Talhões",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/talhoes",
+        "route": "/talhoes/novo",
+        "title": "Cadastra um talhão",
+        "permission": "talhoes:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": true,
+            "description": "Fazenda do talhão",
+            "format": "uuid"
+          },
+          {
+            "name": "codigo",
+            "label": "Código",
+            "kind": "text",
+            "required": true,
+            "description": "Código do talhão"
+          },
+          {
+            "name": "area",
+            "label": "Área",
+            "kind": "number",
+            "required": true,
+            "description": "Tamanho em canteiros",
+            "min": 1,
+            "step": 1
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateTalhaoDto",
+        "source": "backend/src/talhoes/talhoes.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/talhoes",
+        "route": "/talhoes",
+        "title": "Lista os talhões",
+        "permission": "talhoes:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "fazenda_id",
+            "label": "ID da fazenda",
+            "kind": "text",
+            "required": false,
+            "description": "Id da fazenda",
+            "format": "uuid"
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "kind": "text",
+            "required": false,
+            "description": "livre ou plantado"
+          },
+          {
+            "name": "codigo",
+            "label": "Código",
+            "kind": "text",
+            "required": false,
+            "description": "Começo do código, como A"
+          }
+        ],
+        "params": [],
+        "queryDto": "FiltroTalhaoDto",
+        "source": "backend/src/talhoes/talhoes.controller.ts"
+      },
+      {
+        "id": "findOne",
+        "method": "GET",
+        "path": "/talhoes/:id",
+        "route": "/talhoes/[id]",
+        "title": "Mostra um talhão",
+        "permission": "talhoes:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/talhoes/talhoes.controller.ts"
+      },
+      {
+        "id": "update",
+        "method": "PATCH",
+        "path": "/talhoes/:id",
+        "route": "/talhoes/[id]/editar",
+        "title": "Atualiza um talhão",
+        "permission": "talhoes:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "codigo",
+            "label": "Código",
+            "kind": "text",
+            "required": false,
+            "description": "Código do talhão"
+          },
+          {
+            "name": "area",
+            "label": "Área",
+            "kind": "number",
+            "required": false,
+            "description": "Tamanho em canteiros",
+            "min": 1,
+            "step": 1
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "bodyDto": "UpdateTalhaoDto",
+        "source": "backend/src/talhoes/talhoes.controller.ts"
+      },
+      {
+        "id": "remove",
+        "method": "DELETE",
+        "path": "/talhoes/:id",
+        "route": "/talhoes/[id]/excluir",
+        "title": "Exclui um talhão",
+        "permission": "talhoes:deletar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true,
+            "format": "uuid"
+          }
+        ],
+        "source": "backend/src/talhoes/talhoes.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "turmas",
+    "title": "Turmas",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/turmas",
+        "route": "/turmas/novo",
+        "title": "Cadastra uma nova turma",
+        "permission": "turmas:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "codigo",
+            "label": "Código",
+            "kind": "text",
+            "required": true,
+            "description": "Código único da turma (4 caracteres)",
+            "minLength": 4,
+            "maxLength": 4
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome descritivo da turma"
+          },
+          {
+            "name": "ano",
+            "label": "Ano",
+            "kind": "number",
+            "required": true,
+            "description": "Ano letivo da turma",
+            "step": 1
+          },
+          {
+            "name": "max_alunos",
+            "label": "Máximo de alunos",
+            "kind": "number",
+            "required": true,
+            "description": "Capacidade máxima de alunos na turma",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "professor_id",
+            "label": "ID do professor",
+            "kind": "text",
+            "required": true,
+            "description": "ID do professor responsável (UUID)",
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateTurmaDto",
+        "source": "backend/src/turmas/turmas.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/turmas",
+        "route": "/turmas",
+        "title": "Lista turmas com filtros por nome e ano (professor só acessa a própria turma)",
+        "permission": "turmas:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Filtrar por nome da turma"
+          },
+          {
+            "name": "ano",
+            "label": "Ano",
+            "kind": "number",
+            "required": false,
+            "description": "Filtrar por ano",
+            "step": 1
+          }
+        ],
+        "params": [],
+        "queryDto": "FilterTurmaDto",
+        "source": "backend/src/turmas/turmas.controller.ts"
+      },
+      {
+        "id": "findById",
+        "method": "GET",
+        "path": "/turmas/:id",
+        "route": "/turmas/[id]",
+        "title": "Busca turma por ID e seus alunos matriculados",
+        "permission": "turmas:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/turmas/turmas.controller.ts"
+      },
+      {
+        "id": "update",
+        "method": "PATCH",
+        "path": "/turmas/:id",
+        "route": "/turmas/[id]/editar",
+        "title": "Atualiza dados de uma turma",
+        "permission": "turmas:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "codigo",
+            "label": "Código",
+            "kind": "text",
+            "required": false,
+            "description": "Código único da turma (4 caracteres)",
+            "minLength": 4,
+            "maxLength": 4
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Nome descritivo da turma"
+          },
+          {
+            "name": "ano",
+            "label": "Ano",
+            "kind": "number",
+            "required": false,
+            "description": "Ano letivo da turma",
+            "step": 1
+          },
+          {
+            "name": "max_alunos",
+            "label": "Máximo de alunos",
+            "kind": "number",
+            "required": false,
+            "description": "Capacidade máxima de alunos na turma",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "professor_id",
+            "label": "ID do professor",
+            "kind": "text",
+            "required": false,
+            "description": "ID do professor responsável (UUID)",
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "bodyDto": "UpdateTurmaDto",
+        "source": "backend/src/turmas/turmas.controller.ts"
+      },
+      {
+        "id": "remove",
+        "method": "DELETE",
+        "path": "/turmas/:id",
+        "route": "/turmas/[id]/excluir",
+        "title": "Remove uma turma por ID",
+        "permission": "turmas:deletar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/turmas/turmas.controller.ts"
+      },
+      {
+        "id": "adicionarAluno",
+        "method": "POST",
+        "path": "/turmas/:id/alunos",
+        "route": "/turmas/[id]/alunos",
+        "title": "Matricula um aluno em uma turma",
+        "permission": "turmas:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "aluno_id",
+            "label": "ID do aluno",
+            "kind": "text",
+            "required": true,
+            "description": "ID do aluno (UUID) a ser matriculado na turma",
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "bodyDto": "AdicionarAlunoDto",
+        "source": "backend/src/turmas/turmas.controller.ts"
+      }
+    ]
+  },
+  {
+    "key": "usuarios",
+    "title": "Usuários",
+    "endpoints": [
+      {
+        "id": "create",
+        "method": "POST",
+        "path": "/usuarios",
+        "route": "/usuarios/novo",
+        "title": "Cadastra um novo usuário",
+        "permission": "usuarios:criar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": true,
+            "description": "Nome do usuário"
+          },
+          {
+            "name": "email",
+            "label": "E-mail",
+            "kind": "email",
+            "required": true,
+            "description": "E-mail do usuário"
+          },
+          {
+            "name": "senha",
+            "label": "Senha",
+            "kind": "password",
+            "required": true,
+            "description": "Senha de acesso",
+            "minLength": 6
+          },
+          {
+            "name": "perfil_id",
+            "label": "ID do perfil",
+            "kind": "text",
+            "required": false,
+            "description": "ID do perfil associado",
+            "format": "uuid"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "ID da turma vinculada (caso seja aluno)",
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [],
+        "bodyDto": "CreateUsuarioDto",
+        "source": "backend/src/usuarios/usuarios.controller.ts"
+      },
+      {
+        "id": "findAll",
+        "method": "GET",
+        "path": "/usuarios",
+        "route": "/usuarios",
+        "title": "Lista usuários com paginação e filtros de nome e perfil",
+        "permission": "usuarios:listar",
+        "authenticated": true,
+        "body": [],
+        "query": [
+          {
+            "name": "page",
+            "label": "Página",
+            "kind": "number",
+            "required": false,
+            "description": "Número da página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "limit",
+            "label": "Registros por página",
+            "kind": "number",
+            "required": false,
+            "description": "Quantidade de registros por página",
+            "min": 1,
+            "step": 1
+          },
+          {
+            "name": "search",
+            "label": "Busca",
+            "kind": "text",
+            "required": false,
+            "description": "Termo de busca genérico"
+          },
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Parte do nome"
+          },
+          {
+            "name": "perfil",
+            "label": "Perfil",
+            "kind": "text",
+            "required": false,
+            "description": "Nome do perfil"
+          }
+        ],
+        "params": [],
+        "queryDto": "FilterUsuarioDto",
+        "source": "backend/src/usuarios/usuarios.controller.ts"
+      },
+      {
+        "id": "findById",
+        "method": "GET",
+        "path": "/usuarios/:id",
+        "route": "/usuarios/[id]",
+        "title": "Busca usuário por ID",
+        "permission": "usuarios:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/usuarios/usuarios.controller.ts"
+      },
+      {
+        "id": "findByEmail",
+        "method": "GET",
+        "path": "/usuarios/email/:email",
+        "route": "/usuarios/email/[email]",
+        "title": "Busca usuário por e-mail",
+        "permission": "usuarios:visualizar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "email",
+            "label": "E-mail",
+            "kind": "email",
+            "required": true
+          }
+        ],
+        "source": "backend/src/usuarios/usuarios.controller.ts"
+      },
+      {
+        "id": "update",
+        "method": "PATCH",
+        "path": "/usuarios/:id",
+        "route": "/usuarios/[id]/editar",
+        "title": "Atualiza dados de um usuário",
+        "permission": "usuarios:editar",
+        "authenticated": true,
+        "body": [
+          {
+            "name": "nome",
+            "label": "Nome",
+            "kind": "text",
+            "required": false,
+            "description": "Nome do usuário"
+          },
+          {
+            "name": "email",
+            "label": "E-mail",
+            "kind": "email",
+            "required": false,
+            "description": "E-mail do usuário"
+          },
+          {
+            "name": "senha",
+            "label": "Senha",
+            "kind": "password",
+            "required": false,
+            "description": "Senha de acesso",
+            "minLength": 6
+          },
+          {
+            "name": "perfil_id",
+            "label": "ID do perfil",
+            "kind": "text",
+            "required": false,
+            "description": "ID do perfil associado",
+            "format": "uuid"
+          },
+          {
+            "name": "turma_id",
+            "label": "ID da turma",
+            "kind": "text",
+            "required": false,
+            "description": "ID da turma vinculada (caso seja aluno)",
+            "format": "uuid"
+          }
+        ],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "bodyDto": "UpdateUsuarioDto",
+        "source": "backend/src/usuarios/usuarios.controller.ts"
+      },
+      {
+        "id": "remove",
+        "method": "DELETE",
+        "path": "/usuarios/:id",
+        "route": "/usuarios/[id]/excluir",
+        "title": "Remove um usuário por ID",
+        "permission": "usuarios:deletar",
+        "authenticated": true,
+        "body": [],
+        "query": [],
+        "params": [
+          {
+            "name": "id",
+            "label": "ID do registro",
+            "kind": "text",
+            "required": true
+          }
+        ],
+        "source": "backend/src/usuarios/usuarios.controller.ts"
+      }
+    ]
+  }
+]
