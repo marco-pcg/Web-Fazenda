@@ -8,7 +8,7 @@ describe('TurmasController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TurmasController],
-      providers: [TurmasService],
+      providers: [{ provide: TurmasService, useValue: {} }],
     }).compile();
 
     controller = module.get<TurmasController>(TurmasController);

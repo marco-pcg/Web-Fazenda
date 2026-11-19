@@ -1,9 +1,26 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
+  "moduleNameMapper": {
+    "^src/(.*)$": "<rootDir>/../src/$1"
+  },
+  "setupFiles": ["<rootDir>/setup-env.cjs"],
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
+  "transformIgnorePatterns": [
+    "node_modules/(?!@nestjs/(?:passport|jwt|schedule)/)"
+  ],
   "transform": {
+    "^.+\\.js$": [
+      "ts-jest",
+      {
+        "tsconfig": {
+          "allowJs": true,
+          "module": "CommonJS",
+          "moduleResolution": "Node"
+        }
+      }
+    ],
     "^.+\\.(t|j)s$": "ts-jest"
   }
 }

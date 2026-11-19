@@ -8,7 +8,7 @@ describe('PerfisController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PerfisController],
-      providers: [PerfisService],
+      providers: [{ provide: PerfisService, useValue: {} }],
     }).compile();
 
     controller = module.get<PerfisController>(PerfisController);

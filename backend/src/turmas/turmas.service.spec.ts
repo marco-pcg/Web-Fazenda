@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { TurmasRepository } from './turmas.repository';
 import { TurmasService } from './turmas.service';
 
 describe('TurmasService', () => {
@@ -6,7 +7,10 @@ describe('TurmasService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TurmasService],
+      providers: [
+        TurmasService,
+        { provide: TurmasRepository, useValue: {} },
+      ],
     }).compile();
 
     service = module.get<TurmasService>(TurmasService);
