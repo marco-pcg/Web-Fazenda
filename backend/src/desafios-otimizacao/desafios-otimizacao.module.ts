@@ -1,30 +1,17 @@
-import { Module } from '@nestjs/common'
-import { CqrsModule } from '@nestjs/cqrs'
-
-import { IPROBLEMA_REPOSITORY } from './infrastructure/repositories/problema.repository.interface'
-import { ITENTATIVA_REPOSITORY } from './infrastructure/repositories/tentativa.repository.interface'
-import { IRANKING_READ_REPOSITORY } from './infrastructure/repositories/ranking-read.repository.interface'
-
-import { ProblemaPrismaRepository } from './infrastructure/repositories/problema.repository'
-import { TentativaPrismaRepository } from './infrastructure/repositories/tentativa.repository'
-import { RankingReadPrismaRepository } from './infrastructure/repositories/ranking-read.repository'
+import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { GerarPlanoPlantioHandler } from './gerar-plano-plantio.command';
+import { ObterPlanoPlantioHandler } from './obter-plano-plantio.query';
+import { PlanosPlantioController } from './planos-plantio.controller';
+import { PlanosPlantioRepository } from './planos-plantio.repository';
 
 @Module({
   imports: [CqrsModule],
+  controllers: [PlanosPlantioController],
   providers: [
-    {
-      provide: IPROBLEMA_REPOSITORY,
-      useClass: ProblemaPrismaRepository,
-    },
-    {
-      provide: ITENTATIVA_REPOSITORY,
-      useClass: TentativaPrismaRepository,
-    },
-    {
-      provide: IRANKING_READ_REPOSITORY,
-      useClass: RankingReadPrismaRepository,
-    },
+    GerarPlanoPlantioHandler,
+    ObterPlanoPlantioHandler,
+    PlanosPlantioRepository,
   ],
-  exports: [IPROBLEMA_REPOSITORY, ITENTATIVA_REPOSITORY, IRANKING_READ_REPOSITORY],
 })
 export class DesafiosOtimizacaoModule {}
